@@ -145,6 +145,31 @@ try {
   assert.equal((await call(adminCookie(), `/api/admin/assessments/${assessmentId}`, "PATCH", { action: "unpublish" })).response.status, 200);
 
   browser = await chromium.launch({ executablePath: "/usr/bin/chromium", headless: true, args: ["--no-sandbox"] });
+  const authContext = await browser.newContext({ viewport: { width: 1280, height: 820 } });
+  const authPage = await authContext.newPage();
+  const authErrors = [];
+  authPage.on("pageerror", (error) => authErrors.push(error.message));
+  await authPage.goto(`${site}/register`, { waitUntil: "domcontentloaded" });
+  await authPage.getByRole("heading", { name: "Buat akun" }).waitFor();
+  await authPage.getByLabel("Email").waitFor();
+  assert.equal(await authPage.getByLabel(/role|peran/i).count(), 0, "Registration must not allow choosing an elevated role.");
+  await authPage.goto(`${site}/login`, { waitUntil: "domcontentloaded" });
+  await authPage.getByLabel("Email").fill(adminEmail);
+  await authPage.getByLabel("Password").fill(password);
+  await authPage.getByRole("button", { name: "Masuk" }).click();
+  await authPage.waitForURL("**/dashboard", { timeout: 10_000 });
+  await authPage.goto(`${site}/admin`, { waitUntil: "domcontentloaded" });
+  await authPage.getByRole("heading", { name: "Ringkasan" }).waitFor();
+  await authPage.goto(`${site}/login`, { waitUntil: "domcontentloaded" });
+  await authPage.getByLabel("Email").fill(userEmail);
+  await authPage.getByLabel("Password").fill(password);
+  await authPage.getByRole("button", { name: "Masuk" }).click();
+  await authPage.waitForURL("**/dashboard", { timeout: 10_000 });
+  await authPage.goto(`${site}/admin`, { waitUntil: "domcontentloaded" });
+  await authPage.waitForURL("**/dashboard", { timeout: 10_000 });
+  assert.deepEqual(authErrors, [], `Auth UI errors: ${authErrors.join("; ")}`);
+  await authContext.close();
+
   const context = await browser.newContext({ viewport: { width: 1280, height: 820 } });
   await context.addCookies(adminCookie().split("; ").map((part) => { const [name, ...value] = part.split("="); return { name, value: decodeURIComponent(value.join("=")), url: site }; }));
   const page = await context.newPage();
