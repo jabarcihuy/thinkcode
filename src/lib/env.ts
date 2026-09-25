@@ -3,14 +3,12 @@ import { z } from "zod";
 const publicEnvSchema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: z.url().refine((value) => value.startsWith("https://") || value.startsWith("http://localhost:"), "Use an HTTPS URL or localhost"),
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: z.string().min(1),
-  NEXT_PUBLIC_SITE_URL: z.url().refine((value) => value.startsWith("https://") || value.startsWith("http://localhost:"), "Use an HTTPS URL or localhost"),
 });
 
 export function getPublicEnv() {
   const result = publicEnvSchema.safeParse({
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
-    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
   });
   if (!result.success) {
     throw new Error("Supabase configuration is missing or invalid. Set the variables in .env.local.");

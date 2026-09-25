@@ -5,9 +5,9 @@ ThinkCode adalah **Interactive Programming Logic Lab**. MVP memakai JavaScript s
 ## Menjalankan lokal
 
 1. `npm install`.
-2. Salin `.env.example` ke `.env.local`. Isi URL dan publishable key Supabase, secret key server, URL/model/key AI server. Jangan beri prefix `NEXT_PUBLIC_` ke secret key atau kredensial AI.
+2. Salin `.env.example` ke `.env.local`. Isi URL dan publishable key Supabase, secret key server, URL/model/key AI server. Jangan beri prefix `NEXT_PUBLIC_` ke secret key atau kredensial AI. `NEXT_PUBLIC_SITE_URL` hanya dipakai skrip integration browser bila ingin mengganti default `http://localhost:3000`.
 3. Jalankan seluruh migration di `supabase/migrations` menurut urutan nama pada project Supabase baru. Migrasi terakhir menambahkan Admin CMS dan mencabut write grant konten dari role browser.
-4. Di Supabase Dashboard, aktifkan Email provider, atur Site URL, dan daftarkan `http://localhost:3000/auth/confirm` sebagai Redirect URL lokal. Untuk template Confirm signup berbasis token hash, gunakan `{{ .RedirectTo }}?token_hash={{ .TokenHash }}&type=email`.
+4. Di Supabase Dashboard, aktifkan Email provider dan nonaktifkan **Confirm Email** pada Authentication → Sign In / Providers → Email agar akun dapat langsung digunakan setelah daftar. Tidak perlu mengatur template konfirmasi atau redirect callback email.
 5. `npm run dev`.
 
 Promosi admin hanya oleh operator tepercaya melalui database: `update public.profiles set role = 'ADMIN' where id = '<verified-user-uuid>';`.
@@ -22,7 +22,7 @@ Check untuk coding practice menjalankan test **terlihat** di browser. Hasil brow
 
 ## Biaya dan deployment
 
-Arsitektur awal dapat memakai Vercel Hobby, Supabase Free, dan runtime browser tanpa layanan eksekusi tambahan. Periksa syarat penggunaan dan kuota paket sebelum deployment nyata. Vercel Hobby ditujukan untuk penggunaan personal/nonkomersial. Di Vercel konfigurasi `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_SITE_URL`, `SUPABASE_SECRET_KEY`, `AI_API_URL`, `AI_API_KEY`, dan `AI_MODEL`. `SUPABASE_SECRET_KEY` serta seluruh kredensial AI server-only. Tidak ada layanan compiler/code runner eksternal wajib.
+Arsitektur awal dapat memakai Vercel Hobby, Supabase Free, dan runtime browser tanpa layanan eksekusi tambahan. Periksa syarat penggunaan dan kuota paket sebelum deployment nyata. Vercel Hobby ditujukan untuk penggunaan personal/nonkomersial. Di Vercel konfigurasi `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, `AI_API_URL`, `AI_API_KEY`, dan `AI_MODEL`. `SUPABASE_SECRET_KEY` serta seluruh kredensial AI server-only. Tidak ada layanan compiler/code runner eksternal wajib.
 
 ## Pemeriksaan
 

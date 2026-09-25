@@ -1,7 +1,6 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { getPublicEnv } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
 import { loginSchema, registerSchema } from "@/lib/validation/auth";
 
@@ -19,7 +18,7 @@ export async function loginAction(_: AuthFormState, formData: FormData): Promise
   if (!parsed.success) return { error: "Isi email dan password yang valid." };
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
-  if (error) return { error: "Login gagal. Periksa email, password, dan status konfirmasi akun." };
+  if (error) return { error: "Login gagal. Periksa kembali email dan password Anda." };
   redirect("/dashboard");
 }
 
@@ -27,12 +26,11 @@ export async function registerAction(_: AuthFormState, formData: FormData): Prom
   const parsed = registerSchema.safeParse(formCredentials(formData));
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Data pendaftaran tidak valid." };
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.signUp({
-    ...parsed.data,
-    options: { emailRedirectTo: new URL("/auth/confirm", getPublicEnv().NEXT_PUBLIC_SITE_URL).toString() },
-  });
+  const { data, error } = await supabase.auth.signUp(parsed.data);
   if (error) return { error: "Pendaftaran gagal. Coba lagi atau gunakan alamat email lain." };
-  if (!data.session) return { success: "Periksa email Anda untuk mengonfirmasi akun, lalu login." };
+  if (!data.session) {
+    return { error: "Pendaftaran langsung belum aktif. Minta pengelola menonaktifkan Confirm Email di pengaturan Supabase Auth." };
+  }
   redirect("/dashboard");
 }
 
