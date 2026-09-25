@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fafaf8;
+  --foreground: #18252a;
+  --primary: #176b69;
+  --primary-foreground: #ffffff;
+  --secondary: #e5f2ef;
+  --secondary-foreground: #174e4b;
+  --muted: #f0f2ef;
+  --muted-foreground: #526267;
+  --border: #d9e0dc;
+  --input: #becbc5;
+  --ring: #176b69;
+  --destructive: #aa3036;
+  --code-surface: #17282c;
+  --code-foreground: #ecf7f4;
+}
+
+:root.dark {
+    --background: #101c20;
+    --foreground: #edf3f0;
+    --primary: #7ed4c9;
+    --primary-foreground: #102221;
+    --secondary: #1a3938;
+    --secondary-foreground: #d1efea;
+    --muted: #1b2b2e;
+    --muted-foreground: #b3c5c2;
+    --border: #34494a;
+    --input: #476160;
+    --ring: #7ed4c9;
+    --destructive: #ff9b9e;
+    --code-surface: #0a1518;
+    --code-foreground: #ecf7f4;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root.system {
+    --background: #101c20;
+    --foreground: #edf3f0;
+    --primary: #7ed4c9;
+    --primary-foreground: #102221;
+    --secondary: #1a3938;
+    --secondary-foreground: #d1efea;
+    --muted: #1b2b2e;
+    --muted-foreground: #b3c5c2;
+    --border: #34494a;
+    --input: #476160;
+    --ring: #7ed4c9;
+    --destructive: #ff9b9e;
+    --code-surface: #0a1518;
+    --code-foreground: #ecf7f4;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --color-code-surface: var(--code-surface);
+  --color-code-foreground: var(--code-foreground);
+  --font-sans: Arial, Helvetica, sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--background); color: var(--foreground); font-family: Arial, Helvetica, sans-serif; }
+::selection { background: var(--secondary); color: var(--secondary-foreground); }
+a, button { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
