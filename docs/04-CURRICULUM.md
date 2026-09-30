@@ -1,199 +1,116 @@
-# ThinkCode — MVP Curriculum
+# Database Fundamentals Curriculum
 
-## Course
+## Audience and prerequisites
 
-**Programming Logic Fundamentals**
+Beginning university learners. No prior programming or SQL experience is required. The course teaches relational data and SQL, not a programming language or a mapping to a specific institution.
 
-Bahasa implementasi MVP: **JavaScript** (`javascript`, browser runtime). JavaScript adalah medium logika, bukan kurikulum DOM, HTML/CSS, framework, atau Node.js.
+## Learning outcomes
 
-Tujuan course: membangun fondasi berpikir logis dan kemampuan menyelesaikan masalah menggunakan programming.
+Learners can:
 
-## Chapter 1 — Computational Thinking
+1. Read a small relational schema and distinguish tables, rows, columns, and records.
+2. Identify primary and foreign keys and explain one-to-many and many-to-many relationships.
+3. Translate a data question into a source table, selected columns, and row conditions.
+4. Write basic `SELECT`/`FROM`/`WHERE` queries, sort and limit results, join related tables, and create simple grouped summaries.
+5. Add one valid record and carefully update or delete a targeted record in a synthetic database.
+6. Predict and explain query results and changes, recognize basic constraint errors, and reset practice data.
 
-Topics:
+## Three main topics and learning order
 
-- Apa itu problem solving.
-- Decomposition.
-- Pattern recognition.
-- Abstraction sederhana.
-- Menyusun langkah solusi.
+The three requested content groups are **Relasi**, **Write**, and **Read**. They are curriculum categories, while prerequisites set the learner sequence: **Relasi → Read → Write**. Read is placed before Write because targeted updates and deletions depend on selecting and checking the intended rows.
 
-Practice examples:
+Each topic is a chapter; each material is a lesson. A lesson may contain smaller sections such as Concept, Example, Table View, Prediction, Query, Result, Practice, and Summary.
 
-- Menyusun urutan langkah.
-- Memilih langkah yang relevan.
-- Memecah masalah menjadi sub-masalah.
+### 1. Relasi
 
-## Chapter 2 — Algorithm & Flowchart
+| Material / lesson | Submateri | Learning evidence |
+|---|---|---|
+| Membaca Bentuk Data | Database and table; schema vs records; row/record and column/attribute; inspect the Campus Mini tables | Correctly identify a table, one record, a column, and the schema |
+| Key dan Hubungan Antar Tabel | Primary key; foreign key; one-to-many; many-to-many through a bridge table; follow `students → enrollments → courses` | Identify PK/FK pairs and explain why enrollments connects students with courses |
 
-Topics:
+### 2. Read — query untuk membaca data
 
-- Definisi algoritma.
-- Sequence.
-- Input–Process–Output.
-- Pseudocode.
-- Simbol flowchart dasar.
-- Translasi masalah menjadi algoritma.
+| Material / lesson | Submateri | Learning evidence |
+|---|---|---|
+| Mengambil Data dengan `SELECT` | `SELECT`, `FROM`, choosing requested columns, `*` for initial inspection | Return the requested columns from the correct table |
+| Memilih Baris dengan `WHERE` | Comparisons, boundaries, `AND`, `OR`, parentheses | Predict and explain which records satisfy the condition |
+| Mengurutkan dan Membatasi Hasil | `ORDER BY`, `ASC`, `DESC`, tie-breakers, `LIMIT` | Produce a repeatable ordered subset |
+| Membaca Relasi dengan `JOIN` | `INNER JOIN`, `ON`, PK/FK pair, one-to-many result multiplicity | Choose the correct relationship path and explain repeated entities |
+| Membuat Ringkasan Data | `COUNT`, `AVG`, `GROUP BY`, what each output row represents | Calculate and interpret one aggregate row per group |
+| Tantangan Query Kampus | Combine source selection, filters, joins, ordering, and simple aggregation | Solve a new data question and justify each clause |
 
-Practice:
+### 3. Write — perintah untuk mengubah data
 
-- Arrange pseudocode blocks.
-- Complete pseudocode.
-- Simplified flowchart puzzle.
+| Material / lesson | Submateri | Learning evidence |
+|---|---|---|
+| Menambahkan Record dengan `INSERT` | One row; explicit column list; `VALUES`; required values; primary/foreign key constraints | Insert one valid row and explain a rejected duplicate or invalid foreign key |
+| Mengubah Record dengan `UPDATE` | `SET`; select target rows first; `WHERE` with a primary key; inspect affected rows | Preview the target, update only the intended row, and verify the resulting value |
+| Menghapus Record dengan `DELETE` | Select target first; `WHERE` with a primary key; foreign-key restriction; reset | Delete one permitted practice row, explain a foreign-key rejection, and restore seed data |
 
-## Chapter 3 — Programming Basics
+The Write sequence is intentionally conservative: `INSERT` first, then `UPDATE`, then `DELETE`. For `UPDATE` and `DELETE`, the learner previews the target using a `SELECT` with the same predicate before confirming. No lesson teaches an unbounded update/delete as an acceptable action.
 
-Topics:
+## Investigasi Kampus Mini: latihan per submateri
 
-- Program dan source code.
-- Syntax.
-- Syntax/run di browser.
-- Output.
-- Comment.
-- Error dasar.
-- Satu berkas `main.js`, `let`, `const`, dan `console.log`.
+Each lesson has three focused subtopics, two optional exploration checks, one mandatory closing practice, and one optional transfer check on a different schema. Exploration uses actual synthetic records, PK/FK links, and local query or mutation results. Formative checks use server-side deterministic answer keys; browser output does not determine official scores. Run and record exploration do not change completion.
 
-Practice:
+The 2D schema visualizer connects named PK/FK columns. Select tables and records to follow real relationships, including confirmed local mutations. SQL-free Relasi lessons do not introduce query syntax.
 
-- Predict output.
-- Code completion.
-- Fix simple syntax errors.
+| Material | Submateri 1 / exploration | Submateri 2 / exploration | Submateri 3 / mandatory practice |
+|---|---|---|---|
+| Membaca Bentuk Data | Tabel: Temukan tabel yang tepat | Kolom: Kolom atau nilai? | Record dan schema: Bedakan isi dan struktur |
+| Key dan Hubungan Antar Tabel | Primary key: Identitas bukan nama | Foreign key: Ikuti foreign key | Jalur relasi: Telusuri pendaftaran Alya |
+| Mengambil Data dengan SELECT | FROM: Pilih sumber informasi | SELECT: Pilih atribut | Bentuk hasil: Bangun query pertama |
+| Memilih Baris dengan WHERE | Batas perbandingan: Uji nilai batas | AND dan OR: Gabungkan dua syarat | Record hasil: Tentukan record yang lolos |
+| Mengurutkan dan Membatasi Hasil | Arah urutan: Lihat urutan menaik | Tie-breaker: Pecahkan nilai seri | LIMIT: Temukan dua nilai tertinggi |
+| Membaca Relasi dengan JOIN | Pasangan JOIN: Pasangkan key, bukan urutan | Satu-ke-banyak: Mengapa Alya muncul dua kali? | Jalur tiga tabel: Temukan peserta Basis Data |
+| Membuat Ringkasan Data | COUNT: Hitung pendaftaran | GROUP BY: Pahami anggota grup | AVG: Bandingkan jumlah dan rata-rata |
+| Investigasi Query Kampus | Terjemahkan permintaan: Gunakan tabel yang dibutuhkan | Filter dan grup: Susun alur penyelidikan | Verifikasi laporan: Selesaikan laporan kampus |
+| Menambahkan Record dengan INSERT | Kolom dan nilai: Pasangkan INSERT dan VALUES | Constraint: Uji rujukan enrollment | Verifikasi INSERT: Tambahkan Eka dengan aman |
+| Mengubah Record dengan UPDATE | Target UPDATE: Target satu pendaftaran | SET dan dampak: Bandingkan sebelum dan sesudah | Verifikasi UPDATE: Perbaiki nilai dengan bukti |
+| Menghapus Record dengan DELETE | Target DELETE: Pilih target DELETE | Foreign key: Mengapa induk ditolak? | Verifikasi DELETE: Batalkan lalu periksa |
 
-## Chapter 4 — Variables & Data Types
+Keep existing mandatory exercise IDs and historical completions. Add optional exercises without resetting user progress. Incorrect checks return concept-specific hints without answer keys. SQL result predictions accept spaces around separators and numerically equivalent number cells, while preserving column count, row order, text, and incorrect values.
 
-Topics:
+## Synthetic dataset registry
 
-- Variable.
-- Naming.
-- `number`
-- `boolean`
-- `string`
-- Nilai primitif dasar.
-- Assignment.
+Campus Mini remains the anchor example and mandatory practice context:
 
-Practice:
+- `students(student_id, name, cohort)`
+- `courses(course_id, course_code, course_name, credits)`
+- `enrollments(enrollment_id, student_id, course_id, score)`
 
-- Declare variables.
-- Choose correct data type.
-- Predict values.
+`enrollments` links students to courses and contains a score for each enrollment. Seed values must be synthetic, small, stable for exercises, and valid under foreign-key constraints. No learner data or production Supabase rows enter this database.
 
-## Chapter 5 — Operators
+The same concepts also appear in two transfer contexts:
 
-Topics:
+| Context | Tables | Shape / application |
+|---|---|---|
+| Katalog Buku | `authors(author_id, name, city)`, `books(book_id, title, author_id, stock)` | Two tables, one-to-many; table/column identification, SELECT, stock filtering, author-book JOIN, safe INSERT and DELETE |
+| Toko Mini | `customers(customer_id, name, city)`, `orders(order_id, customer_id, status)`, `products(product_id, name, price)`, `order_items(item_id, order_id, product_id, quantity)` | Four tables, chained and bridging relationships; key navigation, price sorting, counting orders, grouped quantity totals, targeted UPDATE |
 
-- Arithmetic.
-- Comparison.
-- Logical.
-- Assignment.
-- Operator precedence dasar.
+Relasi lessons let learners compare all three schemas without SQL. Read/Write labs offer the original campus task and one concept-aligned transfer task. Each lesson has an optional position-4 transfer exercise with an explicit public `datasetId`; its private answer remains server-side. Existing mandatory IDs and progression rules are preserved. SQL Playground offers all three contexts. The interface uses one compact schema selector, not several canvases at once; changing schema resets lab data, source query, prediction, selection, and results.
 
-Practice:
+For Write lessons, seed data should include a clearly designated practice record or disposable copy so required lessons can be repeated without relying on destructive changes to shared course state. Reset restores a known seed.
 
-- Predict expressions.
-- Complete expressions.
-- Small calculations.
+## Learning rhythm and assessments
 
-## Chapter 6 — Conditional Logic
+A lesson is designed for roughly 20–40 minutes; each main topic spans several lessons. A half-semester pilot can use this eight-week rhythm:
 
-Topics:
+| Week | Focus | Assessment |
+|---|---|---|
+| 1 | Relasi: table structure and records | — |
+| 2 | Relasi: keys and relationships | Checkpoint 1 |
+| 3 | Read: `SELECT`/`FROM` and `WHERE` | — |
+| 4 | Read: conditions, ordering, and limits | — |
+| 5 | Read: joins, aggregation, and integrated query | Checkpoint 2 |
+| 6 | Write: insert and constraint practice | — |
+| 7 | Write: targeted update and delete | Checkpoint 3 |
+| 8 | Review and integrated database investigation | Final assessment |
 
-- Boolean conditions.
-- `if`
-- `if/else`
-- `else if`
-- Nested condition sederhana.
+This is a planning estimate for independent study, not an academic credit-hour or institution-specific syllabus claim.
 
-Practice:
+## Content boundaries
 
-- Pass/fail.
-- Even/odd.
-- Grade classification.
-- Debugging condition.
+**Included:** relational structure, keys and relationships, read queries, basic aggregation, and constrained single-row `INSERT`/`UPDATE`/`DELETE` on synthetic SQLite data.
 
-## Chapter 7 — Loops
-
-Topics:
-
-- Repetition concept.
-- `for`
-- `while`
-- Loop counter.
-- Stop condition.
-- Nested loop introduction.
-
-Practice:
-
-- Print ranges.
-- Summation.
-- Even number filtering.
-- Fix infinite/wrong loops.
-
-## Chapter 8 — Functions
-
-JavaScript implementation uses functions.
-
-Topics:
-
-- Why functions/methods.
-- Parameters.
-- Return values.
-- Reuse.
-- Breaking problems into smaller units.
-
-Practice:
-
-- Complete a function.
-- Predict return value.
-- Implement simple function.
-
-## Chapter 9 — Arrays
-
-Topics:
-
-- Array concept.
-- Index.
-- Traversal.
-- Read/update elements.
-- Aggregation.
-
-Practice:
-
-- Sum.
-- Average.
-- Minimum/maximum.
-- Search basic value.
-
-## Chapter 10 — Problem Solving
-
-Combine:
-
-- Variables
-- Operators
-- Conditional
-- Loops
-- Functions
-- Arrays
-
-Challenges:
-
-- Grade processing.
-- Simple menu logic.
-- Statistics of scores.
-- Number analysis.
-- Small algorithmic problems.
-
-## Future Curriculum
-
-Not MVP:
-
-- Strings advanced.
-- Recursion.
-- Searching algorithms.
-- Sorting algorithms.
-- OOP.
-- Data structures advanced.
-- Bahasa lain.
-
-## Batas Bahasa MVP
-
-Gunakan `let`, `const`, tipe primitif, operator, `if/else`, `for`, `while`, fungsi, array, string dasar, dan `console.log`. Hindari prototype, closure mendalam, async/await, Promise, DOM, modules, classes, dan API Node.js. Lesson awal memakai alur masalah → flowchart → pseudocode → JavaScript serta prediksi output sebelum Run.
+**Deferred:** DDL and schema changes, free-form database administration, transaction control, bulk or unbounded mutations, UPSERT, `INSERT ... SELECT`, `UPDATE FROM`, cascading deletion, formal normalization, indexes/query planning, subqueries/CTEs, outer joins, triggers, stored procedures, NoSQL, and queries against private or production databases. The 2D exercise canvas remains focused and predefined; schema and record exploration share the same data; no 3D, freeform canvas, or AR.

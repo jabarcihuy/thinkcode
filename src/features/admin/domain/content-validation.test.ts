@@ -8,26 +8,36 @@ describe("admin CMS content validation", () => {
   it("requires complete lesson content and a valid slug", () => {
     expect(lessonInput.safeParse({ chapter_id: id, title: "", slug: "bad slug", content: "", position: 1 }).success).toBe(false);
     expect(lessonInput.safeParse({ chapter_id: id, title: "Intro", slug: "intro", content: "# Intro", position: 1 }).success).toBe(true);
+    expect(lessonInput.safeParse({ chapter_id: id, title: "Intro", slug: "intro", content: "# Intro", example_sql: "SELECT * FROM students;", position: 1 }).success).toBe(true);
+    expect(lessonInput.safeParse({ chapter_id: id, title: "Intro", slug: "intro", content: "# Intro", example_sql: "x".repeat(4_097), position: 1 }).success).toBe(false);
   });
 
   it("keeps new path, chapter, and assessment drafts valid without publishing", () => {
     expect(pathInput.parse({ title: "Path", slug: "path", position: 1 }).is_published).toBe(false);
     expect(chapterInput.safeParse({ learning_path_id: id, title: "Chapter", position: 1 }).success).toBe(true);
     expect(assessmentInput.safeParse({ learning_path_id: id, title: "Checkpoint", slug: "checkpoint", type: "CHECKPOINT", passing_score: 75, gate_after_chapter: 3, position: 1 }).success).toBe(true);
+    expect(assessmentInput.parse({ learning_path_id: id, title: "Checkpoint", slug: "checkpoint", type: "CHECKPOINT", passing_score: 75, gate_after_chapter: 3, position: 1 }).course_weight_percent).toBe(0);
+    expect(assessmentInput.safeParse({ learning_path_id: id, title: "Checkpoint", slug: "checkpoint", type: "CHECKPOINT", course_weight_percent: 101, passing_score: 75, gate_after_chapter: 3, position: 1 }).success).toBe(false);
     expect(assessmentInput.safeParse({ learning_path_id: id, title: "Checkpoint", slug: "checkpoint", type: "CHECKPOINT", passing_score: 101, gate_after_chapter: 3, position: 1 }).success).toBe(false);
   });
 
-  it("accepts all supported exercise types with their matching configuration", () => {
+  it("accepts database exercise types and rejects programming exercises", () => {
     const cases = [
-      { type: "CODE_COMPLETION", starter_code: "console.log(1);" },
-      { type: "PREDICT_OUTPUT", starter_code: "console.log(1);", config: { answer: { output: "1" } } },
-      { type: "DEBUGGING", starter_code: "console.log(1);" },
-      { type: "PROBLEM_SOLVING", starter_code: "function solve() {}" },
+      { type: "PREDICT_OUTPUT", starter_code: "SELECT name FROM students;", config: { answer: { output: "Alya" } } },
       { type: "PSEUDOCODE", public_config: { mode: "order", blocks: [{ id: "a", text: "Start" }, { id: "b", text: "Stop" }] }, config: { answer: { order: ["a", "b"] } } },
-      { type: "FLOWCHART", public_config: { mode: "choice", options: [{ id: "yes", text: "Yes" }, { id: "no", text: "No" }] }, config: { answer: { choiceId: "yes" } } },
+      { type: "FLOWCHART", public_config: { mode: "choice", options: [{ id: "yes", text: "Relasi key benar" }, { id: "no", text: "Relasi key salah" }] }, config: { answer: { choiceId: "yes" } } },
     ] as const;
     for (const details of cases) expect(exerciseInput.safeParse({ ...exerciseBase, ...details }).success, details.type).toBe(true);
+    for (const type of ["CODE_COMPLETION", "DEBUGGING", "PROBLEM_SOLVING"]) {
+      expect(exerciseInput.safeParse({ ...exerciseBase, type, starter_code: "console.log(1);" }).success).toBe(false);
+    }
     expect(exerciseInput.safeParse({ ...exerciseBase, type: "PSEUDOCODE", public_config: {}, config: {} }).success).toBe(false);
+  });
+
+  it("accepts registered exercise contexts and rejects arbitrary datasets", () => {
+    const exercise = { ...exerciseBase, type: "PREDICT_OUTPUT", starter_code: "SELECT title FROM books;", config: { answer: { output: "Dasar Basis Data" } } };
+    expect(exerciseInput.safeParse({ ...exercise, public_config: { datasetId: "library" } }).success).toBe(true);
+    expect(exerciseInput.safeParse({ ...exercise, public_config: { datasetId: "production" } }).success).toBe(false);
   });
 
   it("validates hidden test values and assessment item private answer config", () => {

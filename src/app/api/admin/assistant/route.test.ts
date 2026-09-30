@@ -13,14 +13,14 @@ describe("admin AI content assistant", () => {
   it("returns a review-only draft and never publishes or persists content", async () => {
     mocks.authorizeAdmin.mockResolvedValue("admin-id");
     mocks.consumeCodeQuota.mockResolvedValue(true);
-    mocks.generate.mockResolvedValue({ content: "Draft explanation: a loop repeats a bounded set of steps." });
+    mocks.generate.mockResolvedValue({ content: "Draft penjelasan tentang relasi tabel." });
     const response = await POST(new Request("http://localhost/api/admin/assistant", {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ task: "explanation", context: "Introduce for loops to a beginner." }),
+      body: JSON.stringify({ task: "explanation", context: "Jelaskan primary key untuk pemula." }),
     }));
     expect(response.status).toBe(200);
     const body = await response.json();
-    expect(body).toEqual({ draft: "Draft explanation: a loop repeats a bounded set of steps.", status: "DRAFT_REQUIRES_ADMIN_REVIEW" });
+    expect(body).toEqual({ draft: "Draft penjelasan tentang relasi tabel.", status: "DRAFT_REQUIRES_ADMIN_REVIEW" });
     expect(body).not.toHaveProperty("is_published");
     expect(body).not.toHaveProperty("id");
     expect(mocks.generate).toHaveBeenCalledOnce();

@@ -1,138 +1,33 @@
-# ThinkCode — Agent Instructions
-
-## Mission
-
-Build ThinkCode according to the documents in `/docs`.
-
-The documentation is the source of truth.
-
-Do not invent major features outside the documented MVP.
+# Quethink — Agent Instructions
 
 ## Product
 
-ThinkCode is a sequential programming-logic learning platform.
+Quethink is an Indonesian-language platform for learning relational databases through data exploration and SQL. The only active learning path is Database Fundamentals. JavaScript and TypeScript are app implementation languages, not learner course material. There is no programming course or PTI curriculum.
 
-MVP:
+The three content topics are Relasi, Write, and Read. Required learner progression is **Relasi → Read → Write**. The learner cycle is: inspect the exercise tables and keys, predict, read or safely change synthetic data with SQL, inspect the result or changed state, explain, practice, then take a separate assessment.
 
-- JavaScript only (`javascript`, browser runtime).
-- USER and ADMIN only.
-- Contextual AI Tutor during learning/practice, using the server-only `AIProvider` abstraction.
-- AI disabled during assessment by server enforcement as well as UI state.
-- Browser JavaScript sandbox in an opaque-origin iframe and terminable worker.
-- Assessment coding grading via server-only QuickJS/WASM `AssessmentRunner`; do not describe this as a separate OS/container sandbox.
-- Supabase.
-- Next.js full-stack.
-- Vercel deployment target.
+## Product guardrails
 
-## Required Stack
+- Keep the interface focused and easy to follow.
+- Teach relational tables, rows, columns, primary/foreign keys, SELECT, FROM, WHERE, AND/OR, ORDER BY, LIMIT, INNER JOIN, COUNT, AVG, GROUP BY, and single-row INSERT/targeted UPDATE/guarded DELETE.
+- Use the shipped synthetic dataset registry: Campus Mini for the anchor examples and mandatory practice, Katalog Buku and Toko Mini for transfer activities. Keep each lab confined to its selected schema; switch/reset creates a fresh local session.
+- SQL practice runs only against local SQLite WASM data. It never connects to Supabase or private data.
+- Keep the learner write subset narrow: one statement at a time, one row changed, target preview before UPDATE/DELETE, foreign keys enabled, and deterministic reset.
+- Reject DDL/schema changes, PRAGMA, transaction control, ATTACH, multiple statements, unsupported tables, bulk mutations, and unbounded writes.
+- Use a focused 2D schema visualizer with named tables, column types, PK/FK labels, and column-to-column relationship lines. Provide table/record selection, pan, zoom, fit, and reset. Keep positions predefined and mobile controls accessible; the app has no 3D viewer.
+- Videos are optional support. Assessments stay separate from retryable practice and never trust browser SQL results as official scores.
+- Keep USER/ADMIN roles, server-side authorization, RLS, progress, AI Tutor, and Admin CMS where they support the database course.
+- Preserve historical user data when replacing old learning content. Unpublish/archive old content; do not delete attempts, assessment results, or progress.
+- Do not add a server, paid runner, or new infrastructure for SQL execution.
 
-- Next.js
-- TypeScript
-- Tailwind CSS
-- shadcn/ui
-- Monaco Editor
-- Supabase PostgreSQL
-- Supabase Auth
-- Supabase Storage where needed
+## Stack and implementation
 
-Do not introduce a separate NestJS/Express backend unless documentation is explicitly revised.
+Use the existing Next.js App Router, strict TypeScript, Tailwind, shadcn/ui primitives, Supabase Auth/PostgreSQL, and Vercel target. JavaScript/TypeScript files are application code only.
 
-## Architecture Rules
+Read the local Next.js guide under node_modules/next/dist/docs before changing App Router behavior. For Supabase auth, migrations, RLS, or database access, read the Supabase skill and current Supabase docs first. Read the relevant files in docs/ before changing product behavior.
 
-1. Keep frontend and backend in one Next.js codebase.
-2. Use server-side boundaries for sensitive operations.
-3. Code runner must use an adapter/interface.
-4. AI provider must use an adapter/interface.
-5. Hidden test cases must never reach the client.
-6. Never execute user practice JavaScript inside Next.js/Vercel runtime or the main application context. Assessment code may only run through the isolated QuickJS/WASM adapter with the documented limits; never use Node's evaluator or host capabilities.
-7. Use Supabase RLS plus server-side authorization.
-8. Use role enum, not `isAdmin`.
-9. Design schema so `TEACHER` can be added later without redesigning users.
-10. Do not couple business logic directly to a single code-runner provider.
-11. The MVP targets Vercel Hobby and Supabase Free without a paid code runner.
-12. True hidden tests cannot be graded securely through browser execution. Keep assessment hidden tests server-only and exclude them from client responses, bundles, and AI context. Practice coding checks are client-checkable and untrusted.
+Separate UI, SQL runner, content access, progress, authorization, validation, and provider code. Validate untrusted SQL and payload size at the execution boundary. Never expose service credentials or private assessment answers.
 
-## Product Rules
+## Done means
 
-### Learning
-
-- Sequential progression.
-- Locked prerequisite.
-- Mandatory practice required for lesson completion.
-- Optional lessons may exist.
-
-### AI
-
-Practice:
-
-- AI enabled.
-
-Assessment:
-
-- AI disabled both in UI and backend.
-
-AI should give progressive hints instead of immediately replacing user code.
-
-### Assessment
-
-- Score 0–100.
-- Passing score default 75.
-- Unlimited retry.
-- Store attempt count.
-- Store latest score.
-- Store highest score.
-
-## UI Rules
-
-- Clean educational interface.
-- Code-first.
-- Avoid excessive gradients.
-- Avoid AI-slop visuals.
-- Avoid decorative clutter.
-- Avoid unnecessary emoji.
-- Use icons only when they improve comprehension.
-- Mobile should use intentional tab-based layouts rather than compressed desktop UI.
-
-## Development Rules
-
-- TypeScript strict mode.
-- Prefer small focused modules.
-- Avoid giant components.
-- Separate:
-  - UI
-  - domain logic
-  - data access
-  - provider adapters
-  - authorization
-- Validate server inputs.
-- Handle loading/error/empty states.
-- Keep secrets server-only.
-- Write tests for critical progression, assessment, AI guard, and code-checking logic.
-
-## Before Implementing a Feature
-
-Read the relevant docs:
-
-- Product: `01-PRD.md`
-- Roles: `02-USER_ROLES_RBAC.md`
-- Learning: `03-LEARNING_SYSTEM.md`
-- Curriculum: `04-CURRICULUM.md`
-- AI: `05-AI_AGENT.md`
-- Architecture: `06-ARCHITECTURE.md`
-- Database: `07-DATABASE.md`
-- API: `08-API_SPEC.md`
-- UX: `09-UX_FLOW.md`
-- Design: `10-DESIGN_SYSTEM.md`
-- Security: `11-SECURITY.md`
-- Roadmap: `12-ROADMAP.md`
-- Testing: `13-TESTING_STRATEGY.md`
-
-## Scope Control
-
-If an implementation decision conflicts with documentation:
-
-1. Do not silently improvise.
-2. Prefer the documented behavior.
-3. Record required changes before modifying product scope.
-
-Phases 0–7, including Admin CMS and UX Polish, are implemented. Do not add scope beyond the MVP or start future roadmap phases unless explicitly requested.
+The public app, dashboard, three-topic learning path, lessons, practice, assessments, and Admin CMS present the database course only. SQL exercises run on local synthetic data with bounded read and write operations; practice and assessment remain separate. Lint, typecheck, tests, and production build pass.

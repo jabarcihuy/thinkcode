@@ -42,10 +42,10 @@ describe("browser coding results", () => {
 });
 
 describe("deterministic answers", () => {
-  it("checks predicted output", () => {
-    const exercise: GradingExercise = { ...coding, type: "PREDICT_OUTPUT", config: { answer: { output: "Halo\nJavaScript" } }, tests: [] };
-    expect(gradeExercise(exercise, { ...submission, sourceCode: null, runResults: null, answer: { output: "Halo\r\nJavaScript\n" } }).passed).toBe(true);
-    expect(gradeExercise(exercise, { ...submission, sourceCode: null, runResults: null, answer: { output: "JavaScript\nHalo" } }).passed).toBe(false);
+  it("checks predicted query results", () => {
+    const exercise: GradingExercise = { ...coding, type: "PREDICT_OUTPUT", config: { answer: { output: "Alya | Basis Data" } }, tests: [] };
+    expect(gradeExercise(exercise, { ...submission, sourceCode: null, runResults: null, answer: { output: "Alya | Basis Data\r\n" } }).passed).toBe(true);
+    expect(gradeExercise(exercise, { ...submission, sourceCode: null, runResults: null, answer: { output: "Bima | Sistem Informasi" } }).passed).toBe(false);
   });
   it("checks pseudocode and flowchart order", () => {
     for (const type of ["PSEUDOCODE", "FLOWCHART"] as const) {

@@ -2,8 +2,8 @@ import type { CodeRunResult } from "@/lib/providers/code-runner";
 
 const labels: Record<CodeRunResult["status"], string> = {
   success: "Berhasil dijalankan",
-  syntax_error: "Syntax Error",
-  runtime_error: "Runtime Error",
+  syntax_error: "Kesalahan sintaks",
+  runtime_error: "Kesalahan saat berjalan",
   timeout: "Waktu eksekusi habis",
   internal_error: "Sandbox bermasalah",
 };

@@ -15,13 +15,13 @@ export default async function ChapterPage({ params }: { params: Promise<{ pathSl
   if (!overview || !chapter) notFound();
   const lessons = overview.lessons.filter((lesson) => lesson.chapter_id === chapter.id);
 
-  return <div className="min-h-screen"><LearningHeader account={account} />
-    <main className="mx-auto max-w-4xl px-5 py-12 sm:px-8 sm:py-16">
-      <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground"><Link className="hover:text-primary" href={`/learn/${pathSlug}`}>{overview.path.title}</Link><span aria-hidden="true" className="px-2">/</span>Chapter {chapter.position}</nav>
-      <h1 className="mt-8 text-3xl font-bold tracking-tight sm:text-4xl">{chapter.title}</h1>
+  return <div className="min-h-dvh"><LearningHeader account={account} />
+    <main id="main-content" className="mx-auto max-w-4xl px-5 py-12 sm:px-8 sm:py-16">
+      <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground"><Link className="hover:text-accent" href={`/learn/${pathSlug}`}>{overview.path.title}</Link><span aria-hidden="true" className="px-2">/</span>Chapter {chapter.position}</nav>
+      <h1 className="mt-8 text-3xl font-semibold tracking-tight sm:text-4xl">{chapter.title}</h1>
       <p className="mt-4 max-w-2xl leading-7 text-muted-foreground">{chapter.description}</p>
       <div className="mt-12"><h2 className="mb-5 text-lg font-semibold">Lesson dalam chapter ini</h2><LessonList lessons={lessons} pathSlug={pathSlug} authenticated={Boolean(account)} /></div>
-      <Link className="mt-10 inline-block text-sm font-semibold text-primary underline underline-offset-4" href={`/learn/${pathSlug}`}>Kembali ke jalur belajar</Link>
+      <Link className="mt-10 inline-block text-sm font-semibold text-accent underline underline-offset-4" href={`/learn/${pathSlug}`}>Kembali ke jalur belajar</Link>
     </main>
   </div>;
 }

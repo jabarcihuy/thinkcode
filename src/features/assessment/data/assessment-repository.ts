@@ -9,6 +9,7 @@ export interface AssessmentSummary {
   instructions: string;
   type: "CHECKPOINT" | "FINAL";
   gateAfterChapter: number;
+  courseWeightPercent: number;
   passingScore: number;
   position: number;
   available: boolean;
@@ -22,7 +23,7 @@ export async function getAssessmentSummaries(pathSlug: string, userId: string): 
   if (pathError) throw pathError;
   if (!path) return [];
   const [{ data: assessments, error: assessmentsError }, { data: chapters, error: chaptersError }] = await Promise.all([
-    supabase.from("assessments").select("id, slug, title, instructions, type, gate_after_chapter, passing_score, position")
+    supabase.from("assessments").select("id, slug, title, instructions, type, gate_after_chapter, course_weight_percent, passing_score, position")
       .eq("learning_path_id", path.id).eq("is_published", true).order("position"),
     supabase.from("chapters").select("id, position").eq("learning_path_id", path.id).eq("is_published", true),
   ]);
@@ -58,6 +59,7 @@ export async function getAssessmentSummaries(pathSlug: string, userId: string): 
     return {
       id: assessment.id, slug: assessment.slug, title: assessment.title, instructions: assessment.instructions,
       type: assessment.type, gateAfterChapter: assessment.gate_after_chapter, passingScore: assessment.passing_score,
+      courseWeightPercent: assessment.course_weight_percent,
       position: assessment.position, available: lessonsComplete && checkpointsComplete && allCheckpointsComplete,
       activeSessionId: activeSessions.get(assessment.id) ?? null,
       result: saved ? { attemptCount: saved.attempt_count, latestScore: saved.latest_score, highestScore: saved.highest_score, passed: saved.passed } : null,

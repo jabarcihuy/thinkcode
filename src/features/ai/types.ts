@@ -8,7 +8,6 @@ export interface TutorContextTools {
   getCurrentExercise(): Promise<unknown>;
   readStudentCode(): string;
   readVisibleOutput(): string;
-  getExecutionTrace(): string;
   getStudentProgress(): Promise<string>;
   runPracticeCode(): "Use Run in the browser workspace first.";
   runVisiblePracticeChecks(): "Use Check in the browser workspace first.";

@@ -14,18 +14,18 @@ export function LessonList({ lessons, pathSlug, authenticated }: { lessons: Less
         <span className="min-w-0 flex-1">
           <span className="block font-medium text-foreground">{lesson.title}</span>
           <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">{lesson.summary}</span>
-          {!lesson.is_required && <span className="mt-2 inline-flex rounded-sm border border-border px-2 py-0.5 text-[11px] font-medium text-muted-foreground">Optional</span>}
+          {!lesson.is_required && <span className="mt-2 inline-flex rounded-md border border-border px-2 py-0.5 text-[11px] font-medium text-muted-foreground">Opsional</span>}
         </span>
         <span className="flex shrink-0 flex-col items-end gap-2 text-right">
-          {authenticated ? <LessonStateLabel state={lesson.state} /> : <span className="text-xs font-semibold text-primary">Preview</span>}
+          {authenticated ? <LessonStateLabel state={lesson.state} /> : <span className="text-xs font-semibold text-accent">Preview</span>}
           {open && <ArrowUpRight size={16} aria-hidden="true" className="text-muted-foreground" />}
         </span>
       </>;
 
       return <li key={lesson.id}>
         {open
-          ? <Link className="flex min-h-19 items-start gap-4 rounded-md px-2 py-4 transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring" href={`/learn/${pathSlug}/lessons/${lesson.slug}`}>{body}</Link>
-          : <div className="flex min-h-19 items-start gap-4 px-2 py-4 opacity-70" aria-label={`${lesson.title}, terkunci`}>{body}</div>}
+          ? <Link className="flex min-h-16 items-start gap-4 rounded-md px-2 py-4 transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring" href={`/learn/${pathSlug}/lessons/${lesson.slug}`}>{body}</Link>
+          : <div className="flex min-h-16 items-start gap-4 px-2 py-4 opacity-70" aria-label={`${lesson.title}, terkunci`}>{body}</div>}
       </li>;
     })}
   </ol>;

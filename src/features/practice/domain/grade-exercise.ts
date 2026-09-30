@@ -1,5 +1,6 @@
 import type { GradeResult, GradingExercise, GradingTest, VisibleTestResult } from "@/features/practice/types";
 import type { SubmissionInput } from "@/features/practice/validation/submission";
+import { compareTableOutput } from "./compare-table-output";
 import { normalizeOutput } from "@/features/practice/domain/normalize-output";
 import type { Json } from "@/types/database";
 
@@ -16,11 +17,27 @@ function simpleResult(passed: boolean, correct: string, retry: string): GradeRes
   return { passed, score: passed ? 100 : 0, feedback: passed ? correct : retry, visibleTests: [], hiddenPassed: 0, hiddenTotal: 0 };
 }
 
+function feedbackConfig(config: Json): Record<string, Json | undefined> {
+  if (!config || typeof config !== "object" || Array.isArray(config)) return {};
+  const feedback = config.feedback;
+  return feedback && typeof feedback === "object" && !Array.isArray(feedback) ? feedback : {};
+}
+
+function safeMessage(value: Json | undefined, fallback: string): string {
+  return typeof value === "string" && value.length <= 600 ? value : fallback;
+}
+
 function gradePredict(exercise: GradingExercise, submission: SubmissionInput): GradeResult {
   const expected = answerConfig(exercise.config).output;
   if (typeof expected !== "string" || !submission.answer || !("output" in submission.answer)) throw new GradingConfigurationError("Invalid predict output exercise");
-  return simpleResult(normalizeOutput(submission.answer.output) === normalizeOutput(expected),
-    "Prediksi output tepat.", "Output belum tepat. Periksa urutan baris dan nilai yang dicetak.");
+  const config = exercise.config;
+  const grading = config && typeof config === "object" && !Array.isArray(config) ? config.grading : null;
+  const types = grading && typeof grading === "object" && !Array.isArray(grading) && grading.mode === "table" ? grading.columnTypes : null;
+  const passed = Array.isArray(types) && types.every((type) => type === "text" || type === "number")
+    ? compareTableOutput(submission.answer.output, expected, types as string[])
+    : normalizeOutput(submission.answer.output) === normalizeOutput(expected);
+  const feedback = feedbackConfig(config);
+  return simpleResult(passed, safeMessage(feedback.correct, "Prediksi hasil query tepat."), safeMessage(feedback.retry, "Hasil belum tepat. Periksa kembali baris dan kolom yang dikembalikan query."));
 }
 
 function gradeBlocks(exercise: GradingExercise, submission: SubmissionInput): GradeResult {
@@ -32,7 +49,8 @@ function gradeBlocks(exercise: GradingExercise, submission: SubmissionInput): Gr
   if (answer && "order" in answer && Array.isArray(expectedOrder)) {
     passed = answer.order.length === expectedOrder.length && answer.order.every((id, index) => id === expectedOrder[index]);
   }
-  return simpleResult(passed, "Urutan langkah tepat.", "Urutan atau pilihan belum tepat. Tinjau kembali langkah dari awal hingga akhir.");
+  const feedback = feedbackConfig(exercise.config);
+  return simpleResult(passed, safeMessage(feedback.correct, "Pilihan atau urutan tepat."), safeMessage(feedback.retry, "Belum tepat. Tinjau kembali hubungan antarrecord dan urutan langkahnya."));
 }
 
 function visibleResult(test: GradingTest, status: VisibleTestResult["status"], stdout: string, detail: string, passed: boolean): VisibleTestResult {
@@ -61,7 +79,7 @@ export function gradeCoding(exercise: GradingExercise, submission: SubmissionInp
   const passed = passedCount === tests.length;
   const score = Math.round((earnedWeight / totalWeight) * 100);
   const feedback = passed ? `${passedCount} dari ${tests.length} test terlihat berhasil.`
-    : results.some((run) => run.status === "syntax_error") ? "Periksa sintaks JavaScript dan jalankan ulang."
+    : results.some((run) => run.status === "syntax_error") ? "Periksa sintaks dan jalankan ulang."
       : results.some((run) => run.status === "timeout") ? "Eksekusi melewati batas waktu. Periksa loop yang tidak berhenti."
         : `${passedCount} dari ${tests.length} test terlihat berhasil. Periksa kembali input yang belum tertangani.`;
   return { passed, score, feedback, visibleTests, hiddenPassed: 0, hiddenTotal: 0 };

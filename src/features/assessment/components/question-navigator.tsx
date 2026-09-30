@@ -19,7 +19,7 @@ export function QuestionNavigator({
           onClick={() => onSelect(index)}
           className={`flex min-h-11 min-w-24 items-center gap-2 rounded-md px-3 text-left text-sm md:w-full ${index === activeIndex ? "bg-secondary font-semibold text-secondary-foreground" : "text-muted-foreground hover:bg-muted"}`}>
           <span>Soal {index + 1}</span>
-          {isAssessmentAnswerComplete(answers[item.id]) && <span className="ml-auto text-xs font-medium text-primary">Terisi</span>}
+          {isAssessmentAnswerComplete(answers[item.id]) && <span className="ml-auto text-xs font-medium text-accent">Terisi</span>}
         </button>
       </li>)}
     </ol>

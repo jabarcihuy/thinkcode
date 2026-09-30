@@ -1,143 +1,53 @@
-# ThinkCode — UX Flow
+# UX Flow
 
-## Guest Flow
+## Public landing
 
-```text
-Landing
-→ Explore Learning Path
-→ Preview Lesson
-→ Register / Login
-→ Start Learning
-```
+Explain in one sentence that Quethink teaches learners to understand relationships, read data, and safely change a practice database. Show the simple cycle: inspect → predict → query → see the result/change. Primary action is to start learning.
 
-## User First Run
+## Learner
 
-```text
-Register
-→ Dashboard
-→ Programming Logic Fundamentals
-→ Start
-→ Chapter 1
-→ Lesson 1
-```
+1. Register or sign in.
+2. Dashboard shows the next lesson and progress.
+3. Open Database Fundamentals.
+4. Follow the sequence Relasi → Read → Write.
+5. In Relasi, read a concise concept and inspect sample table records and keys without SQL. Query writing begins in Read.
+6. Optionally watch the linked Indonesian video.
+7. In Read/Write, predict the query result or the target records/change.
+8. In Read/Write, edit SQL and press Run.
+9. Inspect returned rows or the visible before/after change.
+10. Complete formative practice; retry as needed.
+11. Take checkpoints and final assessment separately.
 
-## Lesson Flow
+## Account tools
 
-```text
-Open Lesson
-→ Read Concept
-→ See Flowchart / Pseudocode
-→ Predict Output
-→ Edit JavaScript main.js
-→ Run in browser
-→ Compare prediction and actual output
-→ Visualize Execution (Previous / Next / Play / Pause / Reset)
-→ Mandatory Practice
-→ Check Answer
-```
+The signed-in navigation provides separate **Chatbot** and **SQL Playground** entries. Chatbot uses the current or next available lesson as context, links to that lesson, and offers concept-level help; it does not claim to see a query unless the learner asks from an inline lesson lab. SQL Playground offers the registered Campus Mini, Katalog Buku, and Toko Mini synthetic datasets through the same browser SQLite Worker for independent, disposable practice. It requires login and is paused during an active assessment. Playground queries do not affect lesson progress.
 
-If failed:
+## Lesson workspace
 
-```text
-Visible result
-→ Try Again
-or
-→ Ask AI Tutor
-```
+Desktop: Relasi uses the lesson content, sample tables, and key visualization. Read/Write use the lesson prompt/content, query editor, and result/visualization panels.
 
-If passed:
+Mobile: Relasi keeps sample tables in a vertical, horizontally scrollable table layout; Read/Write use focused tabs for Materi, Query, Hasil, and Visualisasi. Do not shrink a multi-panel desktop layout onto a phone.
 
-```text
-Practice Passed
-→ Lesson Completed
-→ Next Lesson Unlocked
-```
+Within Relasi, keep **concept → sample tables/records → key relationships → practice**. In Read/Write, keep **tables/data → SQL query → result or changed data**. Practice prompts and answer controls are stacked vertically. A lesson outline stays in the sidebar on desktop; on mobile, keep its links in a compact collapsible contents section.
 
-## Assessment Flow
+Read lessons show the actual SQLite result rows. Write lessons show a target preview when applicable, the affected-row count, and the resulting table state. `UPDATE` and `DELETE` require an explicit confirmation after the learner reviews target rows. Reset restores the known seed and clearly discards local practice changes.
 
-```text
-Checkpoint Available
-→ Start Assessment
-→ Assessment Session = IN_PROGRESS
-→ AI Disabled
-→ Answer Questions
-→ Submit
-→ Score
-→ Pass / Not Passed
-```
+Keep visible actions simple: Run, Check, Reset data, and Previous/Next. The table canvas has pan, zoom, and reset controls; table positions stay fixed.
 
-Before final submission, the user reviews a confirmation dialog explaining that the answers will be graded and the session closed. The question navigator shows answered state, and the progress indicator reports the number of completed answers.
+## Assessment
 
-If failed:
+Show assessment mode, question count, answer progress, and an explicit submit confirmation. Do not show AI Tutor or hints. Results show score, pass/fail, and safe topic feedback.
 
-```text
-Review allowed feedback
-→ Return to learning/practice
-→ Retry later
-```
+## Admin
 
-## Desktop Lesson Layout
+Use one simple content navigation. Editors support lesson Markdown, SQL starter examples, video links, exercise configuration, preview, and explicit publish.
 
-Recommended:
+## Investigasi Kampus Mini
 
-```text
-┌────────────────────────────────────────────────────────┐
-│ Top navigation                                         │
-├──────────────┬──────────────────────┬──────────────────┤
-│ Lesson Nav   │ Problem / Logic Flow │ JavaScript Editor│
-│              │                      │                  │
-│              │                      │                  │
-├──────────────┴──────────────────────┼──────────────────┤
-│ Contextual AI Tutor                  │ Output / Trace   │
-└──────────────────────────────────────┴──────────────────┘
-```
+Each lesson has three subtopics: two optional exploration checks and one required closing practice. Use a concrete campus question, inspect → predict → try → explain, then change one variable and compare. Optional attempts are saved but never block unlocking.
 
-Exact split may change during design iteration.
+Use one 2D schema visualizer with table names, SQLite column types, PK/FK labels, and relationship lines attached to columns. Selecting a table opens its records below the canvas. Selecting a key explains the relationship; selecting a record enables following or filtering its linked records. Mobile table buttons focus one schema node at readable scale; vertical touch gestures still scroll the page. Keep data → SQL → output vertical and exercise exploration collapsible.
 
-## Mobile Lesson Layout
+## Transfer across schemas
 
-Do not shrink desktop panels blindly.
-
-Recommended tabs:
-
-```text
-Problem | Code | Result / Trace
-```
-
-Assessment mobile:
-
-```text
-Question | Code | Output
-```
-
-No AI tab.
-
-The app supports Light, Dark, and System theme selection. Small-screen account navigation uses an explicit menu disclosure. The lesson JavaScript workspace keeps Code and Result in mobile tabs while retaining editor state as the user changes panels.
-
-## Bug Lab
-
-Observe → Run broken JavaScript → see wrong output or timeout → inspect trace → fix → Check. Check is practice feedback; a browser-reported coding result is not a trusted assessment grade.
-
-## Dashboard
-
-Show:
-
-- Continue Learning.
-- Overall progress.
-- Current chapter.
-- Latest checkpoint.
-- Learning path overview.
-
-Avoid gamification overload in MVP.
-
-## Admin Content Workflow
-
-```text
-Create draft
-→ Edit structured content and tests
-→ Preview lesson with learner Markdown renderer
-→ Validate required fields
-→ Explicit Publish
-```
-
-Unpublish keeps existing lesson progress and historical attempts. User management displays role and completed lesson count read-only; role promotion/demotion remains a trusted database/server operation.
+Relasi: choose Campus Mini, Katalog Buku, or Toko Mini to compare keys and relationships without SQL. Read/Write: use the original campus lab, then select its concept-aligned alternate task. Practice: an optional transfer exercise fixes the canvas to its own schema. Playground: choose any registered dataset. A schema switch restarts local data, query, prediction, and output; it never changes saved progress.

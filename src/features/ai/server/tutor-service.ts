@@ -125,7 +125,6 @@ async function loadTutorData(userId: string, request: TutorRequest) {
       sourceCode: request.sourceCode,
       visibleOutput: request.visibleOutput,
       visibleTestResults: request.visibleTestResults,
-      traceSummary: request.traceSummary,
       progressSummary: `${(progressResult.data ?? []).length} of ${lessonIds.length} required lessons complete`,
     } satisfies TutorSnapshot,
   };
@@ -148,10 +147,11 @@ export async function prepareTutorStream(userId: string, request: TutorRequest, 
   });
   if (userSaveError) throw new TutorRequestError(503, "Pesan belum dapat disimpan.");
 
-  const chunks = provider.stream({ messages, maxOutputTokens: 700 })[Symbol.asyncIterator]();
+  const chunks = provider.stream({ messages, maxOutputTokens: 2_000 })[Symbol.asyncIterator]();
   let first: IteratorResult<string>;
   try { first = await chunks.next(); }
   catch { throw new TutorRequestError(502, "AI Tutor sedang bermasalah. Coba lagi."); }
+  if (first.done || !first.value.trim()) throw new TutorRequestError(502, "AI Tutor belum mengirim jawaban. Coba lagi.");
   return { ...data, hintLevel, chunks, first };
 }
 

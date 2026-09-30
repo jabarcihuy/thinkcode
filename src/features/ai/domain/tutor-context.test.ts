@@ -2,21 +2,20 @@ import { describe, expect, it } from "vitest";
 import { createTutorMessages, isExplicitSolutionRequest, nextHintLevel, type TutorSnapshot } from "./tutor-context";
 
 const snapshot: TutorSnapshot = {
-  lesson: { title: "Loops", summary: "Repeat steps", content: "A loop repeats code." },
-  exercise: { title: "Count", type: "CODE_COMPLETION", prompt: "Print 0 to 2" },
-  sourceCode: "for (let i = 0; i < 3; i++) console.log(i)",
-  visibleOutput: "0\n1\n2",
+  lesson: { title: "JOIN tabel", summary: "Hubungkan data", content: "Gunakan key untuk menggabungkan record." },
+  exercise: { title: "Prediksi hasil JOIN", type: "PREDICT_OUTPUT", prompt: "Prediksi baris hasil query." },
+  sourceCode: "SELECT students.name, courses.course_name FROM enrollments JOIN students USING (student_id) JOIN courses USING (course_id);",
+  visibleOutput: "Alya | Basis Data",
   visibleTestResults: [{ position: 1, passed: true }],
-  traceSummary: "i: 0 → 1 → 2",
   progressSummary: "3 of 8 required lessons complete",
 };
 
 describe("AI tutor context and hints", () => {
-  it("includes the current lesson, code and visualizer trace", () => {
-    const messages = createTutorMessages(snapshot, [], "Explain the loop", "explain_trace", 1);
-    expect(messages[0].content).toContain("Loops");
+  it("includes the current lesson, SQL and visible result", () => {
+    const messages = createTutorMessages(snapshot, [], "Jelaskan hasil", "explain_result", 1);
+    expect(messages[0].content).toContain("JOIN tabel");
     expect(messages[0].content).toContain(snapshot.sourceCode);
-    expect(messages[0].content).toContain(snapshot.traceSummary);
+    expect(messages[0].content).toContain(snapshot.visibleOutput);
   });
 
   it("escalates hints up to level four", () => {

@@ -1,56 +1,48 @@
 @import "tailwindcss";
 
+/*
+ * Quethink design tokens. World: Film Strip (seed key e479a247).
+ *
+ * DARK ONLY. The product ships one theme. There is no light mode, no system
+ * preference branch, and no theme switcher: a single set of tokens below is the
+ * whole palette. This also removes the accent's role split, because there is no
+ * light ground left for the bright amber to fail against.
+ *
+ * ONE ACCENT: signal orange, and it means exactly one thing everywhere: the step
+ * that is currently live. Never decorative, never a second highlight, never on
+ * two things at once. Saturation is held at 73%, under the 80% ceiling that
+ * keeps an accent from reading as a neon signal; contrast on the ground is
+ * 5.98:1, comfortably past WCAG AA for text and past 3:1 for UI borders.
+ *
+ * NEUTRALS: one temperature. Surfaces sit on hue ~240 at saturation under 9%;
+ * text sits on a warm bone. The bone is the film's own stock colour, not a
+ * second neutral family, and it is the only warm value in the system.
+ *
+ * RADIUS (documented two-step rule, applied everywhere):
+ *   - controls (button, input, textarea, select, tab) -> 6px, i.e. `rounded-md`
+ *   - surfaces (card, panel, code block, preview)     -> 8px, i.e. `rounded-lg`
+ *   - badges and status dots only                     -> `rounded-full`
+ *   `rounded-sm`, `rounded-xl` and larger are not part of the system.
+ */
 :root {
-  --background: #fafaf8;
-  --foreground: #18252a;
-  --primary: #176b69;
-  --primary-foreground: #ffffff;
-  --secondary: #e5f2ef;
-  --secondary-foreground: #174e4b;
-  --muted: #f0f2ef;
-  --muted-foreground: #526267;
-  --border: #d9e0dc;
-  --input: #becbc5;
-  --ring: #176b69;
-  --destructive: #aa3036;
-  --code-surface: #17282c;
-  --code-foreground: #ecf7f4;
-}
-
-:root.dark {
-    --background: #101c20;
-    --foreground: #edf3f0;
-    --primary: #7ed4c9;
-    --primary-foreground: #102221;
-    --secondary: #1a3938;
-    --secondary-foreground: #d1efea;
-    --muted: #1b2b2e;
-    --muted-foreground: #b3c5c2;
-    --border: #34494a;
-    --input: #476160;
-    --ring: #7ed4c9;
-    --destructive: #ff9b9e;
-    --code-surface: #0a1518;
-    --code-foreground: #ecf7f4;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root.system {
-    --background: #101c20;
-    --foreground: #edf3f0;
-    --primary: #7ed4c9;
-    --primary-foreground: #102221;
-    --secondary: #1a3938;
-    --secondary-foreground: #d1efea;
-    --muted: #1b2b2e;
-    --muted-foreground: #b3c5c2;
-    --border: #34494a;
-    --input: #476160;
-    --ring: #7ed4c9;
-    --destructive: #ff9b9e;
-    --code-surface: #0a1518;
-    --code-foreground: #ecf7f4;
-  }
+  --background: #17171a;
+  --foreground: #e9e6de;
+  --primary: #e9e6de;
+  --primary-foreground: #17171a;
+  --secondary: #232329;
+  --secondary-foreground: #e9e6de;
+  --muted: #1e1e22;
+  --muted-foreground: #a8a49a;
+  --border: #2c2c32;
+  --input: #3a3a41;
+  --ring: #e9e6de;
+  --destructive: #ff9b9e;
+  --code-surface: #101013;
+  --code-foreground: #e9e6de;
+  /* The single accent. Saturation 73%, contrast on ground 5.98:1. */
+  --live: #e07a3a;
+  --live-surface: #2e1c10;
+  --shadow-color: 200 30% 2%;
 }
 
 @theme inline {
@@ -68,12 +60,167 @@
   --color-destructive: var(--destructive);
   --color-code-surface: var(--code-surface);
   --color-code-foreground: var(--code-foreground);
-  --font-sans: Arial, Helvetica, sans-serif;
-  --font-mono: "SFMono-Regular", Consolas, monospace;
+  --color-live: var(--live);
+  --color-live-surface: var(--live-surface);
+  /*
+   * `accent` and `live-ink` both resolve to the one accent now. They survive as
+   * aliases because 17 files call `text-accent` and the wordmark uses
+   * `text-live-ink`; with a single theme there is nothing left to split.
+   */
+  --color-accent: var(--live);
+  --color-live-ink: var(--live);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
 * { box-sizing: border-box; }
-body { background: var(--background); color: var(--foreground); font-family: Arial, Helvetica, sans-serif; }
+body { background: var(--background); color: var(--foreground); font-family: var(--font-sans); }
 ::selection { background: var(--secondary); color: var(--secondary-foreground); }
 a, button { cursor: pointer; }
 button:disabled { cursor: not-allowed; }
+
+/* Single, diffuse elevation token. Tinted to the surface hue, never pure black. */
+.shadow-surface {
+  box-shadow: 0 1px 2px hsl(var(--shadow-color) / 0.06), 0 8px 24px -12px hsl(var(--shadow-color) / 0.12);
+}
+
+/*
+ * Perforated rail: the world's structural signature. A film strip is pulled
+ * through a gate, so the perforations run down the outer gutter and content is
+ * offset past them. Purely decorative and non-interactive, so it never
+ * intercepts a click, and it is hidden from assistive technology at the call
+ * site. Holes use a repeating gradient rather than elements: one paint, no DOM.
+ */
+.perf-rail {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--rail-w, 3.5rem);
+  pointer-events: none;
+  background-image: radial-gradient(circle at center, var(--border) 0 3.5px, transparent 3.5px);
+  background-size: 100% 2.5rem;
+  background-repeat: repeat-y;
+  background-position: center 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .perf-rail {
+    --rail-w: 1.5rem;
+    background-image: radial-gradient(circle at center, var(--border) 0 2px, transparent 2px);
+    background-size: 100% 1.75rem;
+  }
+}
+
+/* Content clears the rail. The inset owns the same value because its rail is a sibling. */
+.rail-inset {
+  --rail-w: 3.5rem;
+  --rail-gap: 1.5rem;
+  padding-left: calc(var(--rail-w) + var(--rail-gap));
+}
+
+@media (max-width: 640px) {
+  .rail-inset {
+    --rail-w: 1.5rem;
+    --rail-gap: 0.75rem;
+  }
+}
+
+/*
+ * Film frames. One rule owns visibility so a frame can never be hidden by one
+ * utility and un-hidden by another. Above 860px every frame shows and shares
+ * the strip; below it only the live frame is pulled into the gate, because a
+ * four-up strip at phone width squeezes each frame past reading measure.
+ *
+ * The live frame also takes the full strip width on narrow screens: the shared
+ * `flex-1 basis-0` sizing is what left the dead gutter to its right.
+ */
+.film-frame { display: block; }
+
+@media (max-width: 860px) {
+  .film-frame { display: none; }
+  .film-frame[data-live="true"] { display: block; flex: 1 1 100%; }
+}
+
+.page-loading {
+  display: grid;
+  min-height: min(68vh, 38rem);
+  place-items: center;
+  padding: 2rem 1.25rem;
+}
+
+.page-loading__content {
+  display: grid;
+  justify-items: center;
+  gap: 0.85rem;
+  color: var(--muted-foreground);
+  font-size: 0.9rem;
+}
+
+.page-loading__content p { margin: 0; }
+
+.page-loading__track {
+  position: relative;
+  display: block;
+  width: 9rem;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--secondary);
+}
+
+.page-loading__track::after {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 38%;
+  border-radius: inherit;
+  background: var(--primary);
+  content: "";
+  animation: page-loading-travel 1.15s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes page-loading-travel {
+  from { transform: translateX(-110%); }
+  to { transform: translateX(265%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-loading__track::after {
+    width: 42%;
+    animation: none;
+    opacity: 0.75;
+  }
+}
+
+/*
+ * Motion reveals.
+ *
+ * Animated elements are hidden from the very first paint so the server-rendered
+ * content never flashes before GSAP takes over after hydration. `data-motion-ready`
+ * is set on a component's own root, so each component is revealed by its own
+ * animation rather than by whichever component happens to hydrate first.
+ *
+ * Three guards keep this safe:
+ *   - the `js` class is only added by an inline script, so with JavaScript
+ *     disabled the content simply renders normally;
+ *   - a fallback timer marks every root ready, so if the animation bundle never
+ *     runs the content still becomes visible instead of staying blank;
+ *   - the rule sits inside `no-preference`, so reduced-motion users never see
+ *     hidden content at all.
+ *
+ * `data-motion` / `data-motion-stagger` / `data-motion-item` are only pre-paint
+ * placeholders: once GSAP writes inline opacity it takes precedence, and
+ * `data-motion-ready` retires the placeholder for good.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-motion]:not([data-motion-ready]) { opacity: 0; }
+  html.js [data-motion-stagger]:not([data-motion-ready]) > * { opacity: 0; }
+  html.js [data-motion-scope]:not([data-motion-ready]) [data-motion-item] { opacity: 0; }
+}
+
+/* A restrained grid belongs to the schema workspace, not the surrounding page. */
+.schema-canvas {
+  background-color: var(--code-surface);
+  background-image: radial-gradient(circle, var(--border) 0.8px, transparent 0.8px);
+  background-size: 20px 20px;
+}

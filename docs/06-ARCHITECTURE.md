@@ -1,67 +1,71 @@
-# ThinkCode — Technical Architecture
+# Quethink Architecture
 
-## Product and Stack
+## Product and stack
 
-ThinkCode is an **Interactive Programming Logic Lab**. MVP language: `displayName: JavaScript`, `slug: javascript`, `runtime: browser`.
+Quethink teaches relational database concepts and SQL through one Next.js App Router application. It targets Vercel with Supabase PostgreSQL/Auth.
 
-- One Next.js full-stack TypeScript codebase on Vercel.
-- Tailwind CSS, shadcn/ui primitives, Monaco Editor.
-- Supabase PostgreSQL and Auth. Storage only when a real need appears.
-- Browser JavaScript sandbox and execution visualizer.
-- Provider-agnostic AI Tutor for lessons and practice.
-- Trusted assessment grading through a server-only QuickJS/WASM adapter.
+- Strict TypeScript, Tailwind, and shadcn/ui primitives.
+- Supabase stores accounts, published content, progress, practice attempts, tutor conversations, and assessments.
+- SQLite WASM runs only in a disposable browser Web Worker against a synthetic dataset.
+- SQL results and write changes are stacked vertically as data objects → SQL → accessible result tables. The 2D schema and record inspector share the same public synthetic snapshot.
+- AI Tutor and Admin CMS use server-side authorization.
+- Signed-in learners can open `/chatbot` for lesson-context help and `/playground` for independent SQL practice; the latter reuses the same browser-only synthetic SQLite Worker as lesson labs.
+- No paid SQL runner or separate backend is required.
 
-The initial cost target is Vercel Hobby plus Supabase Free and browser execution. Eligibility and quotas are governed by each service's current terms. No mandatory paid runner, VPS, Docker execution service, or always-on worker is required.
+JavaScript and TypeScript are application implementation languages only. They are not learner course content.
 
-## Runtime Boundaries
+## Curriculum organization
 
-```text
-Browser
-├── Next.js client UI and Monaco main.js
-├── Trace generator (parses source; never runs it in the app context)
-├── sandboxed iframe (allow-scripts, opaque origin, restrictive CSP)
-│   └── disposable Web Worker executing source
-└── execution visualizer and visible coding tests
-       ↓ authenticated Check request
-Next.js on Vercel
-├── session and role authorization
-├── deterministic answer checking
-├── visible coding result comparison and attempt recording
-├── QuickJS/WASM assessment runner for trusted assessment grading
-└── privileged Supabase access to private checker/assessment configuration
-       ↓
-Supabase PostgreSQL + Auth
-```
+The three content topics are Relasi, Write, and Read. The required learning sequence is Relasi → Read → Write. The content model uses chapters for the three topics and lessons for their materials; lesson Markdown/config can hold smaller subtopic sections.
 
-`CodeRunner` stays generic; `BrowserJavaScriptRunner` is the practice adapter. It accepts source, text `input`, timeout, and visualization flag. A disposable worker captures console output and errors. The parent terminates the frame and worker on timeout. Practice source never runs in React or a Vercel function. Browser JavaScript receives no auth token, Supabase client, privileged key, or hidden test.
+## Runtime boundaries
 
-## Execution Trace
+Browser:
+- Learner UI and SQL editor.
+- A Worker initializes a fresh in-memory SQLite database with only the selected shipped schema and its valid seed rows.
+- The Worker permits bounded `SELECT` queries plus the narrow `INSERT`, `UPDATE`, and `DELETE` subset required for lessons. It rejects schema changes, database attachment, pragma/transaction control, multiple statements, unauthorized tables, and unsupported SQL.
+- `UPDATE` and `DELETE` require a target-row preview and explicit confirmation. The lab reports changed-row count and visible after-state; Reset rebuilds the known seed.
+- Worker execution has source, time, statement, changed-row, and output limits; the Worker is terminated on timeout.
+- SQL changes exist only in the disposable practice database and are never saved to user or Supabase data.
+- The SVG/HTML schema visualizer and accessible record inspector share `DatasetSnapshot`. Dataset-specific FK metadata connects exact column anchors; record relationships come from actual FK matches. Confirmed Worker mutations replace the changed table snapshot; preview does not modify it. Use predefined responsive layouts, bounded pan/zoom, and mobile table focus. There is no WebGL or 3D dependency. The diagram is a conceptual schema, not a query-plan simulator.
+- The browser sends only a validated dataset ID at Worker startup. Schema definitions, seed rows, column types, FK links, and write validation come from the same shipped registry. The authorizer allows only the selected dataset tables; arbitrary identifiers, SQL schemas, seed payloads, or Supabase data cannot initialize the Worker. Switching schemas remounts the lab and disposes the previous Worker, including pending mutation previews.
+- No Supabase token, private key, user record, or hidden assessment answer enters the SQL Worker.
 
-Acorn parses user source and MagicString inserts calls at supported statements. The sandbox runs this instrumented source and emits normalized `ExecutionTrace.steps[]` with line, event, variable snapshot, condition, iteration, function, array values, and output. The visualizer has Previous, Next, Play, Pause, Reset. Output and trace have separate bounds. The trace is explanatory, not a full debugger; dynamic constructs and asynchronous work are outside the MVP scope.
+Next.js server:
+- Auth/session, ownership, role checks, published content, progress, practice attempt records, assessment session lifecycle, deterministic assessment grading, and AI Tutor.
+- Admin mutations use server-only authorization.
+- Assessment answer keys remain server-side.
+- No learner SQL is run against production Supabase tables or on the Next.js server.
 
-## Grading Trust Boundary
+Supabase:
+- PostgreSQL content/progress schema, Auth, RLS, and narrow privileged workflows.
 
-- Predict Output, pseudocode, and simplified flowchart answers are checked server-side against private configuration.
-- Coding practice runs **visible** tests in each learner's browser. Check sends source and bounded results to the server, which compares against published expected outputs, rate limits, and records the attempt.
-- Browser-reported output can be forged. Coding practice completion is educational feedback and must not be reused as a trusted assessment score.
-- True hidden test input/output stays server-only. Browser practice refuses hidden coding tests. Assessment coding executes with QuickJS/WASM in a fresh server-side adapter with memory, stack, output and interrupt limits, and no Node/network/filesystem/environment bindings. It runs within the Vercel function runtime, not an isolated OS/container boundary.
+## SQL practice
 
-## Application Layers
+The registry contains Campus Mini, Katalog Buku, and Toko Mini. Lessons retain campus anchor examples and add aligned transfer activities; public exercise config may select a registered `datasetId`. Practice is local and disposable; user SQL never reaches Supabase. Read and write statements are separately validated against the lesson's supported subset. Invalid or unsupported queries return a safe message. SQLite foreign-key checks are enabled. A reset restores the deterministic seed. Browser results are formative and are not trusted assessment evidence.
 
-```text
-src/app                    pages, protected routes, Check endpoint
-src/components             shared UI and shadcn primitives
-src/features/learning      progression domain, data access, UI
-src/features/workspace     Monaco, sandbox protocol, trace generator, visualizer
-src/features/practice      exercise renderers, validation, grading, data access
-src/features/admin         CMS validation, server authorization, and admin UI
-src/lib/providers          CodeRunner and AIProvider contracts, browser adapter
-src/lib/auth               Supabase session handling
-src/lib/authorization      USER/ADMIN checks
-src/lib/supabase           public clients and server-only privileged client
-src/types                  shared and generated database types
-```
+The standalone SQL Playground uses the selected registered synthetic seed and Worker as lesson practice. It is account-protected, pauses during an active assessment, and does not save queries or change lesson progress. It never connects to Supabase.
 
-Hidden checker configuration, assessment sessions/results, attempts, and progression remain server-authorized with Supabase RLS and narrow RPCs. `AIProvider` isolates a server-configured streaming adapter; tutor context/history are bounded and cannot mutate score or progress. The server rejects AI requests during active assessment before provider invocation. `AssessmentRunner` isolates QuickJS grading; start/finalize RPCs enforce prerequisites, a single active session, and server-derived score/result aggregates. Public assessment reads explicitly omit private answer configuration and tests.
+## Assessments
 
-Admin content operations use `src/app/api/admin` route handlers. Every read and mutation checks the authenticated profile role server-side before creating a privileged Supabase client. Browser clients receive no content write grants. Publication is a separate validated action; new content starts unpublished. The CMS reuses the learner Markdown renderer for lesson preview. AI content suggestions are server generated and returned only as reviewable draft text; no provider route can publish content.
+Assessments use deterministic server-graded question formats: schema/key identification, query/result prediction, selecting a correct query, and ordering clauses. Browser-reported practice SQL results are never accepted as an official score. Arbitrary submitted SQL is not executed by the Vercel server.
+
+## Layers
+
+- src/app: pages, route protection, server APIs.
+- src/features/learning: learning path, lesson access, progress.
+- src/features/database: synthetic dataset, SQL validation, Worker runner, query diagram, write preview/reset.
+- src/features/practice: SQL practice renderers and safe feedback.
+- src/features/assessment: private answer loading and deterministic server grading.
+- src/features/ai: bounded SQL tutor context and provider service.
+- src/features/admin: protected content workflow.
+- src/lib/supabase: browser, server, and privileged clients.
+- supabase/migrations: PostgreSQL content, RLS, and seed changes.
+
+## Content reset and history
+
+The active learning path is Database Fundamentals. Old programming/PTI paths are unpublished rather than deleted so existing progress and assessment history are preserved. When replacing the current database lessons, preserve attempts and results; archive or unpublish replaced content rather than deleting history. Admin/CMS data and user accounts remain.
+
+## Admin lesson preview
+
+`/admin/lessons/[lessonId]/preview` requires ADMIN on the server and rechecks authorization before privileged content reads. Draft and published lessons can be inspected without learner prerequisites. Reuse lesson prose, dataset labs, and exercise display; preview does not invoke grading, create attempts, mutate progress, or include AI Tutor. Exercise display fields are allowlisted and answer/test configuration is excluded. Learner routes and their progression rules remain unchanged.

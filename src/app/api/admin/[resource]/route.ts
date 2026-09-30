@@ -4,6 +4,8 @@ import { createPrivilegedClient } from "@/lib/supabase/privileged";
 import { AdminAuthorizationError, authorizeAdmin } from "@/features/admin/server/authorization";
 import { assessmentInput, assessmentItemInput, assessmentTestCaseInput, chapterInput, exerciseInput, lessonInput, pathInput, testCaseInput } from "@/features/admin/domain/content-validation";
 import type { Json } from "@/types/database";
+import { gradebookForUser } from "@/features/admin/domain/gradebook";
+import { DEFAULT_LEARNING_PATH_SLUG } from "@/features/learning/config";
 
 const resources = ["paths", "chapters", "lessons", "exercises", "test-cases", "assessments", "assessment-items", "assessment-test-cases"] as const;
 type Resource = typeof resources[number];
@@ -14,7 +16,7 @@ type TableName = typeof tableNames[Resource];
 function isResource(value: string): value is Resource { return (resources as readonly string[]).includes(value); }
 function respondError(error: unknown) {
   if (error instanceof AdminAuthorizationError) return NextResponse.json({ error: error.message }, { status: error.status });
-  return NextResponse.json({ error: "Admin operation could not be completed." }, { status: 400 });
+  return NextResponse.json({ error: "Operasi admin belum dapat diselesaikan." }, { status: 400 });
 }
 
 export async function GET(request: Request, context: { params: Promise<{ resource: string }> }) {
@@ -23,16 +25,27 @@ export async function GET(request: Request, context: { params: Promise<{ resourc
     const { resource: raw } = await context.params;
     if (raw === "users") {
       const client = createPrivilegedClient();
-      const [{ data: users, error: usersError }, { data: profiles, error: profilesError }, { data: progress, error: progressError }] = await Promise.all([
-        client.auth.admin.listUsers({ page: 1, perPage: 100 }),
+      const [{ data: users, error: usersError }, { data: profiles, error: profilesError }, { data: progress, error: progressError }, { data: path, error: pathError }] = await Promise.all([
+        client.auth.admin.listUsers({ page: 1, perPage: 1000 }),
         client.from("profiles").select("id, role, display_name, created_at"),
         client.from("lesson_progress").select("user_id, status"),
+        client.from("learning_paths").select("id").eq("slug", DEFAULT_LEARNING_PATH_SLUG).maybeSingle(),
       ]);
-      if (usersError || profilesError || progressError) throw new Error("Unable to load accounts");
+      if (usersError || profilesError || progressError || pathError) throw new Error("Unable to load accounts");
+      const assessmentsResponse = path
+        ? await client.from("assessments").select("id, slug, title, course_weight_percent").eq("learning_path_id", path.id).eq("is_published", true).order("position")
+        : { data: [], error: null };
+      if (assessmentsResponse.error) throw new Error("Unable to load assessments");
+      const assessments = assessmentsResponse.data ?? [];
+      const resultsResponse = assessments.length
+        ? await client.from("assessment_results").select("user_id, assessment_id, highest_score, passed").in("assessment_id", assessments.map((assessment) => assessment.id))
+        : { data: [], error: null };
+      if (resultsResponse.error) throw new Error("Unable to load grades");
+      const results = resultsResponse.data ?? [];
       const profileById = new Map((profiles ?? []).map((profile) => [profile.id, profile]));
       const completedByUser = new Map<string, number>();
       for (const entry of progress ?? []) if (entry.status === "COMPLETED") completedByUser.set(entry.user_id, (completedByUser.get(entry.user_id) ?? 0) + 1);
-      return NextResponse.json({ items: users.users.map((user) => ({ id: user.id, email: user.email ?? "", created_at: user.created_at, display_name: profileById.get(user.id)?.display_name ?? null, role: profileById.get(user.id)?.role ?? "USER", completed_lessons: completedByUser.get(user.id) ?? 0 })) });
+      return NextResponse.json({ assessments: assessments.map(({ slug, title, course_weight_percent }) => ({ slug, title, weight: course_weight_percent })), items: users.users.map((user) => ({ id: user.id, email: user.email ?? "", created_at: user.created_at, display_name: profileById.get(user.id)?.display_name ?? null, role: profileById.get(user.id)?.role ?? "USER", completed_lessons: completedByUser.get(user.id) ?? 0, ...gradebookForUser(user.id, assessments, results) })) });
     }
     if (raw === "overview") {
       const client = createPrivilegedClient();
@@ -46,7 +59,7 @@ export async function GET(request: Request, context: { params: Promise<{ resourc
       const groups = [paths.data ?? [], chapters.data ?? [], lessons.data ?? [], exercises.data ?? [], assessments.data ?? []];
       return NextResponse.json({ counts: { users: users.count ?? 0, paths: groups[0].length, chapters: groups[1].length, lessons: groups[2].length, exercises: groups[3].length, assessments: groups[4].length, published: groups.reduce((sum, rows) => sum + rows.filter((row) => row.is_published).length, 0), drafts: groups.reduce((sum, rows) => sum + rows.filter((row) => !row.is_published).length, 0) } });
     }
-    if (!isResource(raw)) return NextResponse.json({ error: "Unknown resource." }, { status: 404 });
+    if (!isResource(raw)) return NextResponse.json({ error: "Resource tidak dikenal." }, { status: 404 });
     const client = createPrivilegedClient() as unknown as SupabaseClient;
     let query = client.from(tableNames[raw] as TableName).select("*");
     const url = new URL(request.url);
@@ -75,9 +88,9 @@ export async function POST(request: Request, context: { params: Promise<{ resour
   try {
     await authorizeAdmin();
     const { resource: raw } = await context.params;
-    if (!isResource(raw)) return NextResponse.json({ error: "Unknown resource." }, { status: 404 });
+    if (!isResource(raw)) return NextResponse.json({ error: "Resource tidak dikenal." }, { status: 404 });
     const parsed = schemas[raw].safeParse(await request.json());
-    if (!parsed.success) return NextResponse.json({ error: "Check the required fields and values.", details: parsed.error.flatten() }, { status: 422 });
+    if (!parsed.success) return NextResponse.json({ error: "Periksa kembali kolom wajib dan nilainya.", details: parsed.error.flatten() }, { status: 422 });
     const client = createPrivilegedClient() as unknown as SupabaseClient;
     const draft: Record<string, unknown> = { ...parsed.data, ...(raw !== "test-cases" && raw !== "assessment-items" && raw !== "assessment-test-cases" ? { is_published: false } : {}) };
     if (raw === "exercises") {

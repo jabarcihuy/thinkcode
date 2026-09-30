@@ -1,236 +1,51 @@
-# ThinkCode — Product Requirements Document
+# Product Requirements — Quethink Database Learning
 
-## 1. Product Vision
+## Goal
 
-ThinkCode adalah **Interactive Programming Logic Lab** yang membantu pemula memahami logika pemrograman melalui pengalaman belajar terpadu:
+Help beginning university learners understand relational data and answer practical questions with SQL through clear, interactive lessons.
 
-**Learn → Practice → Run → Check → Understand → Progress**
+## Core learner flow
 
-Pengguna tidak perlu berpindah ke IDE eksternal hanya untuk menjalankan contoh atau latihan dasar.
+Landing → account → dashboard → Database Fundamentals → Relasi → Read → Write → practice → separate assessments.
 
-## 2. Problem Statement
+## Learners can
 
-Pemula sering mengalami hambatan berikut:
+- Inspect a small relational schema and synthetic records.
+- Explain rows, columns, primary keys, foreign keys, and basic relationships.
+- Read data with `SELECT`, `FROM`, `WHERE`, ordering, joins, and simple aggregation.
+- Safely change synthetic practice data with one-row `INSERT`, targeted `UPDATE`, and guarded `DELETE`.
+- Preview the target of a change, see affected rows, and reset the dataset.
+- Predict results, run queries, compare outcomes, and explain their reasoning.
+- Reuse lesson notes and optional Indonesian video references.
+- Retry formative practice without penalty.
+- Take checkpoints and a final assessment separately from practice.
+- See their progress and next available lesson.
 
-- Materi dan editor berada di tempat berbeda.
-- Sulit memahami hubungan antara konsep dan implementasi kode.
-- Error sintaks dan runtime membingungkan.
-- Latihan sering tidak memberikan feedback otomatis.
-- Learning path tidak terarah.
-- AI umum sering langsung memberikan jawaban tanpa mengajarkan proses berpikir.
+## Three main learning topics
 
-ThinkCode menggabungkan pembelajaran, code execution, assessment, progress tracking, dan AI Tutor dalam satu aplikasi.
+Content is organized under Relasi, Write, and Read. The prerequisite sequence is Relasi → Read → Write, so learners understand tables and how to select target rows before changing data.
 
-## 3. Goals
+## Administrators can
 
-### MVP Goals
+- Manage published database learning content with the existing Admin CMS.
+- Preview lessons and exercises before publishing.
+- Manage videos, SQL examples, and visible/private practice configuration as lesson content.
 
-- Menyediakan learning path programming logic yang sequential.
-- Menyediakan materi logika menggunakan JavaScript browser-safe untuk pemula.
-- Menyediakan Monaco-based code editor.
-- Menjalankan JavaScript di browser sandbox dengan batas waktu dan output.
-- Memvisualisasikan perubahan variabel, kondisi, loop, array, fungsi, dan output.
-- Mengajak user memprediksi output sebelum Run.
-- Memberikan auto-check pada exercise.
-- Menyimpan progress pengguna.
-- Menyediakan AI Tutor kontekstual pada practice.
-- Memblokir AI selama assessment.
-- Menyediakan admin CMS untuk mengelola konten.
+## Non-goals
 
-## 4. Non-Goals MVP
+No JavaScript or general programming course; no PTI mapping; no C++, Python, DOM/web development, 3D or AR, app-wide infinite canvas, database administration console, production-data query access, collaboration, social features, or paid SQL execution service. Learner practice does not include DDL, transactions, schema changes, or unrestricted SQL.
 
-Tidak termasuk MVP:
+## Product rules
 
-- Teacher role
-- Classroom
-- Assignment guru
-- Leaderboard
-- XP
-- Badge
-- Streak
-- Certificate
-- Forum
-- Social features
-- Mobile application
-- Bahasa pemrograman selain JavaScript
-- Multi-language learning
-- Freeform flowchart editor
+- Keep Campus Mini as the consistent anchor, and offer small Katalog Buku and Toko Mini schemas for concept-aligned transfer activities and Playground.
+- Run learner SQL only in local SQLite in a disposable browser Worker.
+- Permit only the SQL subset needed by the lesson: read queries and bounded single-row data changes.
+- Keep the learning UI focused on the prompt, query editor, Run/Check, result or change summary, and 2D schema and record exploration.
+- SQL editing may use a labeled plain editor; no full IDE features are needed.
+- Show progress and lock state with text as well as color.
+- Never use practice output reported by the browser as official assessment evidence.
+- Keep private answer keys server-side. Assessment uses deterministic server-checked answers and does not trust client scores.
 
-## 5. User Roles
+## Success criteria
 
-### USER
-
-Dapat:
-
-- Register/login.
-- Melihat dashboard.
-- Mengikuti learning path.
-- Membaca lesson.
-- Menjalankan JavaScript di browser sandbox.
-- Mengerjakan practice.
-- Menggunakan AI Tutor pada practice.
-- Mengikuti checkpoint dan final assessment.
-- Melihat progress dan score.
-
-### ADMIN
-
-Dapat:
-
-- Mengelola users.
-- Mengelola learning path.
-- Mengelola chapters.
-- Mengelola lessons.
-- Mengelola exercises.
-- Mengelola test cases.
-- Mengelola assessments.
-- Melihat ringkasan user dan progress dasar. Perubahan role tetap melalui trusted server/database process.
-- Publish/unpublish content.
-- Menggunakan AI Content Assistant untuk membantu draft konten.
-
-## 6. Guest Experience
-
-Guest dapat:
-
-- Membuka landing page.
-- Melihat preview learning path.
-- Membuka preview lesson terbatas.
-
-Guest harus register/login untuk:
-
-- Memulai learning path.
-- Menyimpan progress.
-- Mengerjakan practice penuh.
-- Menggunakan AI Tutor.
-- Mengikuti assessment.
-
-## 7. Core User Journey
-
-1. User membuka landing page.
-2. User melihat learning path.
-3. User register/login.
-4. User memulai chapter pertama.
-5. User membaca konsep.
-6. User mencoba kode.
-7. User mengerjakan mandatory practice.
-8. Auto-check memvalidasi jawaban.
-9. Jika gagal, user dapat menggunakan AI Tutor.
-10. Jika semua mandatory practice selesai, lesson ditandai complete.
-11. Lesson berikutnya terbuka.
-12. Setelah beberapa chapter, user mengikuti checkpoint.
-13. AI dinonaktifkan selama checkpoint.
-14. User mendapatkan score.
-15. User melanjutkan learning path.
-16. Setelah seluruh path selesai, user mengikuti final assessment.
-
-## 8. Functional Requirements
-
-### Authentication
-
-- Email/password registration.
-- Email/password login.
-- Logout.
-- Session persistence.
-- Password reset dapat ditambahkan jika implementasi sederhana.
-
-### Learning
-
-- Sequential chapter/lesson order.
-- Locked prerequisite.
-- Required vs optional lesson support.
-- Progress persistence.
-- Continue learning.
-
-### Code Editor
-
-- Monaco Editor.
-- JavaScript syntax highlighting dengan label `main.js`.
-- Starter code.
-- Reset code.
-- Run.
-- Check answer.
-- Console/output display.
-- Prediksi output dan visualisasi eksekusi langkah demi langkah.
-
-### Exercise
-
-Supported MVP types:
-
-- Code Completion
-- Predict Output
-- Debugging
-- Problem Solving
-- Pseudocode
-- Simplified Flowchart
-
-### Auto-check
-
-Mendukung:
-
-- Exact/normalized output comparison.
-- Visible test cases.
-- Hidden test cases hanya ketika dapat divalidasi sepenuhnya di server; browser-only coding MVP memakai test terlihat.
-- Structural requirement jika diperlukan.
-- Manual/configured checker untuk non-code exercise.
-
-### Assessment
-
-- AI disabled.
-- Hint disabled.
-- Solution disabled.
-- Score 0–100.
-- Passing score default 75.
-- Unlimited retry.
-- Store latest score.
-- Store highest score.
-- Store attempt count.
-
-### AI Tutor
-
-AI hanya tersedia pada learning/practice mode.
-
-Capabilities:
-
-- Explain concept.
-- Explain code.
-- Explain syntax/runtime error.
-- Give progressive hints.
-- Read current lesson.
-- Read current exercise.
-- Read current code.
-- Read visible output.
-- Read user-provided browser output and visible test summary. AI may guide the learner to use Run/Check, but it does not execute or grade code itself.
-- Generate similar practice.
-- Read user learning progress.
-
-Default assistance progression:
-
-1. Small hint
-2. More specific hint
-3. Explanation
-4. Example
-5. Full solution only when explicitly requested
-
-### Admin CMS
-
-- Learning path CRUD.
-- Chapter CRUD.
-- Lesson CRUD.
-- Exercise CRUD.
-- Test case CRUD.
-- Assessment CRUD.
-- Publish/unpublish.
-- Reorder content.
-- Preview content before publish.
-
-## 9. Success Criteria MVP
-
-MVP dianggap berhasil jika user dapat:
-
-- Membuat akun.
-- Mengikuti learning path dari lesson pertama.
-- Menjalankan JavaScript di browser dan melihat jejak eksekusinya.
-- Menyelesaikan exercise dengan auto-check.
-- Mendapat bantuan AI saat practice.
-- Tidak dapat mengakses AI saat assessment.
-- Menyelesaikan checkpoint.
-- Menyimpan progress secara persisten.
+A new learner can complete the Relasi → Read → Write path, inspect the data before and after a safe change, retry practice, and understand what to learn next without seeing programming-course or PTI-specific content.

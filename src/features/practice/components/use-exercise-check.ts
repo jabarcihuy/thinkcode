@@ -4,14 +4,14 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { GradeResult } from "@/features/practice/types";
 
-export function useExerciseCheck(exerciseId: string, pathSlug: string) {
+export function useExerciseCheck(exerciseId: string, pathSlug: string, previewOnly = false) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [result, setResult] = useState<GradeResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   async function check(payload: { sourceCode?: string; answer?: unknown; runResults?: unknown }) {
-    if (pending) return;
+    if (pending || previewOnly) return;
     setPending(true); setError(null); setResult(null);
     try {
       const response = await fetch(`/api/exercises/${exerciseId}/check`, {

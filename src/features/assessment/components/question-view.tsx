@@ -3,6 +3,7 @@
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { JavaScriptEditor } from "@/features/workspace/components/javascript-editor";
+import { exerciseTypeLabel } from "@/features/practice/domain/exercise-labels";
 import type { AssessmentAnswer, PublicAssessmentItem } from "@/features/assessment/types";
 import type { Json } from "@/types/database";
 
@@ -18,7 +19,7 @@ function updateSource(value: string): AssessmentAnswer { return { sourceCode: va
 
 function CodeQuestion({ item, answer, onAnswer }: { item: PublicAssessmentItem; answer: AssessmentAnswer | undefined; onAnswer: (answer: AssessmentAnswer) => void }) {
   return <div className="mt-5">
-    <p className="mb-3 text-sm text-muted-foreground">Tulis solusi JavaScript. Editor dapat digunakan selama assessment; AI Tutor dan petunjuk tidak aktif.</p>
+    <p className="mb-3 text-sm text-muted-foreground">Tulis jawaban untuk pertanyaan basis data. AI Tutor dan petunjuk tidak aktif selama assessment.</p>
     <JavaScriptEditor value={answerSource(answer)} onChange={(value) => onAnswer(updateSource(value))} modelPath={`assessment-${item.id}/main.js`} />
   </div>;
 }
@@ -26,9 +27,9 @@ function CodeQuestion({ item, answer, onAnswer }: { item: PublicAssessmentItem; 
 function PredictQuestion({ item, answer, onAnswer }: { item: PublicAssessmentItem; answer: AssessmentAnswer | undefined; onAnswer: (answer: AssessmentAnswer) => void }) {
   const config = configObject(item.publicConfig);
   return <div className="mt-5">
-    {item.starterCode && <pre className="overflow-x-auto rounded-md bg-code-surface p-4 font-mono text-sm leading-6 text-code-foreground">{item.starterCode}</pre>}
+    {item.starterCode && <pre aria-label="Query SQL untuk ditinjau" className="overflow-x-auto rounded-md bg-code-surface p-4 font-mono text-sm leading-6 text-code-foreground">{item.starterCode}</pre>}
     {typeof config.sampleOutput === "string" && <p className="mt-3 text-sm text-muted-foreground">Sample: {config.sampleOutput}</p>}
-    <label htmlFor={`answer-${item.id}`} className="mt-5 block text-sm font-semibold">Prediksi output</label>
+    <label htmlFor={`answer-${item.id}`} className="mt-5 block text-sm font-semibold">Prediksi hasil query</label>
     <textarea id={`answer-${item.id}`} value={answer && "output" in answer ? answer.output : ""} onChange={(event) => onAnswer({ output: event.target.value })} maxLength={4000} rows={4} className="mt-2 w-full rounded-md border border-input bg-background p-3 font-mono text-sm focus-visible:outline-2 focus-visible:outline-ring" />
   </div>;
 }
@@ -73,7 +74,7 @@ export function AssessmentQuestionView({ item, answer, onAnswer }: { item: Publi
   const mode = config.mode;
   const isCoding = item.type === "CODE_COMPLETION" || item.type === "DEBUGGING" || item.type === "PROBLEM_SOLVING";
   return <article aria-labelledby={`question-title-${item.id}`}>
-    <p className="text-sm font-semibold text-primary">{item.topic} · {item.type.replaceAll("_", " ")}</p>
+    <p className="text-sm font-semibold text-accent">{item.topic} · {exerciseTypeLabel(item.type)}</p>
     <h2 id={`question-title-${item.id}`} className="mt-2 text-xl font-semibold">{item.title}</h2>
     <p className="mt-3 max-w-[72ch] text-sm leading-6 text-muted-foreground">{item.prompt}</p>
     {isCoding ? <CodeQuestion item={item} answer={answer} onAnswer={onAnswer} />

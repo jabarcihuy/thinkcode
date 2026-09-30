@@ -19,20 +19,20 @@ export async function PATCH(request: Request, context: { params: Promise<{ resou
   try {
     await authorizeAdmin();
     const { resource, id } = await context.params;
-    if (!(resource in config)) return NextResponse.json({ error: "Unknown resource." }, { status: 404 });
+    if (!(resource in config)) return NextResponse.json({ error: "Resource tidak dikenal." }, { status: 404 });
     const item = config[resource as Resource];
     const body = await request.json() as { action?: string; position?: number; data?: unknown };
     const client = createPrivilegedClient();
     if (body.action === "publish" || body.action === "unpublish") {
-      if (!["paths", "chapters", "lessons", "exercises", "assessments"].includes(resource)) return NextResponse.json({ error: "This item has no publication state." }, { status: 422 });
+      if (!["paths", "chapters", "lessons", "exercises", "assessments"].includes(resource)) return NextResponse.json({ error: "Item ini tidak memiliki status publikasi." }, { status: 422 });
       const publish = body.action === "publish";
       if (publish && resource === "assessments") {
         const { data: items, error } = await client.from("assessment_items").select("id, title, type, entry_function").eq("assessment_id", id);
         if (error) throw error;
-        if (!items?.length) return NextResponse.json({ error: "Add at least one assessment item before publishing." }, { status: 422 });
+        if (!items?.length) return NextResponse.json({ error: "Tambahkan minimal satu soal assessment sebelum publikasi." }, { status: 422 });
         for (const item of items ?? []) if (["CODE_COMPLETION", "DEBUGGING", "PROBLEM_SOLVING"].includes(item.type) && item.entry_function) {
           const { count: tests, error: testError } = await client.from("assessment_test_cases").select("id", { count: "exact", head: true }).eq("assessment_item_id", item.id);
-          if (testError || !tests) return NextResponse.json({ error: `Add trusted server test cases to ${item.title} before publishing.` }, { status: 422 });
+          if (testError || !tests) return NextResponse.json({ error: `Tambahkan test case server tepercaya ke ${item.title} sebelum publikasi.` }, { status: 422 });
         }
       }
       if (publish && resource === "exercises") {
@@ -42,9 +42,9 @@ export async function PATCH(request: Request, context: { params: Promise<{ resou
         ]);
         if (exerciseError || error) throw exerciseError ?? error;
         if (["CODE_COMPLETION", "DEBUGGING", "PROBLEM_SOLVING"].includes(exercise.type)) {
-          if (!count) return NextResponse.json({ error: "Add at least one test case before publishing this coding exercise." }, { status: 422 });
+          if (!count) return NextResponse.json({ error: "Tambahkan setidaknya satu kasus latihan sebelum mempublikasikan materi ini." }, { status: 422 });
           const { count: hiddenCount, error: hiddenError } = await client.from("test_cases").select("id", { count: "exact", head: true }).eq("exercise_id", id).eq("is_hidden", true);
-          if (hiddenError || hiddenCount) return NextResponse.json({ error: "Browser practice can only use visible tests. Store hidden grading cases in a server-graded assessment instead." }, { status: 422 });
+          if (hiddenError || hiddenCount) return NextResponse.json({ error: "Latihan di browser hanya boleh memakai test terlihat. Simpan test tersembunyi untuk penilaian di assessment yang dinilai server." }, { status: 422 });
         }
       }
       const { data, error } = await client.from(item.table as "learning_paths").update({ is_published: publish } as never).eq("id", id).select().single();
@@ -52,13 +52,13 @@ export async function PATCH(request: Request, context: { params: Promise<{ resou
       return NextResponse.json({ item: data });
     }
     if (body.action === "reorder") {
-      if (!Number.isInteger(body.position) || (body.position ?? 0) < 1 || (body.position ?? 0) > 10_000) return NextResponse.json({ error: "Position must be a positive whole number." }, { status: 422 });
+      if (!Number.isInteger(body.position) || (body.position ?? 0) < 1 || (body.position ?? 0) > 10_000) return NextResponse.json({ error: "Urutan harus berupa bilangan bulat positif." }, { status: 422 });
       const { data, error } = await client.from(item.table as "learning_paths").update({ position: body.position } as never).eq("id", id).select().single();
       if (error) throw error;
       return NextResponse.json({ item: data });
     }
     const parsed = item.schema.safeParse(body.data);
-    if (!parsed.success) return NextResponse.json({ error: "Check the required fields and values.", details: parsed.error.flatten() }, { status: 422 });
+    if (!parsed.success) return NextResponse.json({ error: "Periksa kembali kolom wajib dan nilainya.", details: parsed.error.flatten() }, { status: 422 });
     const dataToSave = { ...parsed.data } as Record<string, unknown>;
     if (resource === "exercises") {
       const exerciseData = parsed.data as Record<string, unknown>;
@@ -72,7 +72,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ resou
     return NextResponse.json({ item: data });
   } catch (error) {
     if (error instanceof AdminAuthorizationError) return NextResponse.json({ error: error.message }, { status: error.status });
-    return NextResponse.json({ error: "Admin operation could not be completed." }, { status: 400 });
+    return NextResponse.json({ error: "Operasi admin belum dapat diselesaikan." }, { status: 400 });
   }
 }
 
@@ -80,7 +80,7 @@ export async function DELETE(request: Request, context: { params: Promise<{ reso
   try {
     await authorizeAdmin();
     const { resource, id } = await context.params;
-    if (resource !== "test-cases" && resource !== "assessment-items" && resource !== "assessment-test-cases") return NextResponse.json({ error: "Content is unpublished instead of deleted." }, { status: 405 });
+    if (resource !== "test-cases" && resource !== "assessment-items" && resource !== "assessment-test-cases") return NextResponse.json({ error: "Konten ditarik dari publikasi, bukan dihapus." }, { status: 405 });
     const client = createPrivilegedClient();
     const table = resource === "test-cases" ? "test_cases" : resource === "assessment-test-cases" ? "assessment_test_cases" : "assessment_items";
     const { error } = await client.from(table).delete().eq("id", id);
@@ -88,6 +88,6 @@ export async function DELETE(request: Request, context: { params: Promise<{ reso
     return NextResponse.json({ ok: true });
   } catch (error) {
     if (error instanceof AdminAuthorizationError) return NextResponse.json({ error: error.message }, { status: error.status });
-    return NextResponse.json({ error: "Admin operation could not be completed." }, { status: 400 });
+    return NextResponse.json({ error: "Operasi admin belum dapat diselesaikan." }, { status: 400 });
   }
 }

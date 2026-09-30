@@ -1,12 +1,13 @@
 import { createPrivilegedClient } from "@/lib/supabase/privileged";
 import { AssessmentAuthError, authenticateAssessmentUser } from "@/features/assessment/server/authenticate";
+import { DEFAULT_LEARNING_PATH_SLUG } from "@/features/learning/config";
 
 export async function POST(_request: Request, { params }: { params: Promise<{ slug: string }> }) {
   try {
     const { client } = await authenticateAssessmentUser();
     const { slug } = await params;
     const admin = createPrivilegedClient();
-    const { data: path } = await admin.from("learning_paths").select("id").eq("slug", "programming-logic-fundamentals").maybeSingle();
+    const { data: path } = await admin.from("learning_paths").select("id").eq("slug", DEFAULT_LEARNING_PATH_SLUG).maybeSingle();
     if (!path) return Response.json({ error: "Assessment tidak tersedia." }, { status: 404 });
     const { data: assessment, error } = await admin.from("assessments").select("id, is_published")
       .eq("slug", slug).eq("learning_path_id", path.id).maybeSingle();

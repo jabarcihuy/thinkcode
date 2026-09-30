@@ -81,9 +81,9 @@ async function loadOverview(pathSlug: string, userId: string | null): Promise<Le
 
 export const getLearningOverview = cache(loadOverview);
 
-export async function getLessonMaterial(lessonId: string): Promise<{ content: string; exampleSourceCode: string | null } | null> {
+export async function getLessonMaterial(lessonId: string): Promise<{ content: string; exampleSql: string | null } | null> {
   const supabase = await createClient();
-  const { data, error } = await supabase.from("lessons").select("content, example_source_code").eq("id", lessonId).maybeSingle();
+  const { data, error } = await supabase.from("lessons").select("content, example_sql").eq("id", lessonId).maybeSingle();
   if (error) throw error;
-  return data ? { content: data.content, exampleSourceCode: data.example_source_code } : null;
+  return data ? { content: data.content, exampleSql: data.example_sql } : null;
 }

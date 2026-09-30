@@ -13,7 +13,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   const account = await getCurrentAccount();
   if (!account) return Response.json({ error: "Masuk untuk memeriksa jawaban." }, { status: 401 });
   const { id } = await context.params;
-  if (!lessonIdSchema.safeParse(id).success) return Response.json({ error: "Exercise tidak ditemukan." }, { status: 404 });
+  if (!lessonIdSchema.safeParse(id).success) return Response.json({ error: "Latihan tidak ditemukan." }, { status: 404 });
 
   let body: unknown;
   try { body = await readLimitedJson(request); }
@@ -21,7 +21,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
 
   try {
     const exercise = await getGradingExercise(id);
-    if (!exercise) return Response.json({ error: "Exercise tidak ditemukan." }, { status: 404 });
+    if (!exercise) return Response.json({ error: "Latihan tidak ditemukan." }, { status: 404 });
     const submission = parseSubmission(exercise.type, body);
     if (!submission) return Response.json({ error: "Jawaban tidak valid." }, { status: 400 });
     const overview = await getLearningOverview(submission.pathSlug, account.userId);

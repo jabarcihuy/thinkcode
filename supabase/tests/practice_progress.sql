@@ -1,58 +1,59 @@
--- Run against seeded Supabase with a privileged SQL connection. No data persists.
+-- Run against seeded Supabase with a privileged SQL connection. The transaction rolls back.
 begin;
 insert into auth.users (id, email) values
-  ('00000000-0000-4000-8000-000000003001', 'phase3-progress@example.invalid');
+  ('00000000-0000-4000-8000-000000003001', 'quethink-database-progress@example.invalid');
 set local role service_role;
 do $test$
 declare
   v_user_id uuid := '00000000-0000-4000-8000-000000003001';
-  exercise_id uuid;
-  first_lesson uuid;
-  next_lesson uuid;
-  javascript_lesson uuid;
-  first_javascript_exercise uuid;
-  second_javascript_exercise uuid;
+  v_first_lesson uuid;
+  v_first_exercise uuid;
+  v_second_lesson uuid;
+  v_second_exercise uuid;
+  v_third_lesson uuid;
+  v_expected text;
 begin
   perform set_config('request.jwt.claim.role', 'service_role', true);
-  select e.id, e.lesson_id into strict exercise_id, first_lesson
-  from public.exercises e join public.lessons l on l.id = e.lesson_id
-  where l.slug = 'what-is-computational-thinking' and e.position = 1;
-  select id into strict next_lesson from public.lessons where slug = 'decomposition';
 
-  perform public.phase3_record_attempt(v_user_id, exercise_id, null, '{"order":["wrong","order"]}'::jsonb, 0, false, '{}'::jsonb);
-  if exists (select 1 from public.lesson_progress progress where progress.user_id = v_user_id and progress.lesson_id = first_lesson) then
-    raise exception 'Failed mandatory practice completed lesson';
+  select l.id, e.id, e.config #>> '{answer,output}'
+  into strict v_first_lesson, v_first_exercise, v_expected
+  from public.lessons l
+  join public.exercises e on e.lesson_id = l.id and e.position = 1
+  join public.chapters c on c.id = l.chapter_id
+  join public.learning_paths p on p.id = c.learning_path_id
+  where p.slug = 'database-fundamentals' and l.slug = 'membaca-data-sebagai-relasi'
+    and l.is_published and e.is_published;
+
+  select l.id, e.id into strict v_second_lesson, v_second_exercise
+  from public.lessons l
+  join public.exercises e on e.lesson_id = l.id and e.position = 1
+  where l.slug = 'memilih-sumber-dan-kolom' and l.is_published and e.is_published;
+  select l.id into strict v_third_lesson
+  from public.lessons l where l.slug = 'menyaring-record' and l.is_published;
+
+  perform public.phase3_record_attempt(v_user_id, v_first_exercise, null, '{"output":"jawaban salah"}'::jsonb, 0, false, '{}'::jsonb);
+  if exists (select 1 from public.lesson_progress where user_id = v_user_id and lesson_id = v_first_lesson) then
+    raise exception 'A failed SQL prediction completed the lesson';
   end if;
-  if public.phase1_lesson_is_available(next_lesson, v_user_id) then
-    raise exception 'Next lesson unlocked before mandatory practice passed';
+  if public.phase1_lesson_is_available(v_second_lesson, v_user_id) then
+    raise exception 'The next lesson unlocked before the SQL prediction passed';
   end if;
 
-  perform public.phase3_record_attempt(v_user_id, exercise_id, null, '{"order":["split","solve","combine"]}'::jsonb, 100, true, '{}'::jsonb);
-  if not exists (select 1 from public.lesson_progress progress where progress.user_id = v_user_id and progress.lesson_id = first_lesson and progress.status = 'COMPLETED') then
-    raise exception 'Passed mandatory practice did not complete lesson';
+  perform public.phase3_record_attempt(v_user_id, v_first_exercise, null, jsonb_build_object('output', v_expected), 100, true, '{}'::jsonb);
+  if not exists (select 1 from public.lesson_progress where user_id = v_user_id and lesson_id = v_first_lesson and status = 'COMPLETED') then
+    raise exception 'A correct SQL prediction did not complete the lesson';
   end if;
-  if not public.phase1_lesson_is_available(next_lesson, v_user_id) then
-    raise exception 'Next lesson remains locked';
+  if not public.phase1_lesson_is_available(v_second_lesson, v_user_id) then
+    raise exception 'The next lesson remained locked after completion';
   end if;
 
-  -- Simulate passing all earlier lessons to isolate the two-practice rule.
-  insert into public.lesson_progress (user_id, lesson_id, status, completed_at)
-  select v_user_id, lesson.id, 'COMPLETED', now()
-  from public.lessons lesson
-  join public.chapters chapter on chapter.id = lesson.chapter_id
-  where chapter.position < 3 or (chapter.position = 3 and lesson.position = 1)
-  on conflict (user_id, lesson_id) do nothing;
-
-  select id into strict javascript_lesson from public.lessons where slug = 'first-javascript-program';
-  select id into strict first_javascript_exercise from public.exercises where lesson_id = javascript_lesson and position = 1;
-  select id into strict second_javascript_exercise from public.exercises where lesson_id = javascript_lesson and position = 2;
-  perform public.phase3_record_attempt(v_user_id, first_javascript_exercise, 'console.log("Hello, ThinkCode!")', null, 100, true, '{}'::jsonb);
-  if exists (select 1 from public.lesson_progress where lesson_id = javascript_lesson and user_id = v_user_id) then
-    raise exception 'One of two mandatory practices completed lesson';
+  select config #>> '{answer,output}' into strict v_expected from public.exercises where id = v_second_exercise;
+  perform public.phase3_record_attempt(v_user_id, v_second_exercise, null, jsonb_build_object('output', v_expected), 100, true, '{}'::jsonb);
+  if not exists (select 1 from public.lesson_progress where user_id = v_user_id and lesson_id = v_second_lesson and status = 'COMPLETED') then
+    raise exception 'The second required SQL practice did not complete its lesson';
   end if;
-  perform public.phase3_record_attempt(v_user_id, second_javascript_exercise, null, '{"output":"5"}'::jsonb, 100, true, '{}'::jsonb);
-  if not exists (select 1 from public.lesson_progress where lesson_id = javascript_lesson and user_id = v_user_id and status = 'COMPLETED') then
-    raise exception 'All mandatory practices did not complete lesson';
+  if public.phase1_lesson_is_available(v_third_lesson, v_user_id) then
+    raise exception 'The next chapter unlocked before its checkpoint passed';
   end if;
 end
 $test$;

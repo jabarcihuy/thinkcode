@@ -100,12 +100,12 @@ export function AssessmentWorkspace({
           <Button type="button" variant="outline" disabled={activeIndex === 0 || submitPending} onClick={() => { setActiveIndex((index) => index - 1); setRunResult(null); }}><ArrowLeft size={15} aria-hidden="true" />Sebelumnya</Button>
           {activeIndex < items.length - 1
             ? <Button type="button" variant="outline" disabled={submitPending} onClick={() => { setActiveIndex((index) => index + 1); setRunResult(null); }}>Berikutnya<ArrowRight size={15} aria-hidden="true" /></Button>
-            : <Button type="button" disabled={submitPending || completeCount !== items.length} onClick={() => confirmationRef.current?.showModal()}><Send size={15} aria-hidden="true" />Submit Assessment</Button>}
+            : <Button type="button" disabled={submitPending || completeCount !== items.length} onClick={() => confirmationRef.current?.showModal()}><Send size={15} aria-hidden="true" />Kirim assessment</Button>}
         </div>
         {error && <p role="alert" className="mt-4 text-sm text-destructive">{error}</p>}
       </div>
     </div>
-    <dialog ref={confirmationRef} aria-labelledby="assessment-confirm-title" className="m-auto w-[min(28rem,calc(100%-2rem))] rounded-lg border border-border bg-background p-0 text-foreground shadow-xl backdrop:bg-black/50">
+    <dialog ref={confirmationRef} aria-labelledby="assessment-confirm-title" className="m-auto w-[min(28rem,calc(100%-2rem))] rounded-lg border border-border bg-background p-0 text-foreground shadow-surface backdrop:bg-black/50">
       <div className="p-6">
         <h2 id="assessment-confirm-title" className="text-lg font-semibold">Kirim jawaban assessment?</h2>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">Semua {items.length} jawaban akan dinilai dan sesi ini akan ditutup. Periksa kembali jawabanmu sebelum melanjutkan.</p>

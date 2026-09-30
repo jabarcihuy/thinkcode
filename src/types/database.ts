@@ -283,6 +283,7 @@ export type Database = {
       assessments: {
         Row: {
           created_at: string
+          course_weight_percent: number
           gate_after_chapter: number
           id: string
           instructions: string
@@ -297,6 +298,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          course_weight_percent?: number
           gate_after_chapter: number
           id?: string
           instructions?: string
@@ -311,6 +313,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          course_weight_percent?: number
           gate_after_chapter?: number
           id?: string
           instructions?: string
@@ -581,6 +584,7 @@ export type Database = {
           chapter_id: string
           content: string
           created_at: string
+          example_sql: string | null
           example_source_code: string | null
           id: string
           is_preview: boolean
@@ -596,6 +600,7 @@ export type Database = {
           chapter_id: string
           content?: string
           created_at?: string
+          example_sql?: string | null
           example_source_code?: string | null
           id?: string
           is_preview?: boolean
@@ -611,6 +616,7 @@ export type Database = {
           chapter_id?: string
           content?: string
           created_at?: string
+          example_sql?: string | null
           example_source_code?: string | null
           id?: string
           is_preview?: boolean

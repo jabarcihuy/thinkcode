@@ -1,4 +1,4 @@
-export const DEFAULT_LEARNING_PATH_SLUG = "programming-logic-fundamentals";
+export const DEFAULT_LEARNING_PATH_SLUG = "database-fundamentals";
 
 export function learningPathHref(slug: string) {
   return `/learn/${slug}`;

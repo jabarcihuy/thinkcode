@@ -1,97 +1,28 @@
-# ThinkCode — Design System Direction
+# Quethink Design Direction
 
-## Product Feel
+## Product feel
 
-ThinkCode should feel:
+Calm, clear, educational, technical, and focused on understanding data. A learner should immediately know which table is the source, which filter is applied, and what rows are returned.
 
-- Clean.
-- Educational.
-- Technical.
-- Focused.
-- Modern.
-- Calm.
-- Logic-first and code-first where the lesson needs code.
+## Simplicity
 
-Avoid:
+- One primary action per screen.
+- Use text labels with color; never communicate match state by color alone.
+- Keep SQL editor, result table, and table canvas visually related. In each exercise, stack data/table, SQL editor, then output/change summary vertically; stack practice prompt and response controls vertically too.
+- Keep a lesson outline in the desktop sidebar and use a compact collapsible outline on mobile.
+- Use a 2D schema visualizer inspired by the readable table/column structure of Supabase Studio. Attach FK connections to the exact columns; show SQLite types and PK/FK labels. Keep pan/zoom/fit/reset together in one restrained toolbar. Select a table to inspect records below; no 3D or app-wide canvas.
+- Use a compact labeled schema selector for transfer tasks and Playground. Render one active schema at a time, with its actual table count and dataset title. Explain that switching restarts local lab state; exercise canvases stay fixed to their own dataset.
+- Avoid repeated cards, decorative animation, glass effects, and dense controls.
+- Keep help and optional video near the lesson concept.
 
-- AI-slop visual style.
-- Excessive gradients.
-- Decorative 3D illustrations everywhere.
-- Excessive glassmorphism.
-- Too many floating cards.
-- Excessive icons.
-- Emoji-driven UI.
+## Typography and components
 
-## Inspiration
+Use readable sans-serif for lesson prose and monospace for SQL. Preserve accessible labels, focus states, semantic tables, responsive tabs, alerts, progress, and buttons. shadcn/ui is a primitive library, not the visual identity.
 
-Conceptual mix:
+## Query visualization
 
-- Codecademy: structured learning.
-- LeetCode: exercise/editor workflow.
-- VS Code: code-first familiarity.
+Show only what the current lesson teaches: table/source and fields, key relationships for a supported JOIN lesson, matching or filtered records, actual SQLite result rows, and aggregate groups only in the aggregation lesson. For Write lessons, make the target preview, affected rows, and after-state legible. Learners may pan, zoom, and reset the predefined table layout. The canvas is conceptual, not a query-plan simulator.
 
-Do not clone any product visually.
+## Mobile
 
-## Layout Principles
-
-- Strong hierarchy.
-- Clear content/editor separation.
-- Maximize usable editor area.
-- Keep progress visible but unobtrusive.
-- Contextual actions close to the relevant content.
-- Keep **Predict → Run → Visualize → Check** distinct and legible. The execution trace should explain a state change at each step.
-
-## Responsive Strategy
-
-Desktop and mobile should have intentionally different layouts where needed.
-
-Desktop:
-
-- Multi-panel learning workspace.
-
-Mobile:
-
-- Tab-based workspace.
-- Larger touch targets.
-- Avoid horizontal squeezing.
-
-## Theme
-
-The application theme selector supports:
-
-- Light
-- Dark
-- System preference
-
-The lesson Monaco editor follows the resolved application theme. UI colors use semantic CSS variables so content, dialogs, controls, and workspace panels stay consistent across themes.
-
-## Typography
-
-- Highly readable sans-serif for UI/content.
-- Monospace font for code.
-- Clear distinction between lesson prose and code.
-
-## Components
-
-Core component categories:
-
-- Button
-- Input
-- Dialog
-- Sheet
-- Tabs
-- Progress
-- Alert
-- Tooltip
-- Card
-- Code editor shell
-- Console panel
-- Execution visualizer with Previous, Next, Play, Pause, Reset and bounded trace notice
-- Prediction and actual-output comparison
-- Bug Lab observation and repair flow
-- Exercise panel
-- AI Tutor panel
-- Locked lesson item
-- Assessment status
-
-Use shadcn/ui as primitives, not as a visual identity.
+At approximately 360px, show one working area at a time: query, visualization, or result. Stack tables vertically inside the exercise canvas, keep pan/zoom controls touch sized, and let result tables scroll inside their own region.

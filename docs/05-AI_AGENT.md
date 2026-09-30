@@ -1,117 +1,51 @@
-# ThinkCode — AI Tutor Specification
+# AI Tutor — Database Learning
 
 ## Purpose
 
-AI Tutor berfungsi sebagai programming mentor kontekstual, bukan chatbot umum.
+The AI Tutor helps learners reason about relational data and their current SQL task. It gives progressive hints instead of taking over the work.
 
-Tujuan:
+## Available context
 
-- Membantu user memahami konsep.
-- Membantu user menemukan kesalahan sendiri.
-- Memberikan hint bertahap.
-- Membantu debugging.
-- Membuat latihan serupa.
-- Tidak menggantikan proses berpikir user.
+The server may provide only bounded, current-task context:
 
-## Availability
+- Current topic, lesson, and concept.
+- Current practice prompt and type.
+- Learner's current SQL statement.
+- Visible SQLite output or a safe summary of the data change.
+- Visible practice feedback.
+- A short summary of the current 2D relationship/query explanation.
+- Progress summary and hint level.
 
-### Allowed
+For Write lessons, context may describe the intended operation and visible affected-row count. Do not send hidden answer configuration or private assessment values.
 
-- Lesson mode.
-- Practice mode.
+Do not include another user's data, Supabase credentials, private CMS configuration, hidden assessment answers, or hidden tests. Assessment source is not included in tutor context.
 
-### Forbidden
+The protected `/chatbot` page offers the same tutor outside a lesson workspace. It selects the learner's current or next available lesson as context (or the latest completed lesson when the path is complete), links back to that lesson, and does not invent query/output context. The inline tutor remains available in lesson practice and receives the visible SQL and Worker result when supplied.
 
-- Active checkpoint.
-- Active final assessment.
-- Any assessment session marked `in_progress`.
+## Actions
 
-Blocking must happen server-side, not only through UI.
+- Explain table/key/relationship concepts.
+- Explain a query or visible SQLite error.
+- Give a hint about an incorrect result or unexpected change.
+- Explain visible query output or affected-row feedback.
+- Create a similar practice prompt.
 
-## Context
+The tutor cannot run arbitrary SQL, change progress, publish content, change scores, or reveal assessment data. Running and confirming a statement remain learner actions in the browser.
 
-AI may receive:
+## Hint progression
 
-- Current lesson.
-- Current exercise.
-- User JavaScript source dan trace yang aman untuk ditampilkan.
-- Visible console output.
-- Visible test results.
-- User progress.
-- Previous hints in the current tutoring session.
+1. Give a general direction.
+2. Point to a relevant table, key, clause, or target-row check.
+3. Explain the related concept.
+4. Use a similar example.
+5. Show a complete SQL statement only when the learner explicitly asks for the solution.
 
-AI tidak boleh menerima hidden test cases, private answer config, assessment data, atau seluruh database user. Server membentuk context ringkas dari lesson aktif, exercise publik, source user, output dan hasil visible yang diberikan client, trace terbatas, progress ringkas, dan hint level. Source/output/trace tidak disimpan dalam riwayat.
+## Safety and limits
 
-## Tools
+The API checks authentication, active assessment state, per-user rate limits, prompt/source size, and trimmed conversation history before using the server-only AIProvider. AI is unavailable during checkpoints and the final assessment. Provider keys stay server-side.
 
-The current `TutorContextTools` is a server-scoped context interface, not provider function-calling. Reading lesson/exercise/code/output/trace/progress is bounded to the current request. Run and Check remain learner-initiated in the browser; tutor receives their visible result when the learner asks again. It cannot mutate lesson progress, score, or completion.
+Write feedback must encourage a target preview before `UPDATE` or `DELETE` and must not claim a change happened unless the visible Worker result confirms it.
 
-Recommended tool abstraction:
+## Provider and admin drafting
 
-```text
-getCurrentLesson()
-getCurrentExercise()
-readStudentCode()
-readVisibleOutput()
-runPracticeCode() // tutupannya mengarahkan user ke Run di browser; tutor tidak menjalankan arbitrary code di server
-runVisiblePracticeChecks() // hasil check browser diberikan oleh user; bukan bukti assessment
-getStudentProgress()
-generateSimilarPractice()
-```
-
-## Tutor Behavior
-
-Default escalation:
-
-1. Small hint
-2. More specific hint
-3. Explain relevant concept
-4. Give analogous example
-5. Full solution only if user explicitly asks
-
-Do not immediately overwrite or replace user code.
-
-## Assessment Guard
-
-Before every AI request:
-
-```text
-if activeAssessmentSession:
-    reject AI request
-```
-
-Route `POST /api/ai/tutor` memeriksa assessment aktif dari server/DB sebelum provider dipanggil. Request selama session `IN_PROGRESS` mendapat 403 product-safe response. Rate limit: 8 request/menit per user; input dan history dibatasi.
-
-## Shipped Provider
-
-`AIProvider` memiliki adapter OpenAI Chat Completions-compatible yang dikonfigurasi server-side lewat `AI_API_URL`, `AI_API_KEY`, dan `AI_MODEL`. Streaming dan non-streaming berada di provider adapter; domain tutor tidak mengimpor SDK vendor. Provider live tidak diperlukan untuk build/test lokal, dan request live dapat memakai quota/biaya akun provider.
-
-## Shipped UX and Persistence
-
-Contextual Tutor Panel tersedia pada lesson dan practice. Quick actions: explain concept/code/error/trace, why wrong, hint, similar practice; free-form prompt juga tersedia. Hint level bereskalasi 1–5 dan solusi penuh hanya pada permintaan eksplisit. Session serta pesan user/assistant tersimpan; data context sensitif tidak disimpan. Similar practice menghasilkan ide/latihan dalam jawaban tutor, tidak menulis ke kurikulum.
-
-## Provider Architecture
-
-AI provider must be abstracted.
-
-```text
-AIProvider
-├── providerA
-├── providerB
-└── futureProvider
-```
-
-Business logic must not directly depend on one vendor SDK throughout the codebase.
-
-## Admin AI Content Assistant
-
-Admin may use AI to draft:
-
-- Lesson explanation.
-- Examples.
-- Exercises.
-- Visible test cases.
-- Hidden test cases.
-- Summaries.
-
-The Admin CMS includes a server-only AI drafting helper for explanations, examples, exercise prompts, tests, and summaries. AI output is inserted as an unpublished suggestion for administrator review. It cannot publish content. Hidden assessment cases remain outside tutor context and user-facing responses.
+Use the existing provider-agnostic AIProvider. The current OpenAI-compatible adapter reads AI_API_URL, AI_API_KEY, and AI_MODEL only on the server. Admin suggestions cover database explanations, SQL examples, practice prompts, and summaries; every suggestion remains a draft for admin review.

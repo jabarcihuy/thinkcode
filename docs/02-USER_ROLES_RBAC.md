@@ -1,78 +1,23 @@
-# ThinkCode — Roles & RBAC
+# Quethink — Roles & Access
 
 ## Roles
 
-MVP menggunakan enum role:
+The application uses USER and ADMIN. Authorization uses the role enum and server-side checks, not an isAdmin boolean.
 
-```text
-USER
-ADMIN
-```
+## USER
 
-Jangan menggunakan boolean seperti `isAdmin`.
+A user may read published database content, run SQL against the synthetic browser dataset, manage their own progress and practice attempts, use the AI Tutor during lessons/practice, and read or submit their own assessments.
 
-Future-compatible:
+A user may not read hidden assessment answers, modify content, alter another user's progress, or access admin routes.
 
-```text
-USER
-ADMIN
-TEACHER
-```
+## ADMIN
 
-## USER Permissions
+An admin may do all learner actions and manage learning paths, chapters, lessons, exercises, video links, publication state, assessments, and user overview through the protected CMS.
 
-Allowed:
+## Enforcement
 
-- Read published learning content.
-- Start learning path.
-- Read own progress.
-- Update own progress through valid learning actions.
-- Submit own exercise.
-- Run code.
-- Use AI Tutor outside assessment.
-- Start assessment.
-- Submit assessment.
-- Read own assessment results.
+Use Supabase RLS and server-side authorization. Validate ownership for progress, attempts, conversations, and assessment sessions. Hiding a control in the UI is not authorization.
 
-Forbidden:
+## Admin lesson preview
 
-- Read hidden test cases.
-- Modify learning content.
-- Modify another user's progress.
-- Access admin routes.
-- Access AI Tutor during active assessment.
-
-## ADMIN Permissions
-
-Allowed:
-
-- All USER capabilities.
-- Manage learning paths.
-- Manage chapters.
-- Manage lessons.
-- Manage exercises.
-- Manage test cases.
-- Manage assessments.
-- Manage content publication state.
-- View user management data.
-- Use admin AI content assistant.
-
-## Ownership Rules
-
-Authorization must check both role and ownership.
-
-Example:
-
-- USER can only read/write their own progress.
-- USER can only read their own submissions.
-- Hidden test cases must never be returned to USER clients.
-- Admin-only mutations must be enforced server-side.
-
-## Enforcement Layers
-
-Use both:
-
-1. Supabase RLS
-2. Next.js server-side authorization
-
-Never trust client-side role checks as the only protection.
+`/admin/lessons/[lessonId]/preview` requires ADMIN on the server and rechecks authorization before privileged content reads. Draft and published lessons can be inspected without learner prerequisites. Reuse lesson prose, dataset labs, and exercise display; preview does not invoke grading, create attempts, mutate progress, or include AI Tutor. Exercise display fields are allowlisted and answer/test configuration is excluded. Learner routes and their progression rules remain unchanged.

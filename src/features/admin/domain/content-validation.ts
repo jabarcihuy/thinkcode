@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isDatasetId } from "@/features/database/data/datasets";
 
 const slug = z.string().trim().min(1).max(120).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 const position = z.number().int().min(1).max(10_000);
@@ -17,10 +18,10 @@ export const chapterInput = z.object({
 export const lessonInput = z.object({
   chapter_id: z.uuid(), title: z.string().trim().min(1).max(160), slug,
   summary: z.string().trim().max(1_000).default(""), content: z.string().trim().min(1).max(30_000),
-  example_source_code: z.string().max(16_000).nullable().default(null), position,
+  example_sql: z.string().max(4_096).nullable().default(null), position,
   is_required: z.boolean().default(true), is_preview: z.boolean().default(false), is_published: z.boolean().default(false),
 });
-const exerciseType = z.enum(["CODE_COMPLETION", "PREDICT_OUTPUT", "DEBUGGING", "PROBLEM_SOLVING", "PSEUDOCODE", "FLOWCHART"]);
+const exerciseType = z.enum(["PREDICT_OUTPUT", "PSEUDOCODE", "FLOWCHART"]);
 const config = z.record(z.string(), z.unknown()).default({});
 export const exerciseInput = z.object({
   lesson_id: z.uuid(), type: exerciseType, title: z.string().trim().min(1).max(160),
@@ -29,6 +30,9 @@ export const exerciseInput = z.object({
   public_config: config.nullable().default(null), position, is_required: z.boolean().default(true),
   is_published: z.boolean().default(false),
 }).superRefine((value, context) => {
+  if (value.public_config?.datasetId !== undefined && !isDatasetId(value.public_config.datasetId)) {
+    context.addIssue({ code: "custom", path: ["public_config", "datasetId"], message: "Pilih skema latihan terdaftar: campus, library, atau shop." });
+  }
   if (["CODE_COMPLETION", "DEBUGGING", "PROBLEM_SOLVING"].includes(value.type) && !value.starter_code?.trim()) {
     context.addIssue({ code: "custom", path: ["starter_code"], message: "Jenis latihan kode memerlukan starter code." });
   }
@@ -64,6 +68,7 @@ export const assessmentTestCaseInput = z.object({
 export const assessmentInput = z.object({
   learning_path_id: z.uuid(), title: z.string().trim().min(1).max(160), slug,
   type: z.enum(["CHECKPOINT", "FINAL"]), instructions: z.string().trim().max(4_000).default(""),
+  course_weight_percent: z.number().min(0).max(100).default(0),
   passing_score: z.number().min(0).max(100), gate_after_chapter: z.number().int().min(1).max(10),
   position, is_published: z.boolean().default(false),
 });

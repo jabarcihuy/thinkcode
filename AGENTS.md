@@ -8,6 +8,6 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-Read `docs/AGENTS.md` and the relevant files in `docs/` before changing ThinkCode. Those documents define product scope and architecture.
+Read `docs/AGENTS.md` and the relevant files in `docs/` before changing Quethink. Those documents define product scope and architecture.
 
-Current MVP decision: ThinkCode is an Interactive Programming Logic Lab using JavaScript (`javascript`, browser runtime). Practice source runs only in the isolated browser sandbox; assessment source uses the server-only QuickJS/WASM assessment adapter with strict resource limits. The MVP targets Vercel Hobby and Supabase Free without an external code runner. Browser coding checks are client-checkable and cannot be treated as trusted assessment evidence. Phases 0–7, including Admin CMS and UX Polish, are implemented. Do not add out-of-scope features without an explicit product decision.
+`docs/AGENTS.md` is the canonical product and architecture guide. Read `docs/04-CURRICULUM.md` and relevant planning/research files before course changes. Before SQL runner or Supabase database changes, read `docs/06-ARCHITECTURE.md`, `docs/11-SECURITY.md`, and the applicable local framework/Supabase guidance. Learner SQL must remain confined to the synthetic SQLite Worker.

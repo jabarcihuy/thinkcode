@@ -2,6 +2,7 @@ import { CodingExercise } from "@/features/practice/components/coding-exercise";
 import { PredictOutputExercise } from "@/features/practice/components/predict-output-exercise";
 import { BlockExercise } from "@/features/practice/components/block-exercise";
 import type { ExerciseType, PublicExercise } from "@/features/practice/types";
+import { exerciseTypeLabel } from "@/features/practice/domain/exercise-labels";
 
 export function exerciseKind(type: ExerciseType): "coding" | "prediction" | "blocks" {
   switch (type) {
@@ -14,9 +15,10 @@ export function exerciseKind(type: ExerciseType): "coding" | "prediction" | "blo
   }
 }
 
-export function ExerciseRenderer({ exercise, pathSlug }: { exercise: PublicExercise; pathSlug: string }) {
+export function ExerciseRenderer({ exercise, pathSlug, previewOnly = false }: { exercise: PublicExercise; pathSlug: string; previewOnly?: boolean }) {
   const kind = exerciseKind(exercise.type);
+  if (previewOnly && kind === "coding") return <p className="mt-6 text-sm text-muted-foreground">Latihan pemrograman lama tidak digunakan pada materi basis data.</p>;
   if (kind === "coding") return <CodingExercise exercise={exercise} pathSlug={pathSlug} />;
-  if (kind === "prediction") return <PredictOutputExercise exercise={exercise} pathSlug={pathSlug} />;
-  return <BlockExercise exercise={exercise} pathSlug={pathSlug} label={exercise.type === "FLOWCHART" ? "Flowchart sederhana" : "Pseudocode"} />;
+  if (kind === "prediction") return <PredictOutputExercise previewOnly={previewOnly} exercise={exercise} pathSlug={pathSlug} />;
+  return <BlockExercise previewOnly={previewOnly} exercise={exercise} pathSlug={pathSlug} label={exerciseTypeLabel(exercise.type)} />;
 }
