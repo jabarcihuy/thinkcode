@@ -24,12 +24,15 @@ type LabRun = QueryRun | MutationRun;
 
 function DataTable({ rows, columns, caption }: { rows: SqliteRow[]; columns: string[]; caption: string }) {
   if (rows.length === 0) return <p className="text-sm text-muted-foreground">Tidak ada record.</p>;
-  return <div className="overflow-x-auto">
+  return <div>
+    <p className="mb-2 text-xs leading-5 text-muted-foreground sm:hidden">Geser tabel ke samping untuk melihat kolom lainnya.</p>
+    <div role="region" aria-label={`${caption}. Geser ke samping bila semua kolom belum terlihat.`} tabIndex={0} className="overflow-x-auto focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring">
     <table className="w-full min-w-[20rem] border-collapse text-left text-sm">
       <caption className="sr-only">{caption}</caption>
       <thead><tr className="border-b border-border text-muted-foreground">{columns.map((column) => <th scope="col" key={column} className="px-3 py-2 font-medium">{column}</th>)}</tr></thead>
       <tbody>{rows.map((row, index) => <tr key={`${JSON.stringify(row)}-${index}`} className="border-b border-border/70 last:border-0">{columns.map((column) => <td key={column} className="px-3 py-2 font-mono text-[0.82rem] tabular-nums">{String(row[column] ?? "NULL")}</td>)}</tr>)}</tbody>
     </table>
+    </div>
   </div>;
 }
 
@@ -196,14 +199,14 @@ export function DatabaseQueryLab({
         <textarea id="database-sql" value={queryText} onChange={(event) => { setQueryText(event.target.value); setRun(null); setQueryError(null); setVisualStep(0); }}
           onKeyDown={(event) => { if ((event.ctrlKey || event.metaKey) && event.key === "Enter") { event.preventDefault(); void runQuery(); } }}
           maxLength={4_096} spellCheck={false} autoCapitalize="off" autoCorrect="off" disabled={pending || Boolean(preview)} rows={7}
-          className="mt-3 min-h-40 w-full resize-y rounded-md border border-input bg-code-surface p-4 font-mono text-sm leading-6 text-code-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-70" />
+          className="mt-3 min-h-40 w-full resize-y rounded-md border border-input bg-code-surface p-4 font-mono text-base leading-6 text-code-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-70 sm:text-sm" />
         <p className="mt-2 text-xs leading-5 text-muted-foreground">{isMutation ? "Pratinjau sebelum menerapkan perubahan." : "SELECT membaca data tanpa mengubahnya."} Ctrl/⌘ + Enter untuk Run.</p>
 
         <label htmlFor="database-prediction" className="mt-6 block text-sm font-semibold">Sebelum Run, berapa {isMutation ? "record yang akan berubah" : "baris hasilnya"}?</label>
         <input id="database-prediction" type="number" min="0" max="100" step="1" value={prediction}
           onChange={(event) => setPrediction(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); void runQuery(); } }}
           disabled={pending || Boolean(preview)} placeholder={isMutation ? "Contoh: 1" : "Contoh: 2"} aria-describedby="database-prediction-help"
-          className="mt-2 min-h-11 w-full max-w-40 rounded-md border border-input bg-background px-3 py-2 font-mono text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-70" />
+          className="mt-2 min-h-11 w-full max-w-40 rounded-md border border-input bg-background px-3 py-2 font-mono text-base outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-70 sm:text-sm" />
         <p id="database-prediction-help" className="mt-2 text-xs leading-5 text-muted-foreground">Hasil baru terlihat setelah kamu membuat prediksi.</p>
 
         <div className="mt-5 flex flex-wrap gap-2">

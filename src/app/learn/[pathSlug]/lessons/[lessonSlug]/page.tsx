@@ -39,20 +39,25 @@ export default async function LessonPage({ params }: { params: Promise<{ pathSlu
   const next = overview.lessons[index + 1] ?? null;
   const chapterLessons = overview.lessons.filter((item) => item.chapter_id === chapter.id);
   const isRelationMaterial = lessonSlug === "membaca-bentuk-data" || lessonSlug === "key-dan-hubungan-antar-tabel";
-  const hasInteractiveContent = Boolean(material.exampleSql) || exercises.length > 0;
+  const hasInteractiveContent = Boolean(material.exampleSql) || exercises.length > 0 || isRelationMaterial;
+  const outlineLabel = material.exampleSql
+    ? "Daftar isi lab dan latihan"
+    : isRelationMaterial
+      ? "Daftar isi materi dan visualisasi"
+      : "Daftar isi materi dan latihan";
 
   return <div className="min-h-dvh"><LearningHeader account={account} />
     <main id="main-content" className="mx-auto max-w-6xl px-5 py-10 sm:px-8 sm:py-14">
-      <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground"><Link className="hover:text-accent" href={`/learn/${pathSlug}`}>{overview.path.title}</Link><span aria-hidden="true">/</span><Link className="hover:text-accent" href={`/learn/${pathSlug}/chapters/${chapter.id}`}>{chapter.title}</Link></nav>
+      <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1 text-sm text-muted-foreground"><Link className="inline-flex min-h-11 items-center px-1 hover:text-accent" href={`/learn/${pathSlug}`}>{overview.path.title}</Link><span aria-hidden="true">/</span><Link className="inline-flex min-h-11 items-center px-1 hover:text-accent" href={`/learn/${pathSlug}/chapters/${chapter.id}`}>{chapter.title}</Link></nav>
       <div className="mt-9 grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_16rem] lg:gap-16">
         <article className="min-w-0">
           <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">{lesson.title}</h1>
           <p className="mt-3 max-w-[72ch] leading-7 text-muted-foreground">{lesson.summary}</p>
           {hasInteractiveContent && <div className="mt-6 lg:hidden">
             <details className="group rounded-md border border-border px-4 py-3">
-            <summary className="min-h-8 cursor-pointer text-sm font-semibold focus-visible:outline-2 focus-visible:outline-ring">{material.exampleSql ? "Daftar isi lab dan latihan" : "Daftar isi materi dan latihan"}</summary>
+            <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-ring">{outlineLabel}</summary>
               <div className="pt-3">
-                <LessonOutline hasLab={Boolean(material.exampleSql)} exercises={exercises.map(({ id, title }) => ({ id, title }))} />
+                <LessonOutline hasLab={Boolean(material.exampleSql)} hasDataExplorer={isRelationMaterial} exercises={exercises.map(({ id, title }) => ({ id, title }))} />
               </div>
             </details>
           </div>}
@@ -80,7 +85,7 @@ export default async function LessonPage({ params }: { params: Promise<{ pathSlu
         </article>
         <aside aria-label="Navigasi lesson" className="border-t border-border pt-6 lg:sticky lg:top-8 lg:border-t-0 lg:border-l lg:pl-6 lg:pt-0">
           <div className="hidden lg:block">
-            <LessonOutline hasLab={Boolean(material.exampleSql)} exercises={exercises.map(({ id, title }) => ({ id, title }))} />
+            <LessonOutline hasLab={Boolean(material.exampleSql)} hasDataExplorer={isRelationMaterial} exercises={exercises.map(({ id, title }) => ({ id, title }))} />
           </div>
           <div className="mt-8 border-t border-border pt-6">
             <h2 className="text-sm font-semibold">{chapter.title}</h2>

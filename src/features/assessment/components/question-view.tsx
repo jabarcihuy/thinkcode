@@ -30,7 +30,7 @@ function PredictQuestion({ item, answer, onAnswer }: { item: PublicAssessmentIte
     {item.starterCode && <pre aria-label="Query SQL untuk ditinjau" className="overflow-x-auto rounded-md bg-code-surface p-4 font-mono text-sm leading-6 text-code-foreground">{item.starterCode}</pre>}
     {typeof config.sampleOutput === "string" && <p className="mt-3 text-sm text-muted-foreground">Sample: {config.sampleOutput}</p>}
     <label htmlFor={`answer-${item.id}`} className="mt-5 block text-sm font-semibold">Prediksi hasil query</label>
-    <textarea id={`answer-${item.id}`} value={answer && "output" in answer ? answer.output : ""} onChange={(event) => onAnswer({ output: event.target.value })} maxLength={4000} rows={4} className="mt-2 w-full rounded-md border border-input bg-background p-3 font-mono text-sm focus-visible:outline-2 focus-visible:outline-ring" />
+    <textarea id={`answer-${item.id}`} value={answer && "output" in answer ? answer.output : ""} onChange={(event) => onAnswer({ output: event.target.value })} maxLength={4000} rows={4} className="mt-2 w-full rounded-md border border-input bg-background p-3 font-mono text-base focus-visible:outline-2 focus-visible:outline-ring sm:text-sm" />
   </div>;
 }
 
@@ -63,8 +63,8 @@ function OrderQuestion({ item, answer, onAnswer }: { item: PublicAssessmentItem;
   return <div className="mt-5"><h3 className="text-sm font-semibold">Atur langkah</h3><ol className="mt-3 space-y-2">
     {selectedOrder.map((id, index) => <li key={id} className="flex items-center gap-2 border-b border-border py-2 text-sm">
       <span className="w-7 text-muted-foreground">{index + 1}.</span><span className="flex-1">{blockById.get(id)}</span>
-      <Button type="button" size="sm" variant="outline" className="h-9 w-9 px-0" aria-label={`Pindahkan langkah ${index + 1} ke atas`} disabled={index === 0} onClick={() => move(index, -1)}><ArrowUp size={15} /></Button>
-      <Button type="button" size="sm" variant="outline" className="h-9 w-9 px-0" aria-label={`Pindahkan langkah ${index + 1} ke bawah`} disabled={index === selectedOrder.length - 1} onClick={() => move(index, 1)}><ArrowDown size={15} /></Button>
+      <Button type="button" size="sm" variant="outline" className="h-11 min-h-11 w-11 min-w-11 shrink-0 px-0" aria-label={`Pindahkan langkah ${index + 1} ke atas`} disabled={index === 0} onClick={() => move(index, -1)}><ArrowUp size={15} /></Button>
+      <Button type="button" size="sm" variant="outline" className="h-11 min-h-11 w-11 min-w-11 shrink-0 px-0" aria-label={`Pindahkan langkah ${index + 1} ke bawah`} disabled={index === selectedOrder.length - 1} onClick={() => move(index, 1)}><ArrowDown size={15} /></Button>
     </li>)}
   </ol></div>;
 }

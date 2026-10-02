@@ -24,7 +24,7 @@ export function PredictOutputExercise({ exercise, pathSlug, previewOnly = false 
     <div className="mt-6 border-t border-border pt-5">
       <label htmlFor={`output-${exercise.id}`} className="text-sm font-semibold">Hasil tabel yang kamu prediksi</label>
       {columns.length > 0 && <p className="mt-2 font-mono text-xs text-muted-foreground">Urutan kolom: {columns.join(" | ")}</p>}
-      <textarea id={`output-${exercise.id}`} value={output} onChange={(event) => setOutput(event.target.value)} maxLength={4000} rows={6} placeholder={columns.length ? columns.join(" | ") : "Satu baris hasil per baris teks"} className="mt-2 w-full rounded-md border border-input bg-background p-3 font-mono text-sm focus-visible:outline-2 focus-visible:outline-ring" />
+      <textarea id={`output-${exercise.id}`} value={output} onChange={(event) => setOutput(event.target.value)} maxLength={4000} rows={6} placeholder={columns.length ? columns.join(" | ") : "Satu baris hasil per baris teks"} className="mt-2 w-full rounded-md border border-input bg-background p-3 font-mono text-base focus-visible:outline-2 focus-visible:outline-ring sm:text-sm" />
       <p className="mt-2 text-xs leading-5 text-muted-foreground">Satu baris per hasil, tanpa header; pisahkan kolom dengan |. Spasi di sekitar | dan nol desimal tambahan tidak memengaruhi nilai.</p>
       <Button type="button" className="mt-3" disabled={previewOnly || checkState.pending} onClick={() => checkState.check({ answer: { output } })}>{previewOnly ? "Pemeriksaan nonaktif di pratinjau" : "Periksa jawaban"}</Button>
     </div>

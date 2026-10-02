@@ -12,7 +12,7 @@ export function LearningHeader({ account }: { account: Account | null }) {
   return <header className="relative border-b border-border bg-background">
     <div className="perf-rail" aria-hidden="true" />
     <div className="rail-inset mx-auto flex min-h-16 max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-3 sm:px-8">
-      <Link className="text-lg font-semibold tracking-tight" href="/" aria-label="Quethink, beranda">Que<span className="text-live-ink">think</span></Link>
+      <Link className="inline-flex min-h-11 items-center text-lg font-semibold tracking-tight" href="/" aria-label="Quethink, beranda">Que<span className="text-live-ink">think</span></Link>
       <nav aria-label="Navigasi utama" className="flex max-w-full flex-wrap items-center gap-1 sm:gap-3">
         {account ? <Button asChild variant="ghost" size="sm"><Link href="/dashboard">Dashboard</Link></Button> : <><Button asChild variant="ghost" size="sm"><Link href="/login">Masuk</Link></Button><Button asChild size="sm"><Link href="/register">Daftar</Link></Button></>}
       </nav>

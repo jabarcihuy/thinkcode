@@ -32,14 +32,14 @@ export function DatabaseQueryDiagram({ query, step, snapshot: suppliedSnapshot, 
     <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border bg-muted px-3 py-2">
       <span className="text-xs font-medium text-muted-foreground">Skema · {dataset.tables.length} tabel</span>
       <div role="group" aria-label="Kontrol canvas" className="flex items-center gap-1">
-        <Button type="button" variant="ghost" size="sm" className="px-3" aria-label="Perkecil canvas" disabled={view.scale <= 0.35} onClick={() => zoom(-0.15)}><ZoomOut size={15} aria-hidden="true" /></Button>
+        <Button type="button" variant="ghost" size="sm" className="h-11 min-h-11 w-11 min-w-11 shrink-0 px-0" aria-label="Perkecil canvas" disabled={view.scale <= 0.35} onClick={() => zoom(-0.15)}><ZoomOut size={15} aria-hidden="true" /></Button>
         <span className="min-w-10 text-center text-xs tabular-nums text-muted-foreground" aria-live="polite">{Math.round(view.scale * 100)}%</span>
-        <Button type="button" variant="ghost" size="sm" className="px-3" aria-label="Perbesar canvas" disabled={view.scale >= 1.5} onClick={() => zoom(0.15)}><ZoomIn size={15} aria-hidden="true" /></Button>
-        <Button type="button" variant="ghost" size="sm" className="px-3" aria-label="Lihat semua tabel" title="Lihat semua tabel" onClick={fit}><Maximize2 size={15} aria-hidden="true" /></Button>
-        <Button type="button" variant="ghost" size="sm" className="px-3" aria-label="Atur ulang" title="Atur ulang tampilan" onClick={reset}><RotateCcw size={15} aria-hidden="true" /></Button>
+        <Button type="button" variant="ghost" size="sm" className="h-11 min-h-11 w-11 min-w-11 shrink-0 px-0" aria-label="Perbesar canvas" disabled={view.scale >= 1.5} onClick={() => zoom(0.15)}><ZoomIn size={15} aria-hidden="true" /></Button>
+        <Button type="button" variant="ghost" size="sm" className="h-11 min-h-11 w-11 min-w-11 shrink-0 px-0" aria-label="Lihat semua tabel" title="Lihat semua tabel" onClick={fit}><Maximize2 size={15} aria-hidden="true" /></Button>
+        <Button type="button" variant="ghost" size="sm" className="h-11 min-h-11 w-11 min-w-11 shrink-0 px-0" aria-label="Atur ulang" title="Atur ulang tampilan" onClick={reset}><RotateCcw size={15} aria-hidden="true" /></Button>
       </div>
     </div>
-    <div ref={viewportRef} role="group" tabIndex={0} aria-label="Area skema. Seret untuk menggeser, atau gunakan tombol panah. Pilih tabel untuk melihat record."
+    <div ref={viewportRef} role="group" tabIndex={0} aria-label="Area skema. Pilih nama tabel untuk memusatkan; pilih kolom PK atau FK untuk membaca relasi. Gunakan tombol panah untuk menggeser."
       onPointerDown={startPan} onPointerMove={movePan} onPointerUp={endPan} onPointerCancel={endPan} onLostPointerCapture={endPan} onKeyDown={panWithKeyboard}
       className={`schema-canvas relative h-[340px] touch-pan-y select-none overflow-hidden outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:h-[520px] ${dragging ? "cursor-grabbing" : "cursor-grab"}`}>
       <div className="absolute left-0 top-0" style={{ width: layout.width, height: layout.height, transform: `translate(${view.x}px, ${view.y}px) scale(${view.scale})`, transformOrigin: "0 0" }}>
@@ -63,7 +63,7 @@ export function DatabaseQueryDiagram({ query, step, snapshot: suppliedSnapshot, 
     </div>
     <div className="border-t border-border bg-muted px-4 py-3">
       <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted-foreground"><span><abbr title="Primary key: identitas unik record" className="font-semibold text-foreground no-underline">PK</abbr> primary key</span><span><abbr title="Foreign key: rujukan ke tabel lain" className="font-semibold text-foreground no-underline">FK</abbr> foreign key</span><span>1:N satu ke banyak</span></div>
-      <p aria-live="polite" className="mt-2 text-xs leading-5 text-muted-foreground">{selectedRelation ? <><code className="text-foreground">{selectedRelation.parent}.{selectedRelation.parentColumn}</code> = <code className="text-foreground">{selectedRelation.child}.{selectedRelation.childColumn}</code>. {selectedRelation.explanation}</> : recordSelection && activeRelations.size ? "Relasi record yang dipilih disorot. Pilih key untuk melihat pasangan kolomnya." : "Pilih key untuk mengikuti relasi, atau nama tabel untuk membuka record."}</p>
+      <p aria-live="polite" className="mt-2 text-xs leading-5 text-muted-foreground">{selectedRelation ? <><code className="text-foreground">{selectedRelation.parent}.{selectedRelation.parentColumn}</code> = <code className="text-foreground">{selectedRelation.child}.{selectedRelation.childColumn}</code>. {selectedRelation.explanation}</> : recordSelection && activeRelations.size ? "Relasi record yang dipilih disorot. Pilih key untuk melihat pasangan kolomnya." : "Pilih PK atau FK untuk membaca hubungan kolom antartabel."}</p>
     </div>
   </div>;
 }

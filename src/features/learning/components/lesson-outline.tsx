@@ -2,12 +2,14 @@ type OutlineExercise = { id: string; title: string };
 
 export function LessonOutline({
   hasLab,
+  hasDataExplorer = false,
   exercises,
 }: {
   hasLab: boolean;
+  hasDataExplorer?: boolean;
   exercises: OutlineExercise[];
 }) {
-  if (!hasLab && exercises.length === 0) return null;
+  if (!hasLab && !hasDataExplorer && exercises.length === 0) return null;
 
   return (
     <nav aria-label="Navigasi materi">
@@ -23,6 +25,13 @@ export function LessonOutline({
               <li><a className="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring" href="#lab-query">Tulis query</a></li>
               <li><a className="block rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring" href="#lab-results">Hasil query</a></li>
             </ul>
+          </li>
+        )}
+        {hasDataExplorer && (
+          <li>
+            <a className="block min-h-11 rounded-md px-3 py-3 text-sm font-medium hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring" href="#database-explorer">
+              Jelajahi tabel dan relasi
+            </a>
           </li>
         )}
         {exercises.length > 0 && (

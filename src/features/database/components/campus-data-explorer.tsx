@@ -32,6 +32,7 @@ export function CampusDataExplorer({ snapshot: suppliedSnapshot, query = "", ste
         {tables.map((name) => <Button key={name} type="button" size="sm" className="px-3" variant={table === name ? "outline" : "ghost"} aria-pressed={table === name} aria-controls={`${id}-records`} onClick={() => chooseTable(name)}><span className="font-mono text-xs">{name}</span><span className="text-[11px] tabular-nums text-muted-foreground">{snapshot[name]!.length}</span></Button>)}
       </div>
     </div>
+    <p className="-mt-2 text-xs leading-5 text-muted-foreground sm:hidden">Pilih nama tabel untuk memfokuskan skema, lalu pilih key untuk melihat relasinya.</p>
     <DatabaseQueryDiagram dataset={dataset} query={query} step={step} snapshot={snapshot} selectedTable={table} onTableSelect={chooseTable} recordSelection={selected} />
     <section id={`${id}-records`} aria-label={`Data tabel ${table}`} className="overflow-hidden rounded-lg border border-input">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3">

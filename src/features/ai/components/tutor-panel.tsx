@@ -123,7 +123,7 @@ export function TutorPanel({
     {error && <p role="alert" className="mt-3 text-sm text-destructive">{error}</p>}
     {!unavailable && <form onSubmit={submit} className="mt-4 flex items-end gap-2">
       <label className="sr-only" htmlFor={`tutor-message-${exerciseId ?? lessonId}`}>Tulis pertanyaan untuk AI Tutor</label>
-      <textarea id={`tutor-message-${exerciseId ?? lessonId}`} value={draft} maxLength={1200} rows={2} onChange={(event) => setDraft(event.target.value)} placeholder={hasExecutionContext ? "Tanyakan tentang tabel, query, atau hasilnya…" : "Tanyakan konsep pada lesson ini…"} disabled={disabled} className="min-h-12 flex-1 resize-y rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-ring disabled:opacity-60" />
+      <textarea id={`tutor-message-${exerciseId ?? lessonId}`} value={draft} maxLength={1200} rows={2} onChange={(event) => setDraft(event.target.value)} placeholder={hasExecutionContext ? "Tanyakan tentang tabel, query, atau hasilnya…" : "Tanyakan konsep pada lesson ini…"} disabled={disabled} className="min-h-12 flex-1 resize-y rounded-md border border-input bg-background px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-ring disabled:opacity-60 sm:text-sm" />
       <Button type="submit" disabled={disabled || !draft.trim()} aria-label="Kirim pertanyaan"><Send size={16} aria-hidden="true" />Kirim</Button>
     </form>}
     <p className="mt-2 text-xs text-muted-foreground">{hasExecutionContext ? "Tutor menerima konteks lesson, query SQL, dan hasil yang terlihat. Gunakan Run pada lab untuk mencoba query." : "Tutor memakai konteks lesson aktif. Untuk membahas hasil query, buka SQL lab di materi terkait."}</p>

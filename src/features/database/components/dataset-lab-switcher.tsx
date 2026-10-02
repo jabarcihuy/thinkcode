@@ -12,7 +12,7 @@ export function DatasetLabSwitcher({ scenarios, lessonId }: { scenarios: readonl
   return <div>
     {scenarios.length > 1 && <div className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-6">
       <div><label htmlFor={id} className="text-sm font-semibold">Skema latihan</label><p className="mt-1 text-xs leading-5 text-muted-foreground">Ganti skema untuk mencoba konteks lain. Data dan query lab akan direset.</p></div>
-      <select id={id} value={index} onChange={(event) => setIndex(Number(event.target.value))} className="min-h-11 max-w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-ring">
+      <select id={id} value={index} onChange={(event) => setIndex(Number(event.target.value))} className="min-h-11 max-w-full rounded-md border border-input bg-background px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-ring sm:text-sm">
         {scenarios.map((item, position) => <option key={item.datasetId} value={position}>{getDataset(item.datasetId).title}</option>)}
       </select>
     </div>}

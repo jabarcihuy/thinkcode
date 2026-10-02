@@ -17,7 +17,7 @@ export function DatabaseLabPreview() {
         </div>
 
         <div className="border-b border-border bg-code-surface">
-          <pre className="overflow-x-auto px-4 py-2.5 font-mono text-[10px] leading-[1.65] text-code-foreground sm:px-5 sm:text-[11px]"><code><span className="text-muted-foreground">SELECT</span> s.name{"\n"}<span className="text-muted-foreground">FROM</span> students s{"\n"}<span className="text-muted-foreground">JOIN</span> enrollments e USING (student_id){"\n"}<span className="text-muted-foreground">JOIN</span> courses c USING (course_id){"\n"}<span className="text-muted-foreground">WHERE</span> c.course_name = &apos;Basis Data&apos;;</code></pre>
+          <pre className="overflow-x-auto px-4 py-2.5 font-mono text-[11px] leading-[1.65] text-code-foreground sm:px-5 sm:text-xs"><code><span className="text-muted-foreground">SELECT</span> s.name{"\n"}<span className="text-muted-foreground">FROM</span> students s{"\n"}<span className="text-muted-foreground">JOIN</span> enrollments e USING (student_id){"\n"}<span className="text-muted-foreground">JOIN</span> courses c USING (course_id){"\n"}<span className="text-muted-foreground">WHERE</span> c.course_name = &apos;Basis Data&apos;;</code></pre>
         </div>
 
         <div className="px-4 py-2.5 sm:px-5">

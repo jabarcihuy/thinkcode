@@ -9,7 +9,9 @@ import type { SqliteRow } from "@/features/database/domain/sql-query";
 type Props = { table: string; dataset: PracticeDataset; rows: SqliteRow[]; selection: RecordSelection | null; related: Set<string>; onSelect: (selection: RecordSelection | null) => void };
 
 export function CampusRecordTable({ table, dataset, rows, selection, related, onSelect }: Props) {
-  return <div className="overflow-x-auto">
+  return <>
+    <p className="px-4 py-2 text-xs leading-5 text-muted-foreground sm:hidden">Geser tabel ke samping untuk melihat kolom lainnya.</p>
+    <div role="region" aria-label={`Tabel ${table}. Geser ke samping untuk melihat semua kolom.`} tabIndex={0} className="overflow-x-auto focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring">
     <table className="w-full min-w-[26rem] border-collapse text-left text-sm">
       <caption className="sr-only">Record {table}. Pilih primary key pada record untuk menelusuri relasinya.</caption>
       <thead><tr className="border-b border-border bg-muted text-muted-foreground">{getDatasetTable(dataset, table).columns.map((column) => <th scope="col" key={column.name} className="px-4 py-3 font-medium"><span className="font-mono text-xs">{column.name}</span>{column.key && <span className="ml-1.5 text-[10px]">{column.key}</span>}</th>)}</tr></thead>
@@ -26,5 +28,6 @@ export function CampusRecordTable({ table, dataset, rows, selection, related, on
       })}</tbody>
     </table>
     {rows.length === 0 && <p className="px-4 py-8 text-sm text-muted-foreground">Tidak ada record pada tampilan ini.</p>}
-  </div>;
+    </div>
+  </>;
 }
