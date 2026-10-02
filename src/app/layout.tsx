@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import "./globals.css";
@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   title: { default: "Quethink", template: "%s | Quethink" },
   description: "Pelajari tabel, relasi, dan query SQL dengan data latihan yang dapat diamati langsung.",
 };
+
+export const viewport: Viewport = { viewportFit: "cover" };
 
 /**
  * Runs before the first paint, and now has one job only.

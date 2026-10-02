@@ -28,6 +28,10 @@ Three main content topics are Relasi, Write, and Read; learner progression follo
 
 Programming-language lessons, PTI mapping, external/paid query runner, arbitrary Supabase query access, SQL administration/DDL, bulk or unbounded data mutations, transaction control, 3D, AR, freeform scene authoring, app-wide infinite canvas, and unrelated course paths.
 
+## Parked for later
+
+- Add a separate pre-test page before the learning materials to measure starting understanding. The retryable exercises embedded in lessons remain formative practice and are not a pre-test. Decide question coverage, feedback, and how the result is used before implementing it.
+
 ## Completion gate
 
 The published path presents the three topics and submaterials in prerequisite order. User practice can inspect, predict, read, safely modify, verify, and reset the synthetic dataset. Progression, video, assessment, admin content flow, mobile usability, RLS, lint, typecheck, tests, and production build remain valid. No unrelated feature phase starts automatically.

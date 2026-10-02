@@ -15,7 +15,7 @@ export default async function ChapterPage({ params }: { params: Promise<{ pathSl
   if (!overview || !chapter) notFound();
   const lessons = overview.lessons.filter((lesson) => lesson.chapter_id === chapter.id);
 
-  return <div className="min-h-dvh"><LearningHeader account={account} />
+  return <div className="min-h-dvh pb-[calc(5rem+env(safe-area-inset-bottom))] lg:pb-0"><LearningHeader account={account} />
     <main id="main-content" className="mx-auto max-w-4xl px-5 py-12 sm:px-8 sm:py-16">
       <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground"><Link className="hover:text-accent" href={`/learn/${pathSlug}`}>{overview.path.title}</Link><span aria-hidden="true" className="px-2">/</span>Chapter {chapter.position}</nav>
       <h1 className="mt-8 text-3xl font-semibold tracking-tight sm:text-4xl">{chapter.title}</h1>

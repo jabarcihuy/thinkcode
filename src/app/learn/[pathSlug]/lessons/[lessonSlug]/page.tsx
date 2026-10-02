@@ -46,7 +46,7 @@ export default async function LessonPage({ params }: { params: Promise<{ pathSlu
       ? "Daftar isi materi dan visualisasi"
       : "Daftar isi materi dan latihan";
 
-  return <div className="min-h-dvh"><LearningHeader account={account} />
+  return <div className="min-h-dvh pb-[calc(5rem+env(safe-area-inset-bottom))] lg:pb-0"><LearningHeader account={account} />
     <main id="main-content" className="mx-auto max-w-6xl px-5 py-10 sm:px-8 sm:py-14">
       <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1 text-sm text-muted-foreground"><Link className="inline-flex min-h-11 items-center px-1 hover:text-accent" href={`/learn/${pathSlug}`}>{overview.path.title}</Link><span aria-hidden="true">/</span><Link className="inline-flex min-h-11 items-center px-1 hover:text-accent" href={`/learn/${pathSlug}/chapters/${chapter.id}`}>{chapter.title}</Link></nav>
       <div className="mt-9 grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_16rem] lg:gap-16">
