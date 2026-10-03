@@ -22,6 +22,14 @@ Explain in one sentence that Quethink teaches learners to understand relationshi
 
 The signed-in navigation provides separate **Chatbot** and **SQL Playground** entries. Chatbot uses the current or next available lesson as context, links to that lesson, and offers concept-level help; it does not claim to see a query unless the learner asks from an inline lesson lab. SQL Playground offers the registered Campus Mini, Katalog Buku, and Toko Mini synthetic datasets through the same browser SQLite Worker for independent, disposable practice. It requires login and is paused during an active assessment. Playground queries do not affect lesson progress.
 
+## Pembuat Skema
+
+Open it from the mobile Lainnya menu, SQL Playground, or the key/relationship lesson. Choose one guided case, add a table, edit its columns, mark one PK, and use selects to connect a FK to another table's compatible PK. On mobile use Susun → Diagram → Periksa; keyboard arrows/Home/End switch tabs. The diagram has native scrolling, zoom/reset, and a table-focus selector. Larger screens show editor and diagram/feedback side by side.
+
+Each case preserves its own local draft. Reset requires confirmation, storage failure is explained, and invalid stored data can be discarded explicitly. Feedback points to incomplete structure and asks for an explanation; after trying, learners can reveal a reference model. This optional tool does not complete lessons or determine scores and is paused during an active assessment.
+
+Videos remain optional disclosures within lesson material. They load a YouTube no-cookie iframe only after the learner chooses Putar video, can be closed, and always offer a link to YouTube if playback fails. Use the lesson's dataset and bounded SQL conventions rather than asking learners to install the tools shown in a video.
+
 ## Lesson workspace
 
 Desktop: Relasi uses the lesson content, sample tables, and key visualization. Read/Write use the lesson prompt/content, query editor, and result/visualization panels.

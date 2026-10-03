@@ -26,6 +26,12 @@ Bound message/history and SQL source context. Rate limit requests. Do not includ
 
 The visualizer receives only registered synthetic dataset rows and public selection state. It never receives Supabase clients, account records, cookies, private grading configuration, or credentials. Schema metadata uses the selected dataset’s allowlisted tables; record links use current FK matches. SVG/HTML rendering does not execute queries. SQLite execution stays in the bounded Worker. Table positions are predefined, records/results remain accessible DOM tables, and confirmed mutations update only the corresponding local snapshot. No 3D or WebGL runtime is loaded.
 
+## Visual modeling drafts
+
+The schema builder accepts only bounded, validated visual JSON; IDs/names are unique and FK links must target another table's matching-type PK. Render identifiers as escaped React text. Reject corrupt/oversized stored payloads and detach references when objects are removed or their identity/type changes. Draft storage contains only learner-created model metadata. No account token, secret, record data, private answer, DDL, or executable source is included. Schema drafts cannot initialize or extend the shipped SQL dataset registry.
+
+Authentication and an active-assessment check guard the page; errors fail closed. Its browser feedback is formative and has no progress/attempt/score mutation endpoint. Pre-test remains deferred. Video sources use validated HTTPS YouTube URLs, deferred iframe loading, and an external fallback; playback is an external service.
+
 ## Admin lesson preview
 
 `/admin/lessons/[lessonId]/preview` requires ADMIN on the server and rechecks authorization before privileged content reads. Draft and published lessons can be inspected without learner prerequisites. Reuse lesson prose, dataset labs, and exercise display; preview does not invoke grading, create attempts, mutate progress, or include AI Tutor. Exercise display fields are allowlisted and answer/test configuration is excluded. Learner routes and their progression rules remain unchanged.

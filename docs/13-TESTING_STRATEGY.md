@@ -44,6 +44,15 @@
 - Admin creates a draft lesson, previews it, and publishes it.
 - Mobile viewport near 360px has no critical overflow; desktop layout remains readable.
 
+## Guided schema builder and video
+
+- Validate bounded local JSON, names/IDs, unique tables/columns, one PK, FK endpoints/types, and duplicate/self relations. Reject corrupt/oversized storage.
+- Removing tables/columns and changing PK/type must clean stale FK links. Case switching/reload preserve separate drafts; unavailable storage keeps the current session and displays a notice.
+- Formative feedback gives structural next steps without accepting client scores or changing lesson progress.
+- Browser smoke at 360/768/1280: add/edit/remove table and column, connect PK/FK using selects, keyboard tabs, focus/scroll/zoom diagram, restore draft, reset confirmation, no page overflow. Verify guest rejection and assessment pause.
+- Video iframe loads after explicit activation only, closes correctly, has a descriptive title, uses validated HTTPS/no-cookie embed, and keeps an external fallback. Metadata verification is distinct from actual playback or full audiovisual review.
+- Student trial protocol and blank instruments are in docs/evaluation/2026-10-03-uji-mahasiswa. Browser QA is not a substitute for observing students.
+
 ## Required gate
 
 Run lint, typecheck, unit/integration tests available in the environment, and production build. Report unavailable live-provider or dashboard tests explicitly instead of claiming they passed.

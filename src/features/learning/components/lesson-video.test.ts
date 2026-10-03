@@ -7,5 +7,7 @@ describe("lesson video URL", () => {
     expect(youtubeVideoId("https://youtu.be/0r0isf8aSy4")).toBe("0r0isf8aSy4");
     expect(youtubeVideoId("https://youtube.com.evil.test/watch?v=UhYLAtbKER0")).toBeNull();
     expect(youtubeVideoId("javascript:alert(1)")).toBeNull();
+    expect(youtubeVideoId("http://youtube.com/watch?v=tfHe0qe9p44")).toBeNull();
+    expect(youtubeVideoId("ftp://youtube.com/watch?v=tfHe0qe9p44")).toBeNull();
   });
 });

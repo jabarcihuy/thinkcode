@@ -16,6 +16,7 @@ The three content topics are Relasi, Write, and Read. Required learner progressi
 - Reject DDL/schema changes, PRAGMA, transaction control, ATTACH, multiple statements, unsupported tables, bulk mutations, and unbounded writes.
 - Use a focused 2D schema visualizer with named tables, column types, PK/FK labels, and column-to-column relationship lines. Provide table/record selection, pan, zoom, fit, and reset. Keep positions predefined and mobile controls accessible; the app has no 3D viewer.
 - Videos are optional support. Assessments stay separate from retryable practice and never trust browser SQL results as official scores.
+- `/schema-builder` is a separate guided visual modeling exercise for tables, columns, PK/FK, and one-to-many relationships. Use bounded validated local drafts and automatic diagram positions. It pauses during assessment and never initializes the SQL Worker, generates executable DDL, or changes progress/scores. Mobile uses labeled forms and Susun/Diagram/Periksa tabs.
 - Keep USER/ADMIN roles, server-side authorization, RLS, progress, AI Tutor, and Admin CMS where they support the database course.
 - Preserve historical user data when replacing old learning content. Unpublish/archive old content; do not delete attempts, assessment results, or progress.
 - Do not add a server, paid runner, or new infrastructure for SQL execution.

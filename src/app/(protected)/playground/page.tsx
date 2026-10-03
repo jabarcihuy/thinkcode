@@ -22,6 +22,7 @@ export default async function PlaygroundPage() {
     <header className="mt-4 max-w-[72ch]">
       <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">SQL Playground</h1>
       <p className="mt-3 leading-7 text-muted-foreground">Tulis query pada data kampus, katalog buku, atau toko sintetis, prediksi hasilnya, lalu jalankan di browser. Perubahan data bisa direset dan tidak memengaruhi progres lesson.</p>
+      <Button asChild variant="outline" className="mt-4"><Link href="/schema-builder">Latihan menyusun skema</Link></Button>
     </header>
 
     {error ? <p role="alert" className="mt-8 border-y border-destructive/50 py-5 text-sm leading-6 text-destructive">Status assessment belum dapat diperiksa. Muat ulang halaman sebelum memakai playground.</p>

@@ -64,6 +64,7 @@ export default async function LessonPage({ params }: { params: Promise<{ pathSlu
           <div className="mt-5">{account ? <LessonStateLabel state={lesson.state} /> : <span className="text-sm font-medium text-accent">Pratinjau lesson</span>}</div>
           <div className="mt-10 border-t border-border pt-8"><LessonContent content={material.content} /></div>
           {isRelationMaterial && <CampusDataPreview />}
+          {account && lessonSlug === "key-dan-hubungan-antar-tabel" && <div className="mt-6"><Button asChild variant="outline"><Link href="/schema-builder">Coba menyusun skema sendiri</Link></Button></div>}
           {material.exampleSql && <DatasetLabSwitcher
             key={lesson.id}
             scenarios={lessonScenarios(lessonSlug, { title: `Praktik: ${lesson.title}`, prompt: getLessonLabPrompt(material.exampleSql, lessonSlug), sql: material.exampleSql })}

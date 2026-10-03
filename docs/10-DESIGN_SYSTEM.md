@@ -25,4 +25,6 @@ Show only what the current lesson teaches: table/source and fields, key relation
 
 ## Mobile
 
+The separate Pembuat Skema surface uses three mobile tabs, Susun/Diagram/Periksa, and stacked labeled forms. Columns are edited through controls rather than precision dragging. Keep the diagram in its own scrollable viewport at readable scale and provide direct table focus. On wider screens the editor and diagram/feedback may sit side by side. Reuse existing fonts, surfaces, touch targets, and focus states; auto-place tables.
+
 At approximately 360px, show one working area at a time: query, visualization, or result. Stack tables vertically inside the exercise canvas, keep pan/zoom controls touch sized, and let result tables scroll inside their own region.

@@ -21,7 +21,7 @@ export async function updateSession(request: NextRequest) {
   const { data } = await supabase.auth.getClaims();
   const claims = data?.claims;
   const path = request.nextUrl.pathname;
-  const protectedPath = ["/dashboard", "/admin", "/chatbot", "/playground"].some((prefix) =>
+  const protectedPath = ["/dashboard", "/admin", "/chatbot", "/playground", "/schema-builder", "/profile"].some((prefix) =>
     path === prefix || path.startsWith(`${prefix}/`),
   );
   let redirectTo: string | null = null;

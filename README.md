@@ -54,6 +54,10 @@ Siklus lab:
 Query dijalankan oleh SQLite pada data sintetis Kampus Mini, Katalog Buku, atau Toko Mini di browser. Query tidak terhubung ke data pengguna atau database Supabase. Contoh utama dan practice wajib memakai Kampus Mini; setiap lesson juga punya latihan opsional pada skema lain. Lab menyediakan tugas lintas konteks yang sesuai materi. Ganti skema memulai sesi lokal baru. Practice dapat dicoba ulang; AI Tutor dapat membantu saat belajar/practice jika tersedia.
 Pengguna yang sudah login juga dapat membuka **Chatbot** dan **SQL Playground** dari navigasi akun. Chatbot memakai lesson yang sedang/akan dipelajari sebagai konteks dan menyediakan tautan kembali ke lesson. SQL Playground menyediakan pilihan ketiga skema di Worker lokal, tidak mengubah progres, dan dijeda selama assessment aktif.
 
+**Pembuat Skema** tersedia dari menu mobile **Lainnya**, SQL Playground, dan materi key/relasi. Susun model Peminjaman buku atau Pesanan toko lewat tabel, kolom, PK, dan FK. Di ponsel gunakan tab **Susun → Diagram → Periksa**. Draft tiap kasus tersimpan di browser, dan petunjuk struktur/contoh model membantu membandingkan alasan desain. Latihan visual ini dijeda saat assessment; tidak menjalankan DDL, tidak mengubah database lab, dan tidak mengubah progres atau skor.
+
+Empat materi menyediakan video Indonesia opsional tentang bentuk tabel, SELECT, WHERE, dan INNER JOIN. Iframe baru dimuat saat dipilih. Contoh video menggunakan MySQL/MariaDB; catatan materi mengarahkan peserta kembali ke SQLite Quethink. Bukti kurasi dan keterbatasan review tersedia di [catatan video](docs/research/2026-10-03-video-pendamping-basis-data.md).
+
 ### 4. Selesaikan practice untuk membuka materi
 
 Setiap lesson mempunyai dua latihan eksplorasi opsional dan satu practice wajib. Practice wajib harus lulus agar lesson ditandai selesai; latihan opsional tidak menghambat progres. Setelah itu, lesson berikutnya terbuka dan progres dashboard diperbarui. Pengguna dapat mengulang lesson yang sudah selesai.
@@ -80,6 +84,12 @@ Next.js full-stack, TypeScript, Supabase Auth/PostgreSQL, dan SQLite WASM di bro
 ## Pemeriksaan
 
 `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`.
+
+`npm run test:schema:integration` menguji pembuat skema, draft, video, dan layout 360/768/1280px pada production server. Memerlukan Chromium lokal dan kredensial Supabase server; akun uji sementara dihapus setelah tes.
+
+Paket [uji mahasiswa](docs/evaluation/2026-10-03-uji-mahasiswa/README.md) menyediakan protokol, tugas peserta, rubrik, dan lembar observasi kosong. Sesi nyata serta efektivitas bahan ajar belum diuji. Pre-test produk tetap ditunda.
+
+Untuk menambahkan video pada database existing dengan aman, jalankan migration video yang terbaru; alternatif seed konten idempoten: `npm run seed:videos`. Seed membaca `.env`/`.env.local`, memakai secret server lokal, dan hanya menambahkan video pada empat lesson yang dipetakan; tidak mencatat histori migration. Jika seed sudah diterapkan, migration tetap dapat dijalankan tanpa menggandakan video.
 
 ### Pratinjau materi oleh admin
 

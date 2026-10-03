@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, ClipboardCheck, Database, House, MessageCircle, MoreHorizontal, Shield, UserRound } from "lucide-react";
+import { BookOpen, ClipboardCheck, Database, House, MessageCircle, MoreHorizontal, Network, Shield, UserRound } from "lucide-react";
 import type { MouseEvent } from "react";
 import { DEFAULT_LEARNING_PATH_SLUG } from "@/features/learning/config";
 import type { Role } from "@/types/auth";
@@ -19,7 +19,7 @@ function closeMoreMenu(event: MouseEvent<HTMLAnchorElement>) {
 
 export function MobileBottomNavigation({ role }: { role: Role }) {
   const pathname = usePathname();
-  const activeMore = ["/playground", "/chatbot", "/admin"].some((href) => isCurrent(pathname, href));
+  const activeMore = ["/playground", "/schema-builder", "/chatbot", "/admin"].some((href) => isCurrent(pathname, href));
 
   return <nav aria-label="Navigasi utama" className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background pb-[env(safe-area-inset-bottom)] lg:hidden">
     <ul className="mx-auto grid max-w-xl grid-cols-5 gap-1 px-2 pt-1">
@@ -40,6 +40,9 @@ export function MobileBottomNavigation({ role }: { role: Role }) {
           <div className="absolute bottom-[calc(100%+0.5rem)] left-1/2 z-50 w-56 -translate-x-1/2 rounded-lg border border-border bg-background p-1 shadow-surface">
             <Link href="/playground" aria-current={isCurrent(pathname, "/playground") ? "page" : undefined} onClick={closeMoreMenu} className="flex min-h-11 items-center gap-3 rounded-md px-3 text-sm hover:bg-secondary focus-visible:outline-2 focus-visible:outline-ring">
               <Database size={17} aria-hidden="true" />SQL Playground
+            </Link>
+            <Link href="/schema-builder" aria-current={isCurrent(pathname, "/schema-builder") ? "page" : undefined} onClick={closeMoreMenu} className="flex min-h-11 items-center gap-3 rounded-md px-3 text-sm hover:bg-secondary focus-visible:outline-2 focus-visible:outline-ring">
+              <Network size={17} aria-hidden="true" />Pembuat Skema
             </Link>
             <Link href="/chatbot" aria-current={isCurrent(pathname, "/chatbot") ? "page" : undefined} onClick={closeMoreMenu} className="flex min-h-11 items-center gap-3 rounded-md px-3 text-sm hover:bg-secondary focus-visible:outline-2 focus-visible:outline-ring">
               <MessageCircle size={17} aria-hidden="true" />Chatbot

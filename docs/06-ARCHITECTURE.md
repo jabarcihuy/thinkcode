@@ -50,6 +50,14 @@ The standalone SQL Playground uses the selected registered synthetic seed and Wo
 
 Assessments use deterministic server-graded question formats: schema/key identification, query/result prediction, selecting a correct query, and ordering clauses. Browser-reported practice SQL results are never accepted as an official score. Arbitrary submitted SQL is not executed by the Vercel server.
 
+## Guided visual modeling
+
+`/schema-builder` is protected and checks the active assessment state before displaying practice helpers. `src/features/schema-builder` owns its draft validation, local storage, modeling scenarios, structural feedback, and diagram UI. Drafts are bounded to six tables, eight columns per table, and twelve valid FK links; a stored JSON payload larger than 50 KB or with invalid structure is rejected. Names, object IDs, unique identifiers, PK identity, FK endpoints, and compatible types are validated.
+
+The model never enters `PracticeDataset`, the SQLite Worker, a query API, Supabase, AI, or grading. Tables have automatic responsive positions; mobile editing uses forms and three task tabs. Each guided scenario has its own versioned browser-local draft; reload restores valid drafts. Deleting an object removes its links, and changing key identity/type detaches stale relationships. The reference model is public formative content, not a hidden assessment answer.
+
+Video references are stored as optional Markdown content in existing lessons, editable/previewable through Admin CMS. The append-only video content migration and `scripts/seed-database-videos.mjs` preserve original material/history and are idempotent by video URL. The script uses a server secret locally, never in application UI.
+
 ## Layers
 
 - src/app: pages, route protection, server APIs.

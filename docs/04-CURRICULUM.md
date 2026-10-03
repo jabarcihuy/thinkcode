@@ -109,6 +109,12 @@ A lesson is designed for roughly 20–40 minutes; each main topic spans several 
 
 This is a planning estimate for independent study, not an academic credit-hour or institution-specific syllabus claim.
 
+## Optional modeling and video support
+
+After key/relationship concepts, learners can use `/schema-builder` to model Peminjaman buku or Pesanan toko. They add tables, typed columns, one PK per table, and FK links through labeled controls. Structural feedback and a reference explanation support reasoning; alternative meaningful names are acceptable. This is optional formative work, separate from mandatory practice, lesson unlocking, and official assessment. Drafts remain local, and the diagram is not an executable schema.
+
+Four optional Indonesian video references are curated for Membaca Bentuk Data, SELECT/FROM, WHERE, and INNER JOIN. Source metadata/descriptions were verified on 3 October 2026; full audiovisual review remains pending. Show a topic focus, MySQL/MariaDB-to-SQLite caveat, and reflection prompt with each reference. Hold broader Write videos until an appropriate safe segment is reviewed. See [video evidence](research/2026-10-03-video-pendamping-basis-data.md).
+
 ## Content boundaries
 
 **Included:** relational structure, keys and relationships, read queries, basic aggregation, and constrained single-row `INSERT`/`UPDATE`/`DELETE` on synthetic SQLite data.
