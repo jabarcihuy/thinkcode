@@ -17,11 +17,14 @@
     "test:flow:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-practice-flow.mjs",
     "test:admin:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-admin-cms.mjs",
     "test:schema:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-schema-builder.mjs",
-    "seed:videos": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/seed-database-videos.mjs"
+    "seed:videos": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/seed-database-videos.mjs",
+    "seed:reading": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/seed-reading-materials.mjs",
+    "test:materials:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-materials.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
     "@monaco-editor/react": "^4.7.0",
+    "@pdf-lib/fontkit": "1.1.1",
     "@radix-ui/react-slot": "^1.2.3",
     "@sqlite.org/sqlite-wasm": "^3.53.4-build1",
     "@supabase/ssr": "^0.7.0",
@@ -36,12 +39,16 @@
     "magic-string": "^1.4.2",
     "monaco-editor": "^0.53.0",
     "next": "16.3.6",
+    "pdf-lib": "1.17.1",
     "quickjs-emscripten": "^0.32.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-markdown": "^10.1.0",
+    "remark-gfm": "4.0.1",
+    "remark-parse": "11.0.0",
     "server-only": "^0.0.1",
     "tailwind-merge": "^3.3.1",
+    "unified": "11.0.5",
     "zod": "^4.1.0"
   },
   "devDependencies": {

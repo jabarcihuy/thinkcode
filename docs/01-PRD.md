@@ -6,7 +6,7 @@ Help beginning university learners understand relational data and answer practic
 
 ## Core learner flow
 
-Landing → account → dashboard → Database Fundamentals → Relasi → Read → Write → practice → separate assessments.
+Landing → account → dashboard → Materi 1–11 → reading/PDF → separate practice → separate assessments. Knowledge still progresses Relasi → Read → Write.
 
 ## Learners can
 
@@ -16,14 +16,14 @@ Landing → account → dashboard → Database Fundamentals → Relasi → Read 
 - Safely change synthetic practice data with one-row `INSERT`, targeted `UPDATE`, and guarded `DELETE`.
 - Preview the target of a change, see affected rows, and reset the dataset.
 - Predict results, run queries, compare outcomes, and explain their reasoning.
-- Reuse lesson notes and optional Indonesian video references.
+- Read one complete material without embedded labs/forms, download its PDF, and optionally watch its Indonesian video.
 - Retry formative practice without penalty.
 - Take checkpoints and a final assessment separately from practice.
 - See their progress and next available lesson.
 
 ## Three main learning topics
 
-Content is organized under Relasi, Write, and Read. The prerequisite sequence is Relasi → Read → Write, so learners understand tables and how to select target rows before changing data.
+Internal content grouping uses Relasi, Write, and Read. Learner navigation is a flat numbered list, not topic/chapter/submateri pages. The prerequisite sequence is Relasi → Read → Write, so learners understand tables and how to select target rows before changing data.
 
 ## Administrators can
 
@@ -40,7 +40,7 @@ No JavaScript or general programming course; no PTI mapping; no C++, Python, DOM
 - Keep Campus Mini as the consistent anchor, and offer small Katalog Buku and Toko Mini schemas for concept-aligned transfer activities and Playground.
 - Run learner SQL only in local SQLite in a disposable browser Worker.
 - Permit only the SQL subset needed by the lesson: read queries and bounded single-row data changes.
-- Keep the learning UI focused on the prompt, query editor, Run/Check, result or change summary, and 2D schema and record exploration.
+- Keep reading focused on prose, static examples/tables, summary and PDF. Keep the separate practice UI focused on the prompt, query editor, Run/Check, result/change summary, and 2D exploration.
 - SQL editing may use a labeled plain editor; no full IDE features are needed.
 - Show progress and lock state with text as well as color.
 - Never use practice output reported by the browser as official assessment evidence.

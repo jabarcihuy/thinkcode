@@ -19,18 +19,18 @@ Learners can:
 
 The three requested content groups are **Relasi**, **Write**, and **Read**. They are curriculum categories, while prerequisites set the learner sequence: **Relasi → Read → Write**. Read is placed before Write because targeted updates and deletions depend on selecting and checking the intended rows.
 
-Each topic is a chapter; each material is a lesson. A lesson may contain smaller sections such as Concept, Example, Table View, Prediction, Query, Result, Practice, and Summary.
+Learner navigation is a flat list **Materi 1–11**. Each material is one reading unit, not a container of separately navigated submateri. Concept headings are prose structure only. Reading contains explanation, static examples/tables, summary and optional video, and is downloadable as an A4 PDF. Interactive tables, prediction, queries, results, AI and exercises are on a separate practice page for that material. Existing chapter/lesson records remain internal grouping and identity metadata; checkpoints and completion history are preserved.
 
 ### 1. Relasi
 
-| Material / lesson | Submateri | Learning evidence |
+| Material / lesson | Concept coverage | Learning evidence |
 |---|---|---|
 | Membaca Bentuk Data | Database and table; schema vs records; row/record and column/attribute; inspect the Campus Mini tables | Correctly identify a table, one record, a column, and the schema |
 | Key dan Hubungan Antar Tabel | Primary key; foreign key; one-to-many; many-to-many through a bridge table; follow `students → enrollments → courses` | Identify PK/FK pairs and explain why enrollments connects students with courses |
 
 ### 2. Read — query untuk membaca data
 
-| Material / lesson | Submateri | Learning evidence |
+| Material / lesson | Concept coverage | Learning evidence |
 |---|---|---|
 | Mengambil Data dengan `SELECT` | `SELECT`, `FROM`, choosing requested columns, `*` for initial inspection | Return the requested columns from the correct table |
 | Memilih Baris dengan `WHERE` | Comparisons, boundaries, `AND`, `OR`, parentheses | Predict and explain which records satisfy the condition |
@@ -41,7 +41,7 @@ Each topic is a chapter; each material is a lesson. A lesson may contain smaller
 
 ### 3. Write — perintah untuk mengubah data
 
-| Material / lesson | Submateri | Learning evidence |
+| Material / lesson | Concept coverage | Learning evidence |
 |---|---|---|
 | Menambahkan Record dengan `INSERT` | One row; explicit column list; `VALUES`; required values; primary/foreign key constraints | Insert one valid row and explain a rejected duplicate or invalid foreign key |
 | Mengubah Record dengan `UPDATE` | `SET`; select target rows first; `WHERE` with a primary key; inspect affected rows | Preview the target, update only the intended row, and verify the resulting value |
@@ -49,13 +49,13 @@ Each topic is a chapter; each material is a lesson. A lesson may contain smaller
 
 The Write sequence is intentionally conservative: `INSERT` first, then `UPDATE`, then `DELETE`. For `UPDATE` and `DELETE`, the learner previews the target using a `SELECT` with the same predicate before confirming. No lesson teaches an unbounded update/delete as an acceptable action.
 
-## Investigasi Kampus Mini: latihan per submateri
+## Separate practice: Investigasi Kampus Mini
 
-Each lesson has three focused subtopics, two optional exploration checks, one mandatory closing practice, and one optional transfer check on a different schema. Exploration uses actual synthetic records, PK/FK links, and local query or mutation results. Formative checks use server-side deterministic answer keys; browser output does not determine official scores. Run and record exploration do not change completion.
+Each material has a separate practice page with two optional concept checks, one mandatory closing practice, and one optional transfer check on a different schema. These checks are exercises, not submateri or extra reading units. Exploration uses actual synthetic records, PK/FK links, and local query or mutation results. Formative checks use server-side deterministic answer keys; browser output does not determine official scores. Run and record exploration do not change completion.
 
 The 2D schema visualizer connects named PK/FK columns. Select tables and records to follow real relationships, including confirmed local mutations. SQL-free Relasi lessons do not introduce query syntax.
 
-| Material | Submateri 1 / exploration | Submateri 2 / exploration | Submateri 3 / mandatory practice |
+| Material | Optional practice A | Optional practice B | Required practice |
 |---|---|---|---|
 | Membaca Bentuk Data | Tabel: Temukan tabel yang tepat | Kolom: Kolom atau nilai? | Record dan schema: Bedakan isi dan struktur |
 | Key dan Hubungan Antar Tabel | Primary key: Identitas bukan nama | Foreign key: Ikuti foreign key | Jalur relasi: Telusuri pendaftaran Alya |
@@ -88,7 +88,7 @@ The same concepts also appear in two transfer contexts:
 | Katalog Buku | `authors(author_id, name, city)`, `books(book_id, title, author_id, stock)` | Two tables, one-to-many; table/column identification, SELECT, stock filtering, author-book JOIN, safe INSERT and DELETE |
 | Toko Mini | `customers(customer_id, name, city)`, `orders(order_id, customer_id, status)`, `products(product_id, name, price)`, `order_items(item_id, order_id, product_id, quantity)` | Four tables, chained and bridging relationships; key navigation, price sorting, counting orders, grouped quantity totals, targeted UPDATE |
 
-Relasi lessons let learners compare all three schemas without SQL. Read/Write labs offer the original campus task and one concept-aligned transfer task. Each lesson has an optional position-4 transfer exercise with an explicit public `datasetId`; its private answer remains server-side. Existing mandatory IDs and progression rules are preserved. SQL Playground offers all three contexts. The interface uses one compact schema selector, not several canvases at once; changing schema resets lab data, source query, prediction, selection, and results.
+Relasi practice pages let learners compare all three schemas without SQL. Read/Write labs offer the original campus task and one concept-aligned transfer task. Each lesson has an optional position-4 transfer exercise with an explicit public `datasetId`; its private answer remains server-side. Existing mandatory IDs and progression rules are preserved. SQL Playground offers all three contexts. The interface uses one compact schema selector, not several canvases at once; changing schema resets lab data, source query, prediction, selection, and results.
 
 For Write lessons, seed data should include a clearly designated practice record or disposable copy so required lessons can be repeated without relying on destructive changes to shared course state. Reset restores a known seed.
 
@@ -113,7 +113,7 @@ This is a planning estimate for independent study, not an academic credit-hour o
 
 After key/relationship concepts, learners can use `/schema-builder` to model Peminjaman buku or Pesanan toko. They add tables, typed columns, one PK per table, and FK links through labeled controls. Structural feedback and a reference explanation support reasoning; alternative meaningful names are acceptable. This is optional formative work, separate from mandatory practice, lesson unlocking, and official assessment. Drafts remain local, and the diagram is not an executable schema.
 
-Four optional Indonesian video references are curated for Membaca Bentuk Data, SELECT/FROM, WHERE, and INNER JOIN. Source metadata/descriptions were verified on 3 October 2026; full audiovisual review remains pending. Show a topic focus, MySQL/MariaDB-to-SQLite caveat, and reflection prompt with each reference. Hold broader Write videos until an appropriate safe segment is reviewed. See [video evidence](research/2026-10-03-video-pendamping-basis-data.md).
+Four optional Indonesian video references are curated for Membaca Bentuk Data, SELECT/FROM, WHERE, and INNER JOIN. Source metadata/descriptions were verified on 3 October 2026; full audiovisual review remains pending. Show a topic focus, MySQL/MariaDB-to-SQLite caveat, with each reference; reflection belongs to practice. Hold broader Write videos until an appropriate safe segment is reviewed. See [video evidence](research/2026-10-03-video-pendamping-basis-data.md).
 
 ## Content boundaries
 

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { getCurrentAccount } from "@/lib/auth/session";
-import { ChapterSequence } from "@/features/learning/components/chapter-sequence";
+import { MaterialList } from "@/features/learning/components/material-list";
 import { LearningHeader } from "@/features/learning/components/learning-header";
 import { ProgressSummary } from "@/features/learning/components/progress-summary";
 import { getLearningOverview } from "@/features/learning/data/learning-repository";
@@ -24,40 +24,17 @@ export default async function LearningPathPage({ params }: { params: Promise<{ p
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">{overview.path.title}</h1>
         <p className="mt-4 max-w-[72ch] text-base leading-7 text-muted-foreground">{overview.path.description}</p>
       </div>
-      {/*
-        Column balance: the chapter list on the left runs many screens tall, so
-        the right column carries the chapter index and stays sticky. A narrow
-        sidebar holding one short card left most of the viewport empty and
-        pushed the fold deep into the list (the design detector flagged it).
-      */}
       <div className="mt-12 grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_16rem] lg:gap-12">
-        <div className="min-w-0"><ChapterSequence chapters={overview.chapters} lessons={overview.lessons} pathSlug={pathSlug} authenticated={Boolean(account)} /></div>
+        <div className="min-w-0"><MaterialList lessons={overview.lessons} pathSlug={pathSlug} authenticated={Boolean(account)} /></div>
         <aside className="space-y-6 lg:sticky lg:top-8" aria-label="Ringkasan jalur belajar">
           <div className="rounded-lg border border-border bg-secondary/50 p-5">
             {account ? <>
               <ProgressSummary metrics={overview.metrics} compact />
-              {current && <div className="mt-5 border-t border-border pt-5"><p className="text-sm text-muted-foreground">Lanjutkan dari</p><p className="mt-1 text-sm font-semibold leading-snug">{current.title}</p><Button asChild className="mt-4 w-full"><Link href={lessonHref(pathSlug, current.slug)}>Buka lesson</Link></Button></div>}
-              {!current && overview.metrics.totalRequiredLessons > 0 && <p className="mt-5 border-t border-border pt-5 text-sm font-medium text-accent">Semua lesson wajib yang tersedia sudah selesai.</p>}
-            </> : <><h2 className="text-lg font-semibold">Mulai belajar terarah</h2><p className="mt-3 text-sm leading-6 text-muted-foreground">Baca lesson preview, lalu buat akun untuk menyimpan progres dan membuka jalur belajar.</p><Button asChild className="mt-5 w-full"><Link href="/register">Buat akun</Link></Button></>}
+              {current && <div className="mt-5 border-t border-border pt-5"><p className="text-sm text-muted-foreground">Lanjutkan dari</p><p className="mt-1 text-sm font-semibold leading-snug">{current.title}</p><Button asChild className="mt-4 w-full"><Link href={lessonHref(pathSlug, current.slug)}>Baca materi</Link></Button></div>}
+              {!current && overview.metrics.totalRequiredLessons > 0 && <p className="mt-5 border-t border-border pt-5 text-sm font-medium text-accent">Semua materi wajib yang tersedia sudah selesai.</p>}
+            </> : <><h2 className="text-lg font-semibold">Mulai belajar terarah</h2><p className="mt-3 text-sm leading-6 text-muted-foreground">Baca materi pratinjau, lalu buat akun untuk menyimpan progres dan membuka jalur belajar.</p><Button asChild className="mt-5 w-full"><Link href="/register">Buat akun</Link></Button></>}
           </div>
 
-          {/* Chapter index: real navigation for a long page, not filler. */}
-          <nav aria-label="Indeks chapter" className="rounded-lg border border-border p-5">
-            <h2 className="text-sm font-semibold">Chapter</h2>
-            <ol className="mt-3 space-y-2">
-              {overview.chapters.map((chapter) => (
-                <li key={chapter.id}>
-                  <Link
-                    href={`/learn/${pathSlug}/chapters/${chapter.id}`}
-                    className="flex items-baseline gap-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-                  >
-                    <span className="font-mono text-xs tabular-nums">{String(chapter.position).padStart(2, "0")}</span>
-                    <span className="leading-snug">{chapter.title}</span>
-                  </Link>
-                </li>
-              ))}
-            </ol>
-          </nav>
         </aside>
       </div>
     </main>

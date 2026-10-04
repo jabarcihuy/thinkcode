@@ -35,3 +35,7 @@ Authentication and an active-assessment check guard the page; errors fail closed
 ## Admin lesson preview
 
 `/admin/lessons/[lessonId]/preview` requires ADMIN on the server and rechecks authorization before privileged content reads. Draft and published lessons can be inspected without learner prerequisites. Reuse lesson prose, dataset labs, and exercise display; preview does not invoke grading, create attempts, mutate progress, or include AI Tutor. Exercise display fields are allowlisted and answer/test configuration is excluded. Learner routes and their progression rules remain unchanged.
+
+## Material downloads
+
+Reading, practice and PDF share published-material and sequential-unlock authorization. Guests can only download preview material; signed-in users cannot download locked material by URL. A PDF contains public prose/examples and optional video URLs, never exercises, answer keys, private grader data or credentials. HTML/resources are not executed or fetched; document length, page count and table size are bounded. Downloading/reading never changes completion. Practice additionally requires login and is paused while assessment is active.

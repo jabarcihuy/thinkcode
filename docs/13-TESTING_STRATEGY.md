@@ -66,3 +66,7 @@ Run lint, typecheck, unit/integration tests available in the environment, and pr
 - SQL table-answer grading accepts spaces around separators and equivalent numeric cells, while preserving row order, column count, text, and wrong values.
 - Private answer keys and feedback configuration are absent from public content reads.
 - Browser QA: key/table/record selection, pan/zoom/fit/reset, keyboard access, mobile table focus, vertical page scrolling, and 360/768/1280px layout without critical overflow.
+
+## Reading-only material regression
+
+Run `npm run test:materials:integration` against the production build and remote Supabase with temporary accounts that are deleted afterwards. Verify flat Materi 1–11 navigation, absence of embedded lab/exercise/AI controls, valid preview PDF downloads, denied non-preview guest and locked authenticated PDFs/practice, friendly retryable download failure, and no progress writes from reading/download. Capture list, reading and practice at 360/768/1280px with no page overflow. `test:flow:integration` still checks mandatory practice unlocking and all checkpoints/final, and downloads all 11 PDFs after access is earned. PDF unit tests cover safe Markdown, Unicode, A4, code/tables, pagination and failure responses; render generated PDFs for visual inspection.

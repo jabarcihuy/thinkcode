@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { randomBytes, randomUUID } from "node:crypto";
 import { spawn } from "node:child_process";
+import { mkdir, writeFile } from "node:fs/promises";
 import { createServerClient } from "@supabase/ssr";
 import { createClient } from "@supabase/supabase-js";
 import { chromium } from "playwright-core";
@@ -181,6 +182,9 @@ try {
   await page.locator(`a[href="/learn/${pathSlug}/lessons/${lessons[0].slug}"]`).first().click();
   await page.waitForURL(new RegExp(`/learn/${pathSlug}/lessons/${lessons[0].slug}$`));
   await page.locator("main h1").filter({ hasText: lessons[0].title }).waitFor();
+  assert.equal(await page.locator("#lesson-practice, #database-sql").count(), 0, "Reading must not embed practice or lab.");
+  await page.getByRole("link", { name: "Buka latihan materi 1" }).click();
+  await page.waitForURL(`${site}/learn/${pathSlug}/lessons/${lessons[0].slug}/practice`);
   const dataPreview = page.getByRole("region", { name: "Jelajahi tabel dan relasi", exact: true });
   await dataPreview.waitFor();
   assert.equal(await dataPreview.getByRole("table").count(), 1, "Relasi shows one selectable record table at a time.");
@@ -189,9 +193,9 @@ try {
   await tableChoices.getByRole("button", { name: /^courses/ }).click();
   await tableChoices.getByRole("button", { name: /^students/ }).click();
   assert.equal(await page.locator("#database-sql").count(), 0, "Relasi should not show a SQL editor.");
-  await page.getByRole("heading", { name: "Latihan per submateri" }).waitFor();
+  await page.getByRole("heading", { name: "Latihan materi 1" }).waitFor();
   await page.getByRole("heading", { name: exercisesByLesson.get(lessons[0].id)[0].title }).waitFor();
-  await page.getByRole("button", { name: "Mulai lesson" }).click();
+  await page.getByRole("button", { name: "Mulai latihan" }).click();
   await page.getByText("Sedang berjalan").waitFor();
   const tutorHistory = await call(learner, `/api/ai/tutor?lessonId=${lessons[0].id}`);
   assert.equal(tutorHistory.response.status, 200, `Contextual chatbot history failed: ${JSON.stringify(tutorHistory.payload)}`);
@@ -210,7 +214,7 @@ try {
   await page.locator("#lab-results").getByRole("cell", { name: "Alya" }).waitFor();
   const playgroundWidths = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));
   assert.ok(playgroundWidths.content <= playgroundWidths.viewport, `SQL Playground overflowed mobile width: ${JSON.stringify(playgroundWidths)}.`);
-  await page.goto(`${site}/learn/${pathSlug}/lessons/${lessons[0].slug}`, { waitUntil: "domcontentloaded" });
+  await page.goto(`${site}/learn/${pathSlug}/lessons/${lessons[0].slug}/practice`, { waitUntil: "domcontentloaded" });
   await page.getByRole("button", { name: "Atur ulang" }).waitFor();
   const relationCanvas = page.getByRole("group", { name: "Canvas struktur tabel basis data" });
   const tableCanvas = relationCanvas.getByRole("group", { name: /^Area skema\./ });
@@ -246,9 +250,17 @@ try {
   assert.ok(finalAssessment);
   await passAssessment(learner, finalAssessment, lessons.at(-1).id, exercisesByLesson.get(lessons.at(-1).id)[0].id);
 
+  for (const [index, material] of lessons.entries()) {
+    const pdf = await fetch(`${site}/learn/${pathSlug}/lessons/${material.slug}/pdf`, { headers: { Cookie: learner.cookie() } });
+    assert.equal(pdf.status, 200, `PDF for material ${index + 1} failed.`);
+    assert.equal(pdf.headers.get("content-type"), "application/pdf");
+    const bytes = Buffer.from(await pdf.arrayBuffer());
+    await mkdir("/tmp/quethink-material-pdfs", { recursive: true });
+    await writeFile(`/tmp/quethink-material-pdfs/materi-${index + 1}.pdf`, bytes);
+  }
   const readLesson = lessons.find((lesson) => lesson.slug === "memilih-sumber-dan-kolom");
   assert.ok(readLesson, "The first Read material should be present.");
-  await page.goto(`${site}/learn/${pathSlug}/lessons/${readLesson.slug}`, { waitUntil: "domcontentloaded" });
+  await page.goto(`${site}/learn/${pathSlug}/lessons/${readLesson.slug}/practice`, { waitUntil: "domcontentloaded" });
   await page.getByRole("heading", { name: "Praktik di lab" }).waitFor();
   const labRegion = page.getByRole("region", { name: "Praktik query basis data" });
   const sqlEditor = labRegion.locator("#database-sql");

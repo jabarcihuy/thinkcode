@@ -9,11 +9,12 @@ Calm, clear, educational, technical, and focused on understanding data. A learne
 - One primary action per screen.
 - Use text labels with color; never communicate match state by color alone.
 - Keep SQL editor, result table, and table canvas visually related. In each exercise, stack data/table, SQL editor, then output/change summary vertically; stack practice prompt and response controls vertically too.
-- Keep a lesson outline in the desktop sidebar and use a compact collapsible outline on mobile.
+- Reading pages use one comfortable column and a visible Unduh PDF control; no lab, exercise, AI panel or submateri outline. The flat material list uses Materi N, title, summary and a textual progress state.
+- On separate practice pages, keep a lab/exercise outline in the desktop sidebar and a compact collapsible outline on mobile.
 - Use a 2D schema visualizer inspired by the readable table/column structure of Supabase Studio. Attach FK connections to the exact columns; show SQLite types and PK/FK labels. Keep pan/zoom/fit/reset together in one restrained toolbar. Select a table to inspect records below; no 3D or app-wide canvas.
 - Use a compact labeled schema selector for transfer tasks and Playground. Render one active schema at a time, with its actual table count and dataset title. Explain that switching restarts local lab state; exercise canvases stay fixed to their own dataset.
 - Avoid repeated cards, decorative animation, glass effects, and dense controls.
-- Keep help and optional video near the lesson concept.
+- Keep optional video near the reading concept; interactive help belongs to practice.
 
 ## Typography and components
 

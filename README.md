@@ -26,7 +26,7 @@ Landing page
 
 ### 1. Masuk dan lihat langkah berikutnya
 
-Setelah daftar atau login, pengguna tiba di dashboard. Dashboard menampilkan progres, unit yang sedang dipelajari, lesson berikutnya, dan checkpoint yang sudah terbuka. Pengguna baru memilih **Mulai belajar**; pengguna yang kembali memilih **Lanjutkan belajar**.
+Setelah daftar atau login, pengguna tiba di dashboard. Dashboard menampilkan progres, materi berikutnya, dan checkpoint yang sudah terbuka. Pengguna baru memilih **Mulai belajar**; pengguna yang kembali memilih **Lanjutkan belajar**.
 
 ### 2. Ikuti tiga materi utama
 
@@ -38,25 +38,13 @@ Konten dikelompokkan sebagai **Relasi**, **Write**, dan **Read**. Urutan belajar
 
 Lesson berikutnya terbuka setelah practice wajib dan checkpoint prasyarat selesai. Lesson terkunci juga diperiksa di server, jadi URL langsung tidak dapat melewati urutan belajar.
 
-### 3. Belajar dan bereksperimen di lesson
+### 3. Membaca materi dan mengunduh PDF
 
-Pada setiap unit, pengguna membaca konsep dan contoh, lalu mengamati tabel, kolom, key, serta relasinya. Video berbahasa Indonesia menjadi pendukung opsional jika tersedia; video tidak menggantikan kegiatan query.
+Daftar belajar menampilkan **Materi 1 sampai Materi 11**, tanpa chapter atau submateri. Setiap halaman hanya berisi penjelasan, contoh, tabel pendukung, ringkasan, dan video opsional. Pilih **Unduh PDF** untuk menyimpan bacaan materi tersebut.
 
-Siklus lab:
+Lab dan latihan berada di halaman terpisah, melalui **Buka latihan materi N**. Di sana pengguna dapat mengeksplorasi skema, memprediksi, menjalankan query pada data sintetis, membaca hasil, dan memeriksa jawaban. Relasi dipelajari dahulu tanpa query; query dimulai pada materi Read lalu Write.
 
-1. Baca pertanyaan tentang data.
-2. Amati skema 2D, pilih tabel untuk melihat record, lalu ikuti hubungan PK/FK.
-3. Prediksi baris atau bentuk hasil.
-4. Tulis atau ubah query SQL, lalu pilih **Run**.
-5. Periksa hasil aktual dan visualisasi relasinya.
-6. Coba latihan eksplorasi tiap submateri, lalu tuntaskan satu practice wajib penutup. Gunakan feedback untuk mencoba lagi.
-
-Query dijalankan oleh SQLite pada data sintetis Kampus Mini, Katalog Buku, atau Toko Mini di browser. Query tidak terhubung ke data pengguna atau database Supabase. Contoh utama dan practice wajib memakai Kampus Mini; setiap lesson juga punya latihan opsional pada skema lain. Lab menyediakan tugas lintas konteks yang sesuai materi. Ganti skema memulai sesi lokal baru. Practice dapat dicoba ulang; AI Tutor dapat membantu saat belajar/practice jika tersedia.
-Pengguna yang sudah login juga dapat membuka **Chatbot** dan **SQL Playground** dari navigasi akun. Chatbot memakai lesson yang sedang/akan dipelajari sebagai konteks dan menyediakan tautan kembali ke lesson. SQL Playground menyediakan pilihan ketiga skema di Worker lokal, tidak mengubah progres, dan dijeda selama assessment aktif.
-
-**Pembuat Skema** tersedia dari menu mobile **Lainnya**, SQL Playground, dan materi key/relasi. Susun model Peminjaman buku atau Pesanan toko lewat tabel, kolom, PK, dan FK. Di ponsel gunakan tab **Susun → Diagram → Periksa**. Draft tiap kasus tersimpan di browser, dan petunjuk struktur/contoh model membantu membandingkan alasan desain. Latihan visual ini dijeda saat assessment; tidak menjalankan DDL, tidak mengubah database lab, dan tidak mengubah progres atau skor.
-
-Empat materi menyediakan video Indonesia opsional tentang bentuk tabel, SELECT, WHERE, dan INNER JOIN. Iframe baru dimuat saat dipilih. Contoh video menggunakan MySQL/MariaDB; catatan materi mengarahkan peserta kembali ke SQLite Quethink. Bukti kurasi dan keterbatasan review tersedia di [catatan video](docs/research/2026-10-03-video-pendamping-basis-data.md).
+Membaca atau mengunduh PDF tidak otomatis menuntaskan materi. Penyelesaian tetap berdasarkan latihan wajib, lalu checkpoint sesuai urutan. Materi terkunci juga tidak dapat dibuka atau diunduh lewat URL langsung.
 
 ### 4. Selesaikan practice untuk membuka materi
 
@@ -93,4 +81,8 @@ Untuk menambahkan video pada database existing dengan aman, jalankan migration v
 
 ### Pratinjau materi oleh admin
 
-Buka **Admin CMS → Lesson → Buka pratinjau**. Admin dapat meninjau draft atau materi terbit tanpa menyelesaikan urutan belajar. Pratinjau menampilkan materi, skema, lab SQL lokal, dan tampilan latihan; pemeriksaan jawaban dan pencatatan progres nonaktif. Simpan draft terlebih dahulu untuk melihat perubahan terbaru pada pratinjau lengkap.
+Buka **Admin CMS → Lesson → Buka pratinjau**. Admin dapat meninjau draft atau materi terbit tanpa menyelesaikan urutan belajar. Pratinjau menampilkan bacaan dan bagian pratinjau latihan terpisah berisi skema, lab SQL lokal, dan tampilan latihan; pemeriksaan jawaban dan pencatatan progres nonaktif. Simpan draft terlebih dahulu untuk melihat perubahan terbaru pada pratinjau lengkap.
+
+### Seed bacaan dan PDF
+
+`npm run seed:reading` menerapkan 11 bacaan tanpa mengubah ID materi, latihan, progres atau nilai. Migration `20261004075424_reading_materials_only.sql` menyediakan bacaan yang sama pada database baru; seed konten tidak mencatat histori migration. PDF dibuat server-side dari bacaan yang dapat diakses pengguna, menggunakan font lokal dan tanpa mengambil resource eksternal. Tidak diperlukan konfigurasi PDF tambahan di Vercel.

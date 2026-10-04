@@ -21,7 +21,7 @@ export function ProgressSummary({ metrics, compact = false }: { metrics: Learnin
     <section aria-label="Progres pembelajaran" className={compact ? "space-y-3" : "space-y-4"}>
       <div className="flex items-end justify-between gap-3">
         <div>
-          <p className="text-sm font-medium text-muted-foreground">Progres lesson wajib</p>
+          <p className="text-sm font-medium text-muted-foreground">Progres materi wajib</p>
           <p className="mt-1 text-3xl font-semibold tabular-nums tracking-tight">{metrics.percentage}%</p>
         </div>
         <p className="text-sm tabular-nums text-muted-foreground">{done} dari {total} selesai</p>
@@ -38,7 +38,7 @@ export function ProgressSummary({ metrics, compact = false }: { metrics: Learnin
         aria-valuenow={metrics.percentage}
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-label="Progres lesson wajib"
+        aria-label="Progres materi wajib"
         className="flex gap-1"
       >
         {Array.from({ length: cells }, (_, i) => {
@@ -57,7 +57,7 @@ export function ProgressSummary({ metrics, compact = false }: { metrics: Learnin
         })}
       </div>
 
-      {!compact && <p className="text-sm leading-relaxed text-muted-foreground">Dihitung dari lesson wajib yang saat ini sudah tersedia.</p>}
+      {!compact && <p className="text-sm leading-relaxed text-muted-foreground">Dihitung dari materi wajib yang saat ini sudah tersedia.</p>}
     </section>
   );
 }

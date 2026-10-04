@@ -4,7 +4,7 @@
 
 Quethink is an Indonesian-language platform for learning relational databases through data exploration and SQL. The only active learning path is Database Fundamentals. JavaScript and TypeScript are app implementation languages, not learner course material. There is no programming course or PTI curriculum.
 
-The three content topics are Relasi, Write, and Read. Required learner progression is **Relasi → Read → Write**. The learner cycle is: inspect the exercise tables and keys, predict, read or safely change synthetic data with SQL, inspect the result or changed state, explain, practice, then take a separate assessment.
+Learners see one flat list, Materi 1 through Materi 11, without chapters or submateri. Relasi, Write, and Read remain internal content groupings for sequencing and assessment gates. Required learner progression is **Relasi → Read → Write**. Reading pages contain prose, static examples/tables, and optional video only, with a per-material PDF download. Labs, prediction, AI help and exercises live on the separate `/learn/[pathSlug]/lessons/[lessonSlug]/practice` page. The practice cycle is: inspect the exercise tables and keys, predict, read or safely change synthetic data with SQL, inspect the result or changed state, explain, practice, then take a separate assessment.
 
 ## Product guardrails
 
@@ -31,4 +31,4 @@ Separate UI, SQL runner, content access, progress, authorization, validation, an
 
 ## Done means
 
-The public app, dashboard, three-topic learning path, lessons, practice, assessments, and Admin CMS present the database course only. SQL exercises run on local synthetic data with bounded read and write operations; practice and assessment remain separate. Lint, typecheck, tests, and production build pass.
+The public app, dashboard, flat material list, reading/PDF, separate practice, assessments, and Admin CMS present the database course only. SQL exercises run on local synthetic data with bounded read and write operations; practice and assessment remain separate. Lint, typecheck, tests, and production build pass.

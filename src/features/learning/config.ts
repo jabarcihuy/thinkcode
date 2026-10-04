@@ -7,3 +7,11 @@ export function learningPathHref(slug: string) {
 export function lessonHref(pathSlug: string, lessonSlug: string) {
   return `/learn/${pathSlug}/lessons/${lessonSlug}`;
 }
+
+export function lessonPracticeHref(pathSlug: string, lessonSlug: string) {
+  return `${lessonHref(pathSlug, lessonSlug)}/practice`;
+}
+
+export function lessonPdfHref(pathSlug: string, lessonSlug: string) {
+  return `${lessonHref(pathSlug, lessonSlug)}/pdf`;
+}

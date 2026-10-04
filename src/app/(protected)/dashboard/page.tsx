@@ -27,16 +27,16 @@ export default async function DashboardPage() {
       <section className="border-t border-border pt-8" aria-labelledby="continue-title">
         <h2 id="continue-title" className="text-2xl font-semibold tracking-tight">{hasStarted ? "Lanjutkan belajar" : "Mulai belajar"}</h2>
         {current ? <>
-          <p className="mt-3 text-sm font-semibold text-accent">{current.chapterTitle}</p>
+          <p className="mt-3 text-sm font-semibold text-accent">{`Materi ${overview.lessons.findIndex((item) => item.id === current.id) + 1}`}</p>
           <h3 className="mt-2 text-xl font-semibold">{current.title}</h3>
           <p className="mt-3 max-w-xl leading-7 text-muted-foreground">{current.summary}</p>
           <Button asChild className="mt-6"><Link href={hasStarted ? lessonHref(overview.path.slug, current.slug) : pathUrl}>{hasStarted ? "Lanjutkan belajar" : "Mulai belajar"}<ArrowRight size={16} aria-hidden="true" /></Link></Button>
-    </> : <><p className="mt-3 leading-7 text-muted-foreground">Selesaikan checkpoint berikutnya untuk membuka kelompok chapter selanjutnya. Lesson yang sudah selesai tetap dapat dibuka untuk diulang.</p><Button asChild variant="outline" className="mt-6"><Link href="/assessments">Lihat checkpoint</Link></Button></>}
-        <div className="mt-12 border-t border-border pt-7"><h2 className="text-lg font-semibold">{overview.path.title}</h2><p className="mt-2 max-w-xl leading-7 text-muted-foreground">{overview.path.description}</p><Link className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-accent hover:underline" href={pathUrl}>Jelajahi semua chapter <ArrowRight size={16} aria-hidden="true" /></Link></div>
+    </> : <><p className="mt-3 leading-7 text-muted-foreground">Selesaikan checkpoint berikutnya untuk membuka materi selanjutnya. Materi yang sudah selesai tetap dapat dibuka untuk diulang.</p><Button asChild variant="outline" className="mt-6"><Link href="/assessments">Lihat checkpoint</Link></Button></>}
+        <div className="mt-12 border-t border-border pt-7"><h2 className="text-lg font-semibold">{overview.path.title}</h2><p className="mt-2 max-w-xl leading-7 text-muted-foreground">{overview.path.description}</p><Link className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-accent hover:underline" href={pathUrl}>Lihat semua materi <ArrowRight size={16} aria-hidden="true" /></Link></div>
       </section>
       <aside className="space-y-7 border-t border-border pt-7 lg:sticky lg:top-8 lg:border-l lg:border-t-0 lg:pl-7 lg:pt-0" aria-label="Progres belajar">
         <ProgressSummary metrics={overview.metrics} />
-        <div className="border-t border-border pt-5"><p className="text-sm text-muted-foreground">Chapter saat ini</p><p className="mt-1 font-semibold">{current?.chapterTitle ?? "Semua lesson yang tersedia sudah selesai"}</p><p className="mt-2 text-sm text-muted-foreground">{overview.metrics.completedRequiredLessons} lesson wajib selesai</p></div>
+        <div className="border-t border-border pt-5"><p className="text-sm text-muted-foreground">Materi saat ini</p><p className="mt-1 font-semibold">{current?.title ?? "Semua materi yang tersedia sudah selesai"}</p><p className="mt-2 text-sm text-muted-foreground">{overview.metrics.completedRequiredLessons} materi wajib selesai</p></div>
         <div className="border-t border-border pt-5"><div className="flex items-center justify-between gap-3"><h2 className="text-sm font-semibold">Checkpoint berikutnya</h2><span className={`text-xs font-semibold ${nextAssessment?.available ? "text-accent" : "text-muted-foreground"}`}>{nextAssessment?.available ? "Tersedia" : nextAssessment ? "Terkunci" : "Selesai"}</span></div><p className="mt-2 text-sm leading-6 text-muted-foreground">{nextAssessment?.title ?? "Semua checkpoint lulus. Lanjutkan menuju penyelesaian kursus."}</p><Button asChild variant="outline" size="sm" className="mt-3"><Link href="/assessments">{nextAssessment?.available ? "Mulai checkpoint" : "Lihat status assessment"}<ArrowRight size={14} aria-hidden="true" /></Link></Button></div>
       </aside>
     </div>}

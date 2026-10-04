@@ -18,5 +18,5 @@ export async function startLessonAction(pathSlug: string, lessonId: string) {
   const account = await requireAccount();
   const lesson = await startLesson(account.userId, input.pathSlug, input.lessonId);
   revalidatePath(`/learn/${input.pathSlug}`);
-  redirect(`/learn/${input.pathSlug}/lessons/${lesson.slug}`);
+  redirect(`/learn/${input.pathSlug}/lessons/${lesson.slug}/practice`);
 }

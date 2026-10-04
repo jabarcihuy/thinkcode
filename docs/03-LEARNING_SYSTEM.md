@@ -8,9 +8,11 @@ The three main content topics are Relasi, Write, and Read. Learner progression f
 - **Read:** select columns and records, order results, join related tables, and summarize data.
 - **Write:** add, update, and delete a small amount of synthetic data after learners can read and identify the target records.
 
-Each main topic contains lessons. Relasi lessons show table schemas and sample records before SQL is introduced. Read and Write lesson sections may include a query walkthrough, prediction, local SQL lab, practice, and summary. Video is optional support, not a replacement for the activity.
+Learners see Materi 1–11 without submateri navigation. Each reading page contains explanation, static examples/tables, summary and optional video, with an authorized per-material PDF download. Headings organize prose only, not separately completed learning units. Interactive tables, prediction, SQL labs, AI help and checks belong to the separate practice page associated with that material. Internal topic/chapter records preserve prerequisite and checkpoint grouping.
 
-## Lesson cycle
+## Material and practice cycle
+
+First read the material or download its PDF. Reading and downloading never change completion. Then open its separate practice page:
 
 1. Read a practical question about data.
 2. In Relasi, inspect table structure, sample records, and keys without writing SQL.
