@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { LearningHeader } from "@/features/learning/components/learning-header";
 import { LessonContent } from "@/features/learning/components/lesson-content";
 import { MaterialDownload } from "@/features/learning/components/material-download";
+import { AcknowledgeReading } from "@/features/learning/components/acknowledge-reading";
 import { getAccessibleMaterial } from "@/features/learning/server/material-access";
 import { mayOpenLesson } from "@/features/learning/domain/progression";
 import { lessonHref, lessonPdfHref, lessonPracticeHref, learningPathHref } from "@/features/learning/config";
@@ -28,7 +29,7 @@ export default async function LessonPage({ params }: { params: Promise<{ pathSlu
         <div className="mt-8"><LessonContent content={material.content} /></div>
       </article>
       <section aria-label="Lanjut belajar" className="mt-10 border-t border-border pt-7">
-        {account ? <><h2 className="text-lg font-semibold">Siap menerapkan materi ini?</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Lab dan latihan tersedia di halaman terpisah. Selesaikan latihan wajib untuk membuka materi berikutnya.</p><Button asChild className="mt-4 w-full sm:w-auto"><Link href={lessonPracticeHref(pathSlug, lessonSlug)}>Buka latihan materi {index + 1}<ArrowRight size={16} aria-hidden="true" /></Link></Button></> : <Button asChild><Link href="/register">Buat akun untuk berlatih</Link></Button>}
+        {account ? <><h2 className="text-lg font-semibold">Selesai membaca?</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Tandai untuk membuka materi berikutnya. Pemahamanmu akan dinilai di post-test.</p><div className="mt-4"><AcknowledgeReading lessonId={lesson.id} completed={lesson.state === "COMPLETED"} /></div><Link className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-accent hover:underline" href={lessonPracticeHref(pathSlug, lessonSlug)}>Coba di Lab · opsional<ArrowRight size={16} aria-hidden="true" /></Link>{!next && lesson.state === "COMPLETED" && <Button asChild className="mt-5 w-full sm:ml-4 sm:w-auto"><Link href="/post-test">Buka post-test</Link></Button>}</> : <Button asChild><Link href="/register">Buat akun untuk menyimpan progres</Link></Button>}
       </section>
       <nav aria-label="Navigasi materi" className="mt-8 flex flex-col gap-4 border-t border-border pt-5 sm:flex-row sm:justify-between">
         <div>{previous && mayOpenLesson(previous, Boolean(account)) && <Link className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-accent hover:underline" href={lessonHref(pathSlug, previous.slug)}><ArrowLeft size={16} aria-hidden="true" />Materi {index}</Link>}</div>

@@ -133,9 +133,9 @@ try {
   const exercises = exerciseResult.data;
   assert.equal(lessons.length,11);
   assert.equal(exercises.length,44);
-  assert.equal(exercises.filter((row)=>row.is_required).length,11);
+  assert.equal(exercises.filter((row)=>row.is_required).length,0);
   const first = exercises.filter((row)=>row.lesson_id === lessons[0].id);
-  const second = exercises.find((row)=>row.lesson_id === lessons[1].id && row.is_required);
+  const second = exercises.find((row)=>row.lesson_id === lessons[1].id && row.position === 3);
   assert.equal((await call(null, `/api/exercises/${first[0].id}/check`, "POST", {pathSlug, answer:first[0].config.answer})).response.status,401);
   assert.equal((await call(learner, `/api/exercises/${second.id}/check`, "POST", {pathSlug, answer:second.config.answer})).response.status,403);
   assert.equal((await call(learner, "/api/admin/users")).response.status,403);
@@ -162,9 +162,10 @@ try {
   assert.ifError(assessmentResult.error);
   for(let i=0;i<lessons.length;i++) {
     const lesson=lessons[i];
-    const required=exercises.find((row)=>row.lesson_id===lesson.id&&row.is_required);
+    const required=exercises.find((row)=>row.lesson_id===lesson.id&&row.position===3);
     const result = await passPractice(learner,required);
-    assert.equal(result.lessonCompleted,true);
+    assert.equal(result.lessonCompleted,false);
+    assert.equal((await call(learner, `/api/materials/${lesson.id}/read`, "POST")).response.status,200);
     const chapterEnded=lessons[i+1]?.chapter_id!==lesson.chapter_id;
     if(chapterEnded) {
       const checkpoint=assessmentResult.data.find((row)=>row.type==="CHECKPOINT"&&row.gate_after_chapter===positions.get(lesson.chapter_id));
@@ -173,16 +174,16 @@ try {
   }
   const final=assessmentResult.data.find((row)=>row.type==="FINAL");
   assert.ok(final);
-  await passAssessment(learner,final,lessons.at(-1).id,exercises.find((row)=>row.lesson_id===lessons.at(-1).id&&row.is_required).id);
+  await passAssessment(learner,final,lessons.at(-1).id,exercises.find((row)=>row.lesson_id===lessons.at(-1).id&&row.position===3).id);
   const progress = await privileged.from("lesson_progress").select("lesson_id,status").eq("user_id",learner.id).eq("status","COMPLETED");
   assert.ifError(progress.error); assert.equal(progress.data.length,11);
   const resultRows = await privileged.from("assessment_results").select("passed").eq("user_id",learner.id);
-  assert.ifError(resultRows.error); assert.equal(resultRows.data.filter((row)=>row.passed).length,4);
+  assert.ifError(resultRows.error); assert.equal(resultRows.data.filter((row)=>row.passed).length,1);
   const otherJar=createClient(url,publishableKey,{auth:{persistSession:false}});
   assert.ifError((await otherJar.auth.signInWithPassword({email:other.email,password})).error);
   const stolen=await otherJar.from("exercise_attempts").select("id").eq("user_id",learner.id);
   assert.ifError(stolen.error); assert.equal(stolen.data.length,0);
-  console.log("PASS: 11 lessons / 44 checks; optional does not unlock; mandatory unlocks; 4 assessments pass; assessment AI/Playground blocked; private answers absent; attempts owner-only; guest/admin guards intact.");
+  console.log("PASS: 11 lessons / 44 checks; optional does not unlock; reading acknowledgement unlocks; post-test passes; assessment AI/Playground blocked; private answers absent; attempts owner-only; guest/admin guards intact.");
 } finally {
   server.kill("SIGTERM");
   for(const id of userIds) assert.ifError((await privileged.auth.admin.deleteUser(id)).error);

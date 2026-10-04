@@ -6,8 +6,8 @@
 - SQLite synthetic seed, foreign-key behavior, changed-row and result limits, timeout, and deterministic reset.
 - Read result normalization and formative grading.
 - Write operations: one-row INSERT; UPDATE/DELETE target preview; missing/overbroad WHERE rejection; foreign-key rejection; before/after state.
-- Progression: first lesson available; required practice unlocks the next lesson.
-- Curriculum coverage: each of the 11 published required materials has one published required exercise aligned to its lab task and learning outcome.
+- Progression: first material available; reading acknowledgement unlocks the next material.
+- Curriculum coverage: each of the 11 published required materials has published optional checks aligned to its lab task and learning outcome.
 - Assessment deterministic grading and passing score.
 - AI assessment guard and bounded database context, including safe visible summaries for write lessons.
 - Admin validation and role checks.
@@ -20,7 +20,7 @@
 - User role is denied admin route and mutations.
 - Hidden assessment answer configuration is absent from public reads and AI context.
 - SQL practice never sends a statement or database change to Supabase or a paid runner.
-- Each required material exposes its specific lab prompt and required practice; checks retain the intended type and can be retried.
+- Each required material exposes its specific lab prompt and optional formative practice; checks retain the intended type and can be retried.
 - Reset reinitializes the synthetic database without changing user/Supabase data.
 
 ## Dataset regression
@@ -39,7 +39,7 @@
 - Inspect tables and keys; run SELECT/FROM/WHERE and inspect actual SQLite rows.
 - Join synthetic tables; pan, zoom, and reset the exercise table canvas; inspect relationship/result output.
 - Insert one practice record; preview and update a targeted row; delete a permitted row; reset and verify the original seed.
-- Complete practice, unlock the next lesson, and open a checkpoint.
+- Acknowledge reading, unlock the next material and open post-test after all required reading.
 - AI works in practice and is blocked during an active assessment.
 - Admin creates a draft lesson, previews it, and publishes it.
 - Mobile viewport near 360px has no critical overflow; desktop layout remains readable.
@@ -59,7 +59,7 @@ Run lint, typecheck, unit/integration tests available in the environment, and pr
 
 ## Interactive curriculum regression
 
-- Three aligned subtopic checks plus one optional transfer check per lesson; exactly one required, with existing required IDs/history preserved.
+- Three aligned subtopic checks plus one optional transfer check per lesson; all optional, with existing IDs/history preserved.
 - Optional check success alone does not complete a lesson or unlock the next.
 - Schema PK/FK endpoints match named columns; selected records follow real one-to-many links without spreading to unrelated enrollments.
 - Confirmed mutations update viewer rows/counts; preview and cancel do not; reset restores the seed.
@@ -69,4 +69,12 @@ Run lint, typecheck, unit/integration tests available in the environment, and pr
 
 ## Reading-only material regression
 
-Run `npm run test:materials:integration` against the production build and remote Supabase with temporary accounts that are deleted afterwards. Verify flat Materi 1–11 navigation, absence of embedded lab/exercise/AI controls, valid preview PDF downloads, denied non-preview guest and locked authenticated PDFs/practice, friendly retryable download failure, and no progress writes from reading/download. Capture list, reading and practice at 360/768/1280px with no page overflow. `test:flow:integration` still checks mandatory practice unlocking and all checkpoints/final, and downloads all 11 PDFs after access is earned. PDF unit tests cover safe Markdown, Unicode, A4, code/tables, pagination and failure responses; render generated PDFs for visual inspection.
+Run `npm run test:materials:integration` against the production build and remote Supabase with temporary accounts that are deleted afterwards. Verify flat Materi 1–11 navigation, absence of embedded lab/exercise/AI controls, valid preview PDF downloads, denied non-preview guest and locked authenticated PDFs/practice, friendly retryable download failure, and no progress writes from reading/download. Capture list, reading and practice at 360/768/1280px with no page overflow. `test:flow:integration` still checks explicit reading unlocking and diagnostic/post-test, and downloads all 11 PDFs after access is earned. PDF unit tests cover safe Markdown, Unicode, A4, code/tables, pagination and failure responses; render generated PDFs for visual inspection.
+
+## Pre-test / reading / optional Lab / post-test
+
+`test:flow:integration` checks: diagnostic available before reading, Belum tahu scores zero with no pass/fail UI, baseline immutable, concurrent start idempotent, other-user session/results denied, no private keys in network, AI block during both tests, reading paused during active tests, optional practice saves attempts without progress, first/next/locked reading order, all eleven PDFs, post-test prerequisites, forged client scores ignored, post-test retry and course completion. Capture dashboard/test/session/result/reading/Lab at 360/768/1280px and execute a real browser SQLite query. Unit tests cover test policies/topic aggregation and admin PRETEST zero-weight validation.
+
+## Current course progression
+
+Pre-test → Materi → optional Lab SQL → Post-test. The authoritative behavior is defined in docs/03-LEARNING_SYSTEM.md. Reading acknowledgement replaces practice completion; historical checkpoints are unpublished and no longer gate the course. Existing history is retained.

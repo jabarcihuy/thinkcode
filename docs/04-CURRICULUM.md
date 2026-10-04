@@ -19,7 +19,7 @@ Learners can:
 
 The three requested content groups are **Relasi**, **Write**, and **Read**. They are curriculum categories, while prerequisites set the learner sequence: **Relasi → Read → Write**. Read is placed before Write because targeted updates and deletions depend on selecting and checking the intended rows.
 
-Learner navigation is a flat list **Materi 1–11**. Each material is one reading unit, not a container of separately navigated submateri. Concept headings are prose structure only. Reading contains explanation, static examples/tables, summary and optional video, and is downloadable as an A4 PDF. Interactive tables, prediction, queries, results, AI and exercises are on a separate practice page for that material. Existing chapter/lesson records remain internal grouping and identity metadata; checkpoints and completion history are preserved.
+Learner navigation is a flat list **Materi 1–11**. Each material is one reading unit, not a container of separately navigated submateri. Concept headings are prose structure only. Reading contains explanation, static examples/tables, summary and optional video, and is downloadable as an A4 PDF. Interactive tables, prediction, queries, results, AI and exercises are on a separate practice page for that material. Existing chapter/lesson records remain internal grouping and identity metadata; completion history is preserved; historical checkpoints are unpublished and no longer gate reading.
 
 ### 1. Relasi
 
@@ -51,11 +51,11 @@ The Write sequence is intentionally conservative: `INSERT` first, then `UPDATE`,
 
 ## Separate practice: Investigasi Kampus Mini
 
-Each material has a separate practice page with two optional concept checks, one mandatory closing practice, and one optional transfer check on a different schema. These checks are exercises, not submateri or extra reading units. Exploration uses actual synthetic records, PK/FK links, and local query or mutation results. Formative checks use server-side deterministic answer keys; browser output does not determine official scores. Run and record exploration do not change completion.
+Each material has a separate optional lab with concept checks and transfer activities. These are formative exercises, not reading units or pre-test. All are optional; attempts remain stored without unlocking or scoring the course. The ten-question pre-test adapts selected concepts (tables/columns, PK, FK, SELECT, WHERE, JOIN, COUNT, INSERT, UPDATE, DELETE). The post-test has the same concept distribution and different cases/data. Private keys remain server-only. Explicit reading acknowledgement unlocks materials; post-test measures mastery.
 
 The 2D schema visualizer connects named PK/FK columns. Select tables and records to follow real relationships, including confirmed local mutations. SQL-free Relasi lessons do not introduce query syntax.
 
-| Material | Optional practice A | Optional practice B | Required practice |
+| Material | Optional practice A | Optional practice B | Optional consolidation |
 |---|---|---|---|
 | Membaca Bentuk Data | Tabel: Temukan tabel yang tepat | Kolom: Kolom atau nilai? | Record dan schema: Bedakan isi dan struktur |
 | Key dan Hubungan Antar Tabel | Primary key: Identitas bukan nama | Foreign key: Ikuti foreign key | Jalur relasi: Telusuri pendaftaran Alya |
@@ -69,11 +69,11 @@ The 2D schema visualizer connects named PK/FK columns. Select tables and records
 | Mengubah Record dengan UPDATE | Target UPDATE: Target satu pendaftaran | SET dan dampak: Bandingkan sebelum dan sesudah | Verifikasi UPDATE: Perbaiki nilai dengan bukti |
 | Menghapus Record dengan DELETE | Target DELETE: Pilih target DELETE | Foreign key: Mengapa induk ditolak? | Verifikasi DELETE: Batalkan lalu periksa |
 
-Keep existing mandatory exercise IDs and historical completions. Add optional exercises without resetting user progress. Incorrect checks return concept-specific hints without answer keys. SQL result predictions accept spaces around separators and numerically equivalent number cells, while preserving column count, row order, text, and incorrect values.
+Keep existing exercise IDs, attempts and historical completions. All exercise checks are optional; they no longer write material completion. Incorrect checks return concept-specific hints without answer keys. SQL result predictions accept spaces around separators and numerically equivalent number cells, while preserving column count, row order, text, and incorrect values.
 
 ## Synthetic dataset registry
 
-Campus Mini remains the anchor example and mandatory practice context:
+Campus Mini remains the anchor example and optional practice context:
 
 - `students(student_id, name, cohort)`
 - `courses(course_id, course_code, course_name, credits)`
@@ -88,30 +88,17 @@ The same concepts also appear in two transfer contexts:
 | Katalog Buku | `authors(author_id, name, city)`, `books(book_id, title, author_id, stock)` | Two tables, one-to-many; table/column identification, SELECT, stock filtering, author-book JOIN, safe INSERT and DELETE |
 | Toko Mini | `customers(customer_id, name, city)`, `orders(order_id, customer_id, status)`, `products(product_id, name, price)`, `order_items(item_id, order_id, product_id, quantity)` | Four tables, chained and bridging relationships; key navigation, price sorting, counting orders, grouped quantity totals, targeted UPDATE |
 
-Relasi practice pages let learners compare all three schemas without SQL. Read/Write labs offer the original campus task and one concept-aligned transfer task. Each lesson has an optional position-4 transfer exercise with an explicit public `datasetId`; its private answer remains server-side. Existing mandatory IDs and progression rules are preserved. SQL Playground offers all three contexts. The interface uses one compact schema selector, not several canvases at once; changing schema resets lab data, source query, prediction, selection, and results.
+Relasi practice pages let learners compare all three schemas without SQL. Read/Write labs offer the original campus task and one concept-aligned transfer task. Each lesson has an optional position-4 transfer exercise with an explicit public `datasetId`; its private answer remains server-side. Existing exercise IDs are preserved; reading acknowledgement controls progression. SQL Playground offers all three contexts. The interface uses one compact schema selector, not several canvases at once; changing schema resets lab data, source query, prediction, selection, and results.
 
 For Write lessons, seed data should include a clearly designated practice record or disposable copy so required lessons can be repeated without relying on destructive changes to shared course state. Reset restores a known seed.
 
 ## Learning rhythm and assessments
 
-A lesson is designed for roughly 20–40 minutes; each main topic spans several lessons. A half-semester pilot can use this eight-week rhythm:
-
-| Week | Focus | Assessment |
-|---|---|---|
-| 1 | Relasi: table structure and records | — |
-| 2 | Relasi: keys and relationships | Checkpoint 1 |
-| 3 | Read: `SELECT`/`FROM` and `WHERE` | — |
-| 4 | Read: conditions, ordering, and limits | — |
-| 5 | Read: joins, aggregation, and integrated query | Checkpoint 2 |
-| 6 | Write: insert and constraint practice | — |
-| 7 | Write: targeted update and delete | Checkpoint 3 |
-| 8 | Review and integrated database investigation | Final assessment |
-
-This is a planning estimate for independent study, not an academic credit-hour or institution-specific syllabus claim.
+The course can be used across eight weeks: Relasi (weeks 1–2), Read (weeks 3–5), Write (weeks 6–7), and review/post-test (week 8). These durations are planning estimates, not credit-hour claims. Pre-test comes before study and has no passing gate; post-test follows all required reading and passes at 75/100. Historical checkpoints are unpublished instead of deleted. Materials remain sequential and optional labs can be revisited throughout learning.
 
 ## Optional modeling and video support
 
-After key/relationship concepts, learners can use `/schema-builder` to model Peminjaman buku or Pesanan toko. They add tables, typed columns, one PK per table, and FK links through labeled controls. Structural feedback and a reference explanation support reasoning; alternative meaningful names are acceptable. This is optional formative work, separate from mandatory practice, lesson unlocking, and official assessment. Drafts remain local, and the diagram is not an executable schema.
+After key/relationship concepts, learners can use `/schema-builder` to model Peminjaman buku or Pesanan toko. They add tables, typed columns, one PK per table, and FK links through labeled controls. Structural feedback and a reference explanation support reasoning; alternative meaningful names are acceptable. This is optional formative work, separate from optional practice, lesson unlocking, and official assessment. Drafts remain local, and the diagram is not an executable schema.
 
 Four optional Indonesian video references are curated for Membaca Bentuk Data, SELECT/FROM, WHERE, and INNER JOIN. Source metadata/descriptions were verified on 3 October 2026; full audiovisual review remains pending. Show a topic focus, MySQL/MariaDB-to-SQLite caveat, with each reference; reflection belongs to practice. Hold broader Write videos until an appropriate safe segment is reviewed. See [video evidence](research/2026-10-03-video-pendamping-basis-data.md).
 

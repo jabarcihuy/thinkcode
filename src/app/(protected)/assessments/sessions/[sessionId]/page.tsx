@@ -13,6 +13,6 @@ export default async function AssessmentSessionPage({ params }: { params: Promis
   if (session.session.status !== "IN_PROGRESS") notFound();
   return <main id="main-content" className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-12">
     <AssessmentWorkspace sessionId={sessionId} assessmentTitle={session.assessment.title} instructions={session.assessment.instructions}
-      passingScore={session.assessment.passingScore} items={session.items} />
+      diagnostic={session.assessment.type === "PRETEST"} passingScore={session.assessment.passingScore} items={session.items} />
   </main>;
 }

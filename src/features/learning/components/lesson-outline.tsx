@@ -37,7 +37,7 @@ export function LessonOutline({
         {exercises.length > 0 && (
           <li className="pt-2">
             <a className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring" href="#lesson-practice">
-              Latihan wajib
+              Cek pemahaman · opsional
             </a>
             <ul className="ml-3 space-y-1 border-l border-border pl-2">
               {exercises.map((exercise) => (

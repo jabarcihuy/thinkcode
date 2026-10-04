@@ -31,10 +31,10 @@ export default async function LearningPathPage({ params }: { params: Promise<{ p
             {account ? <>
               <ProgressSummary metrics={overview.metrics} compact />
               {current && <div className="mt-5 border-t border-border pt-5"><p className="text-sm text-muted-foreground">Lanjutkan dari</p><p className="mt-1 text-sm font-semibold leading-snug">{current.title}</p><Button asChild className="mt-4 w-full"><Link href={lessonHref(pathSlug, current.slug)}>Baca materi</Link></Button></div>}
-              {!current && overview.metrics.totalRequiredLessons > 0 && <p className="mt-5 border-t border-border pt-5 text-sm font-medium text-accent">Semua materi wajib yang tersedia sudah selesai.</p>}
+              {!current && overview.metrics.totalRequiredLessons > 0 && <p className="mt-5 border-t border-border pt-5 text-sm font-medium text-accent">Semua materi wajib selesai dibaca.</p>}
             </> : <><h2 className="text-lg font-semibold">Mulai belajar terarah</h2><p className="mt-3 text-sm leading-6 text-muted-foreground">Baca materi pratinjau, lalu buat akun untuk menyimpan progres dan membuka jalur belajar.</p><Button asChild className="mt-5 w-full"><Link href="/register">Buat akun</Link></Button></>}
           </div>
-
+          {account && <Link href="/pre-test" className="inline-flex min-h-11 items-center text-sm font-medium text-accent hover:underline">Pre-test: catat pemahaman awal</Link>}
         </aside>
       </div>
     </main>

@@ -1,8 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
-import { createPrivilegedClient } from "@/lib/supabase/privileged";
-import { calculateLearningMetrics, deriveLessonStates, ownsProgress, type AssessmentGate } from "@/features/learning/domain/progression";
+import { calculateLearningMetrics, deriveLessonStates, ownsProgress } from "@/features/learning/domain/progression";
 import type { Chapter, LearningOverview, LearningPath, LessonOutline, ProgressRecord } from "@/features/learning/types";
 
 async function loadOverview(pathSlug: string, userId: string | null): Promise<LearningOverview | null> {
@@ -51,26 +50,13 @@ async function loadOverview(pathSlug: string, userId: string | null): Promise<Le
   });
 
   let progress: ProgressRecord[] = [];
-  let assessmentGates: AssessmentGate[] = [];
   if (userId && outlines.length > 0) {
-    const [progressResult, assessmentResult] = await Promise.all([
-      supabase.from("lesson_progress").select("lesson_id, status").eq("user_id", userId).in("lesson_id", outlines.map((lesson) => lesson.id)),
-      createPrivilegedClient().from("assessments").select("id, gate_after_chapter").eq("learning_path_id", path.id).eq("type", "CHECKPOINT").eq("is_published", true),
-    ]);
-    if (progressResult.error) throw progressResult.error;
-    if (assessmentResult.error) throw assessmentResult.error;
-    progress = progressResult.data ?? [];
-    const assessmentIds = (assessmentResult.data ?? []).map((assessment) => assessment.id);
-    if (assessmentIds.length > 0) {
-      const { data, error } = await createPrivilegedClient().from("assessment_results").select("assessment_id, passed")
-        .eq("user_id", userId).in("assessment_id", assessmentIds);
-      if (error) throw error;
-      const passed = new Set((data ?? []).filter((result) => result.passed).map((result) => result.assessment_id));
-      assessmentGates = (assessmentResult.data ?? []).map((assessment) => ({ gateAfterChapter: assessment.gate_after_chapter, passed: passed.has(assessment.id) }));
-    }
+    const result = await supabase.from("lesson_progress").select("lesson_id, status").eq("user_id", userId).in("lesson_id", outlines.map((lesson) => lesson.id));
+    if (result.error) throw result.error;
+    progress = result.data ?? [];
   }
 
-  const lessonsWithState = deriveLessonStates(outlines, progress, assessmentGates);
+  const lessonsWithState = deriveLessonStates(outlines, progress);
   return {
     path: path as LearningPath,
     chapters: chapterRows,

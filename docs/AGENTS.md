@@ -4,13 +4,13 @@
 
 Quethink is an Indonesian-language platform for learning relational databases through data exploration and SQL. The only active learning path is Database Fundamentals. JavaScript and TypeScript are app implementation languages, not learner course material. There is no programming course or PTI curriculum.
 
-Learners see one flat list, Materi 1 through Materi 11, without chapters or submateri. Relasi, Write, and Read remain internal content groupings for sequencing and assessment gates. Required learner progression is **Relasi → Read → Write**. Reading pages contain prose, static examples/tables, and optional video only, with a per-material PDF download. Labs, prediction, AI help and exercises live on the separate `/learn/[pathSlug]/lessons/[lessonSlug]/practice` page. The practice cycle is: inspect the exercise tables and keys, predict, read or safely change synthetic data with SQL, inspect the result or changed state, explain, practice, then take a separate assessment.
+The learner flow is **Pre-test → Materi → Lab SQL → Post-test**, on separate pages. Materi 1–11 is a flat reading/PDF list, ordered Relasi → Read → Write, with optional videos and no submateri, missions, exercises, query editor or AI panel. “Selesai dibaca” acknowledges reading server-side and unlocks the next material; it is not mastery. Labs and optional formative checks live separately at `/lab` and existing material `/practice` URLs. Pre-test is diagnostic, one completed baseline per user, zero weight, no passing gate. Post-test is server-graded after required reading, pass ≥75. Historical checkpoint/content/attempt records stay intact but unpublished gates are inactive. Follow docs/03-LEARNING_SYSTEM.md for progression and session rules.
 
 ## Product guardrails
 
 - Keep the interface focused and easy to follow.
 - Teach relational tables, rows, columns, primary/foreign keys, SELECT, FROM, WHERE, AND/OR, ORDER BY, LIMIT, INNER JOIN, COUNT, AVG, GROUP BY, and single-row INSERT/targeted UPDATE/guarded DELETE.
-- Use the shipped synthetic dataset registry: Campus Mini for the anchor examples and mandatory practice, Katalog Buku and Toko Mini for transfer activities. Keep each lab confined to its selected schema; switch/reset creates a fresh local session.
+- Use the shipped synthetic dataset registry: Campus Mini for the anchor examples and optional practice, Katalog Buku and Toko Mini for transfer activities. Keep each lab confined to its selected schema; switch/reset creates a fresh local session.
 - SQL practice runs only against local SQLite WASM data. It never connects to Supabase or private data.
 - Keep the learner write subset narrow: one statement at a time, one row changed, target preview before UPDATE/DELETE, foreign keys enabled, and deterministic reset.
 - Reject DDL/schema changes, PRAGMA, transaction control, ATTACH, multiple statements, unsupported tables, bulk mutations, and unbounded writes.
@@ -31,4 +31,4 @@ Separate UI, SQL runner, content access, progress, authorization, validation, an
 
 ## Done means
 
-The public app, dashboard, flat material list, reading/PDF, separate practice, assessments, and Admin CMS present the database course only. SQL exercises run on local synthetic data with bounded read and write operations; practice and assessment remain separate. Lint, typecheck, tests, and production build pass.
+The public app, dashboard, flat material list, reading/PDF, separate optional labs, pre-test/post-test, and Admin CMS present the database course only. SQL exercises run on local synthetic data with bounded read and write operations; practice and assessment remain separate. Lint, typecheck, tests, and production build pass.

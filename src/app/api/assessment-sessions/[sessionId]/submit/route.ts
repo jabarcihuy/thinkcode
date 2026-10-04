@@ -73,7 +73,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ ses
     if (finalizeError) throw finalizeError;
     if (!finalized) return Response.json({ error: "Assessment ini sudah dikirim." }, { status: 409 });
     return Response.json({
-      score: grade.score, passed: grade.passed, passingScore: session.assessment.passingScore,
+      score: grade.score, passed: session.assessment.type !== "PRETEST" && grade.passed, diagnostic: session.assessment.type === "PRETEST", passingScore: session.assessment.passingScore,
       totalCorrect: grade.totalCorrect, totalItems: grade.totalItems,
       hiddenPassed: grade.hiddenPassed, hiddenTotal: grade.hiddenTotal,
       topicSummary: grade.topicSummary,

@@ -209,9 +209,12 @@ try {
   await page.setViewportSize({ width: 360, height: 780 });
   const mobileWidths = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));
   assert.ok(mobileWidths.content <= mobileWidths.viewport, `Admin mobile layout overflows: ${JSON.stringify(mobileWidths)}`);
-  const menu = page.getByRole("button", { name: "Buka navigasi" });
-  await menu.click();
-  assert.equal(await page.getByRole("navigation", { name: "Navigasi akun" }).isVisible(), true, "Mobile account navigation should open.");
+  const navigation = page.getByRole("navigation", { name: "Navigasi utama" });
+  assert.equal(await navigation.isVisible(), true, "Mobile bottom navigation should be visible.");
+  assert.equal(await navigation.getByRole("link").count(), 5);
+  await navigation.getByRole("link", { name: "Profil dan Admin CMS" }).click();
+  await page.waitForURL("**/profile");
+  assert.equal(await page.getByRole("link", { name: "Admin CMS" }).isVisible(), true, "Admin remains accessible from Profile.");
   assert.deepEqual(errors, [], `Admin UI errors: ${errors.join("; ")}`);
   await context.close();
   }

@@ -10,20 +10,20 @@ Supabase is the source for authenticated users, roles, learning paths, chapters,
 - `chapters`: one main topic per chapter, with path relationship, sequence position, required and published state.
 - `lessons`: one material per lesson, with chapter relationship, Markdown content, summary, order, preview and publication state. SQL examples and optional Indonesian video references remain lesson content/configuration.
 - `exercises` and `test_cases`: practice prompt, type, starter SQL, public instructions, expected configuration and visible tests. Private expected values remain server-side where applicable.
-- `assessments`, `assessment_items`, `assessment_test_cases`: checkpoint/final question order, private answer configuration, scoring and publication.
+- `assessments`, `assessment_items`, `assessment_test_cases`: pre-test/post-test and historical checkpoint question order, private answer configuration, scoring and publication.
 - `lesson_progress`, `exercise_attempts`, `assessment_sessions`, `assessment_results`: user-owned progress and outcomes.
 
 All exposed tables retain RLS. Learners can read published content and their own progress/attempts/results. Content mutation uses server-side ADMIN checks.
 
 ## Active path structure
 
-The published Database Fundamentals path has three main topics: **Relasi**, **Write**, and **Read**. They map to chapters; each chapter contains lessons, and lesson headings/exercise configuration hold its submaterials. Learner unlock order follows prerequisites: **Relasi → Read → Write**. Exact lesson titles and outcomes are maintained in docs/04-CURRICULUM.md.
+The published Database Fundamentals path has three main topics: **Relasi**, **Write**, and **Read**. They map to chapters; each chapter contains lessons, and each lesson is one numbered material. Learner unlock order follows prerequisites: **Relasi → Read → Write**. Exact lesson titles and outcomes are maintained in docs/04-CURRICULUM.md.
 
 When replacing the current seven-chapter shape, preserve accounts, progress, exercise attempts, assessment sessions/results, and AI conversations. Keep historical content records available but unpublished/archived as appropriate; do not delete historical learner data.
 
 ## Local SQL dataset
 
-The two Relasi materials do not have a SQL starter or query lab. They show synthetic table records and key structure first. The query lab begins in the Read topic; Write uses the selected registered local dataset for bounded changes. Transfer exercises select `campus`, `library`, or `shop` using `config.public.datasetId`, exposed through public_config; answers and grading configuration stay private. Lesson anchor examples and existing mandatory exercises remain unchanged.
+The two Relasi materials do not have a SQL starter or query lab. They show synthetic table records and key structure first. The query lab begins in the Read topic; Write uses the selected registered local dataset for bounded changes. Transfer exercises select `campus`, `library`, or `shop` using `config.public.datasetId`, exposed through public_config; answers and grading configuration stay private. Lesson examples and exercise identities remain unchanged; all checks are now optional.
 
 The browser Worker creates an in-memory synthetic schema:
 
@@ -42,3 +42,13 @@ Public assessment reads allowlist question text and public configuration. answer
 ## Migrations
 
 Use additive migrations and preserve accounts, progress, and historical attempts. Reorganize content without destructive resets: archive/unpublish replaced learning content, keep stable historical references where possible, and seed the three-topic curriculum. Do not delete user-generated or historical records to reset the product surface.
+
+## Diagnostic and post-test data
+
+Assessment enum includes PRETEST. A published ten-item PRETEST has zero weight/passing score; a published ten-item FINAL serves as post-test, weight 100 and threshold 75. Both reuse assessment_items/sessions/results and their existing private-content/owner-only RLS. Historical checkpoint/final rows are unpublished. Existing exercises are optional and phase3_record_attempt only saves attempts, never lesson_progress. acknowledge_material_read is authenticated-only, checks availability and active sessions, and writes the caller’s reading status. Serialized starts prevent multiple active tests and a completed PRETEST cannot restart. Historical content IDs, attempts and results are preserved.
+
+## Current course progression
+
+Pre-test → Materi → optional Lab SQL → Post-test. The authoritative behavior is defined in docs/03-LEARNING_SYSTEM.md. Reading acknowledgement replaces practice completion; historical checkpoints are unpublished and no longer gate the course. Existing history is retained.
+
+The security advisor flags authenticated SECURITY DEFINER RPCs as intentional review points. Reading acknowledgement needs constrained elevated writes because clients have no arbitrary progress-write grant. It derives the caller with auth.uid(), uses an empty search_path, checks publication/prerequisites/assessment state, and grants only authenticated execution. Anonymous access and client finalization are denied in live tests. Private assessment tables intentionally have no client policies/grants.

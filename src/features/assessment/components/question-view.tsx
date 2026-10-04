@@ -74,8 +74,8 @@ export function AssessmentQuestionView({ item, answer, onAnswer }: { item: Publi
   const mode = config.mode;
   const isCoding = item.type === "CODE_COMPLETION" || item.type === "DEBUGGING" || item.type === "PROBLEM_SOLVING";
   return <article aria-labelledby={`question-title-${item.id}`}>
-    <p className="text-sm font-semibold text-accent">{item.topic} · {exerciseTypeLabel(item.type)}</p>
-    <h2 id={`question-title-${item.id}`} className="mt-2 text-xl font-semibold">{item.title}</h2>
+    <h2 id={`question-title-${item.id}`} className="text-xl font-semibold">{item.title}</h2>
+    <p className="mt-2 text-sm text-muted-foreground">{item.topic} · {mode === "choice" ? "Pilihan ganda" : exerciseTypeLabel(item.type)}</p>
     <p className="mt-3 max-w-[72ch] text-sm leading-6 text-muted-foreground">{item.prompt}</p>
     {isCoding ? <CodeQuestion item={item} answer={answer} onAnswer={onAnswer} />
       : item.type === "PREDICT_OUTPUT" ? <PredictQuestion item={item} answer={answer} onAnswer={onAnswer} />

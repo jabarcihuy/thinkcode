@@ -13,57 +13,34 @@ Quethink membantu mahasiswa memahami basis data relasional dengan melihat tabel,
 ## Alur pengguna: dari login sampai selesai
 
 ```text
-Landing page
-→ Daftar atau login
-→ Dashboard
-→ Jalur Basis Data
-→ Lesson dan practice
-→ Checkpoint
-→ Lesson berikutnya
-→ Tes Akhir · Relasi, Read, dan Write
-→ Jalur selesai
+Login → Dashboard → Pre-test → Materi 1–11 → Lab SQL → Post-test → Selesai
 ```
 
-### 1. Masuk dan lihat langkah berikutnya
+### Pre-test
 
-Setelah daftar atau login, pengguna tiba di dashboard. Dashboard menampilkan progres, materi berikutnya, dan checkpoint yang sudah terbuka. Pengguna baru memilih **Mulai belajar**; pengguna yang kembali memilih **Lanjutkan belajar**.
+Buka `/pre-test` untuk mencatat pemahaman awal tentang Relasi, Read, dan Write melalui sepuluh pertanyaan. Pilih **Belum tahu** bila belum mengenal konsepnya. Tidak ada syarat lulus atau bobot nilai; hasil yang sudah dikirim tidak dapat diulang. Pre-test tidak mengunci materi. Jika belajar sudah dimulai, halaman menjelaskan bahwa hasil bukan lagi baseline sebelum belajar.
 
-### 2. Ikuti tiga materi utama
+### Materi dan PDF
 
-Konten dikelompokkan sebagai **Relasi**, **Write**, dan **Read**. Urutan belajar mengikuti prasyarat: **Relasi → Read → Write**.
+Materi 1–11 disajikan sebagai daftar datar, tanpa submateri. Halaman hanya berisi penjelasan, contoh, tabel statis, ringkasan dan video opsional. Setiap materi dapat diunduh sebagai PDF. Urutan konsep: **Relasi → Read → Write**.
 
-- **Relasi:** Membaca Bentuk Data; Key dan Hubungan Antar Tabel.
-- **Read:** Memilih Sumber dan Kolom; Menyaring Record; Mengurutkan dan Membatasi Hasil; Menghubungkan Tabel dengan JOIN; Merangkum Data dengan GROUP BY; Tantangan Query Kampus.
-- **Write:** Menambahkan Record dengan INSERT; Mengubah Record dengan UPDATE; Menghapus Record dengan DELETE.
+Pilih **Selesai dibaca** untuk mencatat progres dan membuka materi berikutnya. Membuka halaman atau mengunduh PDF saja tidak mengubah progres. Ini merupakan pengakuan membaca, bukan bukti penguasaan materi. Server memeriksa urutan, publication dan akun; URL langsung tidak melewati lock.
 
-Lesson berikutnya terbuka setelah practice wajib dan checkpoint prasyarat selesai. Lesson terkunci juga diperiksa di server, jadi URL langsung tidak dapat melewati urutan belajar.
+### Lab SQL
 
-### 3. Membaca materi dan mengunduh PDF
+Buka `/lab` untuk eksplorasi visual dan mencoba query. Lab Relasi menggunakan tabel/key tanpa SQL; Read dan Write memakai SQLite sintetis di browser Worker. Lab tetap vertikal: data → query → hasil. Check pemahaman di Lab bersifat opsional dan bisa diulang. Hasilnya tidak menyelesaikan materi atau menentukan nilai post-test. Bookmark halaman `/practice` lama tetap bekerja.
 
-Daftar belajar menampilkan **Materi 1 sampai Materi 11**, tanpa chapter atau submateri. Setiap halaman hanya berisi penjelasan, contoh, tabel pendukung, ringkasan, dan video opsional. Pilih **Unduh PDF** untuk menyimpan bacaan materi tersebut.
+SQL Playground, Pembuat Skema, dan Tutor tersedia sebagai alat bantu dari Lab. Navigasi mobile: **Beranda · Materi · Lab · Tes · Profil**.
 
-Lab dan latihan berada di halaman terpisah, melalui **Buka latihan materi N**. Di sana pengguna dapat mengeksplorasi skema, memprediksi, menjalankan query pada data sintetis, membaca hasil, dan memeriksa jawaban. Relasi dipelajari dahulu tanpa query; query dimulai pada materi Read lalu Write.
+### Post-test dan penyelesaian
 
-Membaca atau mengunduh PDF tidak otomatis menuntaskan materi. Penyelesaian tetap berdasarkan latihan wajib, lalu checkpoint sesuai urutan. Materi terkunci juga tidak dapat dibuka atau diunduh lewat URL langsung.
+Buka `/post-test` setelah seluruh materi wajib selesai dibaca. Sepuluh pertanyaan menguji konsep yang sama dengan pre-test menggunakan kasus berbeda. Skor dihitung server-side, lulus pada **75/100**, dan percobaan dapat diulang setelah sesi sebelumnya selesai. Post-test memiliki bobot nilai 100%; pre-test tidak dihitung.
 
-### 4. Selesaikan practice untuk membuka materi
+Jalur selesai setelah semua materi wajib selesai dibaca dan post-test lulus. Skor produk tidak otomatis menjadi nilai yang disahkan kampus. Kedua instrumen belum divalidasi secara psikometrik; selisih skor bukan bukti tunggal efektivitas belajar.
 
-Setiap lesson mempunyai dua latihan eksplorasi opsional dan satu practice wajib. Practice wajib harus lulus agar lesson ditandai selesai; latihan opsional tidak menghambat progres. Setelah itu, lesson berikutnya terbuka dan progres dashboard diperbarui. Pengguna dapat mengulang lesson yang sudah selesai.
+AI, hints, Lab/check dan pencatatan progres membaca dijeda selama sesi tes aktif. Private answer key tidak dikirim ke browser. Hanya satu sesi aktif dapat dimulai per akun. Checkpoint/tes akhir lama kini tidak terbit tetapi riwayat sesi, nilai, latihan dan progres tetap disimpan.
 
-Checkpoint dan final assessment terpisah dari practice. Selama assessment berlangsung, AI Tutor dan petunjuk dinonaktifkan. Hasil assessment dihitung dan disimpan oleh server; skor minimum lulus saat ini **75/100**. Percobaan dapat diulang setelah sesi sebelumnya dikirim.
-
-### 5. Lewati checkpoint dan tamatkan jalur
-
-Checkpoint tersedia setelah kelompok unit berikut:
-
-- **Checkpoint 1:** setelah materi Relasi.
-- **Checkpoint 2:** setelah materi Read.
-- **Checkpoint 3:** setelah materi Write.
-- **Tes Akhir:** setelah semua materi dan checkpoint prasyarat selesai.
-
-Jalur dinyatakan selesai setelah seluruh lesson wajib selesai dan semua checkpoint serta final assessment lulus. Dashboard dan halaman assessment menampilkan progres, status kelulusan, dan skor. Skor yang tercatat di Quethink tidak otomatis menjadi nilai resmi kampus atau mata kuliah.
-
-JavaScript dan TypeScript adalah teknologi internal aplikasi, bukan materi siswa. Practice SQL hanya memakai dataset latihan lokal; assessment memakai mekanisme penilaian server yang tidak mengirim jawaban privat ke browser.
+JavaScript/TypeScript adalah teknologi aplikasi, bukan materi mahasiswa. SQL mahasiswa hanya berjalan di browser pada database latihan sintetis.
 
 ## Stack
 
@@ -75,7 +52,7 @@ Next.js full-stack, TypeScript, Supabase Auth/PostgreSQL, dan SQLite WASM di bro
 
 `npm run test:schema:integration` menguji pembuat skema, draft, video, dan layout 360/768/1280px pada production server. Memerlukan Chromium lokal dan kredensial Supabase server; akun uji sementara dihapus setelah tes.
 
-Paket [uji mahasiswa](docs/evaluation/2026-10-03-uji-mahasiswa/README.md) menyediakan protokol, tugas peserta, rubrik, dan lembar observasi kosong. Sesi nyata serta efektivitas bahan ajar belum diuji. Pre-test produk tetap ditunda.
+Paket [uji mahasiswa](docs/evaluation/2026-10-03-uji-mahasiswa/README.md) menyediakan protokol, tugas peserta, rubrik, dan lembar observasi kosong. Sesi nyata serta efektivitas bahan ajar belum diuji. Pre-test produk tersedia; pengujian instrumennya dengan mahasiswa masih perlu dilakukan.
 
 Untuk menambahkan video pada database existing dengan aman, jalankan migration video yang terbaru; alternatif seed konten idempoten: `npm run seed:videos`. Seed membaca `.env`/`.env.local`, memakai secret server lokal, dan hanya menambahkan video pada empat lesson yang dipetakan; tidak mencatat histori migration. Jika seed sudah diterapkan, migration tetap dapat dijalankan tanpa menggandakan video.
 
@@ -86,3 +63,7 @@ Buka **Admin CMS → Lesson → Buka pratinjau**. Admin dapat meninjau draft ata
 ### Seed bacaan dan PDF
 
 `npm run seed:reading` menerapkan 11 bacaan tanpa mengubah ID materi, latihan, progres atau nilai. Migration `20261004075424_reading_materials_only.sql` menyediakan bacaan yang sama pada database baru; seed konten tidak mencatat histori migration. PDF dibuat server-side dari bacaan yang dapat diakses pengguna, menggunakan font lokal dan tanpa mengambil resource eksternal. Tidak diperlukan konfigurasi PDF tambahan di Vercel.
+
+### Uji alur sederhana
+
+`npm run test:flow:integration` memeriksa baseline pre-test, pembacaan seluruh materi, Lab opsional, post-test/retry, manipulasi skor, private key, ownership, RBAC, AI block, query SQLite dan layout 360/768/1280px pada production build. Akun sementara dibersihkan setelah tes. Perubahan alur disediakan dalam dua migration: enum PRETEST lalu reading progress/seed pertanyaan; jalankan berurutan. Tidak ada environment variable baru.

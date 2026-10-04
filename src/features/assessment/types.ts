@@ -1,6 +1,6 @@
 import type { Database, Json } from "@/types/database";
 
-export type AssessmentType = "CHECKPOINT" | "FINAL";
+export type AssessmentType = "CHECKPOINT" | "FINAL" | "PRETEST";
 export type AssessmentItemType = Database["public"]["Enums"]["exercise_type"];
 export type AssessmentStatus = "IN_PROGRESS" | "COMPLETED" | "ABANDONED";
 

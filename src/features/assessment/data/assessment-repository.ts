@@ -1,19 +1,21 @@
 import "server-only";
 import { createPrivilegedClient } from "@/lib/supabase/privileged";
-import type { PublicAssessmentItem } from "@/features/assessment/types";
+import { isTestAvailable } from "../domain/test-policy";
+import type { AssessmentType, PublicAssessmentItem } from "@/features/assessment/types";
 
 export interface AssessmentSummary {
   id: string;
   slug: string;
   title: string;
   instructions: string;
-  type: "CHECKPOINT" | "FINAL";
+  type: AssessmentType;
   gateAfterChapter: number;
   courseWeightPercent: number;
   passingScore: number;
   position: number;
   available: boolean;
   activeSessionId: string | null;
+  completedSessionId: string | null;
   result: { attemptCount: number; latestScore: number; highestScore: number; passed: boolean } | null;
 }
 
@@ -25,7 +27,7 @@ export async function getAssessmentSummaries(pathSlug: string, userId: string): 
   const [{ data: assessments, error: assessmentsError }, { data: chapters, error: chaptersError }] = await Promise.all([
     supabase.from("assessments").select("id, slug, title, instructions, type, gate_after_chapter, course_weight_percent, passing_score, position")
       .eq("learning_path_id", path.id).eq("is_published", true).order("position"),
-    supabase.from("chapters").select("id, position").eq("learning_path_id", path.id).eq("is_published", true),
+    supabase.from("chapters").select("id, position").eq("learning_path_id", path.id).eq("is_published", true).eq("is_required", true),
   ]);
   if (assessmentsError) throw assessmentsError;
   if (chaptersError) throw chaptersError;
@@ -36,11 +38,13 @@ export async function getAssessmentSummaries(pathSlug: string, userId: string): 
     : { data: [], error: null };
   if (lessonError) throw lessonError;
   const lessonIds = (lessons ?? []).map((lesson) => lesson.id);
-  const [progressResult, resultResult, activeResult] = await Promise.all([
+  const [progressResult, resultResult, activeResult, completedResult] = await Promise.all([
     lessonIds.length ? supabase.from("lesson_progress").select("lesson_id").eq("user_id", userId).eq("status", "COMPLETED").in("lesson_id", lessonIds) : Promise.resolve({ data: [], error: null }),
     (assessments ?? []).length ? supabase.from("assessment_results").select("assessment_id, attempt_count, latest_score, highest_score, passed").eq("user_id", userId).in("assessment_id", (assessments ?? []).map((item) => item.id)) : Promise.resolve({ data: [], error: null }),
     (assessments ?? []).length ? supabase.from("assessment_sessions").select("id, assessment_id").eq("user_id", userId).eq("status", "IN_PROGRESS").in("assessment_id", (assessments ?? []).map((item) => item.id)) : Promise.resolve({ data: [], error: null }),
+    (assessments ?? []).length ? supabase.from("assessment_sessions").select("id, assessment_id, started_at").eq("user_id", userId).eq("status", "COMPLETED").in("assessment_id", (assessments ?? []).map((item) => item.id)).order("started_at", { ascending: false }) : Promise.resolve({ data: [], error: null }),
   ]);
+  if (completedResult.error) throw completedResult.error;
   if (progressResult.error) throw progressResult.error;
   if (resultResult.error) throw resultResult.error;
   if (activeResult.error) throw activeResult.error;
@@ -51,17 +55,14 @@ export async function getAssessmentSummaries(pathSlug: string, userId: string): 
   return (assessments ?? []).map((assessment) => {
     const required = (lessons ?? []).filter((lesson) => (chapterPosition.get(lesson.chapter_id) ?? 99) <= assessment.gate_after_chapter);
     const lessonsComplete = required.every((lesson) => completedLessons.has(lesson.id));
-    const earlierCheckpoints = (assessments ?? []).filter((item) => item.type === "CHECKPOINT" && item.position < assessment.position);
-    const checkpointsComplete = earlierCheckpoints.every((item) => results.get(item.id)?.passed === true);
-    const allCheckpointsComplete = assessment.type !== "FINAL"
-      || (assessments ?? []).filter((item) => item.type === "CHECKPOINT").every((item) => results.get(item.id)?.passed === true);
     const saved = results.get(assessment.id);
     return {
       id: assessment.id, slug: assessment.slug, title: assessment.title, instructions: assessment.instructions,
       type: assessment.type, gateAfterChapter: assessment.gate_after_chapter, passingScore: assessment.passing_score,
       courseWeightPercent: assessment.course_weight_percent,
-      position: assessment.position, available: lessonsComplete && checkpointsComplete && allCheckpointsComplete,
+      position: assessment.position, available: isTestAvailable(assessment.type, lessonsComplete, results.has(assessment.id)),
       activeSessionId: activeSessions.get(assessment.id) ?? null,
+      completedSessionId: completedResult.data?.find((entry) => entry.assessment_id === assessment.id)?.id ?? null,
       result: saved ? { attemptCount: saved.attempt_count, latestScore: saved.latest_score, highestScore: saved.highest_score, passed: saved.passed } : null,
     };
   });
@@ -69,7 +70,7 @@ export async function getAssessmentSummaries(pathSlug: string, userId: string): 
 
 export interface AssessmentSessionData {
   session: { id: string; assessment_id: string; status: string; score: number | null; started_at: string };
-  assessment: { title: string; instructions: string; passingScore: number; type: "CHECKPOINT" | "FINAL" };
+  assessment: { title: string; instructions: string; passingScore: number; type: AssessmentType };
   items: PublicAssessmentItem[];
 }
 
@@ -105,7 +106,7 @@ export async function getAssessmentResult(sessionId: string, userId: string) {
     .eq("id", sessionId).eq("user_id", userId).eq("status", "COMPLETED").maybeSingle();
   if (error) throw error;
   if (!data) return null;
-  const { data: assessment } = await supabase.from("assessments").select("title, passing_score").eq("id", data.assessment_id).maybeSingle();
+  const { data: assessment } = await supabase.from("assessments").select("title, passing_score, type").eq("id", data.assessment_id).maybeSingle();
   if (!assessment) return null;
-  return { id: data.id, title: assessment.title, passingScore: assessment.passing_score, score: data.score ?? 0, completedAt: data.completed_at, safeFeedback: data.safe_feedback };
+  return { id: data.id, title: assessment.title, type: assessment.type, passingScore: assessment.passing_score, score: data.score ?? 0, completedAt: data.completed_at, safeFeedback: data.safe_feedback };
 }

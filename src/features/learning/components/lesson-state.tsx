@@ -21,7 +21,7 @@ const marks: Record<LessonState, string> = {
 };
 
 const labels: Record<LessonState, string> = {
-  COMPLETED: "Selesai",
+  COMPLETED: "Selesai dibaca",
   IN_PROGRESS: "Sedang berjalan",
   AVAILABLE: "Tersedia",
   LOCKED: "Terkunci",

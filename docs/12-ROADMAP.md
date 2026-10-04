@@ -21,7 +21,7 @@ Three main content topics are Relasi, Write, and Read; learner progression follo
 - Optional Indonesian video references.
 - Optional guided 2D schema modeling with local drafts, formative feedback, and mobile-first controls.
 - Contextual AI Tutor during lessons/practice, blocked during assessment.
-- Separate deterministic checkpoints/final assessment.
+- Separate diagnostic pre-test and deterministic post-test.
 - Admin CMS with draft, preview, and publish flow.
 - Vercel and Supabase free-plan deployment target.
 
@@ -35,10 +35,10 @@ Programming-language lessons, PTI mapping, external/paid query runner, arbitrary
 - Four optional lesson videos: source metadata/descriptions checked, dialect notes included; reflection belongs to practice. Full audiovisual review and Write segment selection remain pending.
 - [Student trial package](evaluation/2026-10-03-uji-mahasiswa/README.md): moderator protocol, participant tasks, rubric/survey, empty observation sheets, and report template prepared. Student sessions and results are not yet available.
 
-## Parked for later
+## Simplified learning flow
 
-- Add a separate pre-test page before the learning materials to measure starting understanding. The retryable exercises on separate material practice pages remain formative practice and are not a pre-test. Decide question coverage, feedback, and how the result is used before implementing it.
+Implemented target: separate diagnostic pre-test, numbered reading/PDF, optional Lab SQL and server-graded post-test. Pre-test adapts existing question concepts; post-test uses parallel cases. Reading acknowledgement replaces mandatory practice completion. Historical checkpoints are unpublished and attempts/results preserved. No additional course stage is required.
 
 ## Completion gate
 
-The published path presents numbered Materi 1–11 in prerequisite order without chapter/submateri navigation. Relasi/Read/Write remain internal groups for checkpoint gates. Reading and PDF stay separate from interactive practice. User practice can inspect, predict, read, safely modify, verify, and reset the synthetic dataset. Progression, video, assessment, admin content flow, mobile usability, RLS, lint, typecheck, tests, and production build remain valid. No unrelated feature phase starts automatically.
+The published path presents numbered Materi 1–11 in prerequisite order without chapter/submateri navigation. Relasi/Read/Write remain internal content groups. Reading and PDF stay separate from interactive practice. User practice can inspect, predict, read, safely modify, verify, and reset the synthetic dataset. Progression, video, assessment, admin content flow, mobile usability, RLS, lint, typecheck, tests, and production build remain valid. No unrelated feature phase starts automatically.

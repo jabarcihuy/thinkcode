@@ -2,6 +2,12 @@
 
 ## Learner routes
 
+- GET /pre-test: diagnostic baseline with no passing gate, one completed result.
+- GET /post-test: scored final test after required reading.
+- GET /lab: index of optional concept-aligned labs.
+- GET /assessments: redirects to /post-test; historical session/result URLs remain valid.
+- POST /api/materials/[lessonId]/read: authenticated reading acknowledgement; checks sequence/publication and denies while any test is active. Does not accept a user ID or score.
+
 - GET /learn/[pathSlug]: flat numbered published-material list in prerequisite order.
 - GET /learn/[pathSlug]/lessons/[lessonSlug]: reading-only published/preview prose and examples, with server-side lock checks.
 - GET /learn/[pathSlug]/lessons/[lessonSlug]/practice: authenticated, lock-checked lab and practice; paused during active assessment.
@@ -30,3 +36,7 @@ Admin routes under /api/admin require a valid session and ADMIN role for every o
 ## Input limits
 
 Bound SQL text, statement count, practice payloads, AI context, answer count, affected rows, result rows/cells, and assessment attempts. Do not return hidden answers/test values or raw provider errors.
+
+## Current course progression
+
+Pre-test → Materi → optional Lab SQL → Post-test. The authoritative behavior is defined in docs/03-LEARNING_SYSTEM.md. Reading acknowledgement replaces practice completion; historical checkpoints are unpublished and no longer gate the course. Existing history is retained.

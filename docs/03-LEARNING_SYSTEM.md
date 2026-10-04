@@ -1,44 +1,35 @@
 # Learning System
 
-## Curriculum structure
+## Learner flow
 
-The three main content topics are Relasi, Write, and Read. Learner progression follows **Relasi → Read → Write**. The labels organize the content; progression follows prerequisite knowledge.
+**Pre-test → Materi → Lab SQL → Post-test.** These are separate pages. Learners see one flat list, Materi 1–11, ordered Relasi → Read → Write.
 
-- **Relasi:** understand table structure, records, columns, keys, and relationship paths by inspecting visual tables; do not write SQL yet.
-- **Read:** select columns and records, order results, join related tables, and summarize data.
-- **Write:** add, update, and delete a small amount of synthetic data after learners can read and identify the target records.
+## Pre-test
 
-Learners see Materi 1–11 without submateri navigation. Each reading page contains explanation, static examples/tables, summary and optional video, with an authorized per-material PDF download. Headings organize prose only, not separately completed learning units. Interactive tables, prediction, SQL labs, AI help and checks belong to the separate practice page associated with that material. Internal topic/chapter records preserve prerequisite and checkpoint grouping.
+`/pre-test` measures starting understanding with ten selected/adapted questions from the existing concept bank: three Relasi, four Read, three Write. It uses a different question/data variant from the post-test. Each question offers “Belum tahu”. A completed baseline is immutable and cannot be retaken. The score is diagnostic, has no passing threshold and has zero course weight. It never blocks learning. Learners who have already studied can take it, but the page must explain that this is no longer a before-learning baseline. Completion date and topic summary are retained. This instrument is a product baseline, not a psychometrically validated test or proof of causal learning gain.
 
-## Material and practice cycle
+## Materi
 
-First read the material or download its PDF. Reading and downloading never change completion. Then open its separate practice page:
+Reading pages contain explanations, static examples/tables, summary and optional video, and have per-material PDF downloads. No exercises, missions, SQL editor or AI panel is embedded in reading. Headings organize prose, not submateri.
 
-1. Read a practical question about data.
-2. In Relasi, inspect table structure, sample records, and keys without writing SQL.
-3. In Read or Write, predict query results or the records that will change.
-4. Write or adjust one SQL statement when the material introduces SQL.
-5. Run it against the synthetic SQLite dataset in a disposable browser Worker.
-6. Inspect returned rows or the before/after data change.
-7. Explain why the outcome answers the question.
-8. Complete the required formative practice for the material.
+Reading or downloading alone writes no progress. An authenticated learner explicitly chooses **Selesai dibaca** to acknowledge reading and unlock the next required material. This is reading progress, not mastery or an official score. The server and a narrowly granted database function enforce publication, ownership, prerequisite order and assessment pause. Optional materials never block. Previously earned completion/history is preserved.
 
-Each material pairs a suitable activity with one required check. Relasi uses visual table and key inspection; Read and Write pair a focused SQL task in the local lab with practice. SQL lab tasks are exploratory: predict, run, inspect, and explain. The required check targets the material's learning outcome, allows retries, and stores an attempt for progression. A local SQL result alone does not complete a material.
+## Lab SQL
 
-For `UPDATE` and `DELETE`, learners inspect the target rows using the same predicate before confirming the change. The lab shows the affected-row count and resulting data. Reset restores the deterministic seed.
+`/lab` is the separate index of available concept-aligned labs. Existing `/learn/[pathSlug]/lessons/[lessonSlug]/practice` URLs remain compatible. All checks there are optional formative practice: inspect → predict → try SQL → see result/change → explain. They may be retried freely and attempts are saved, but neither a passing check nor browser output completes a material or changes an official score.
 
-## Progress
+Relasi labs inspect records, PK/FK and relationships without SQL. Read/Write labs use only the selected synthetic SQLite Worker dataset. Preview target rows before UPDATE/DELETE, confirm one-row changes and allow deterministic reset. SQL never reaches Supabase or a server execution runtime.
 
-Required lessons unlock in order. The first required lesson is available; the next required lesson unlocks after required practice passes. Optional material never blocks progression. Completed lessons remain reviewable.
+## Post-test
 
-Checkpoints follow Relasi, Read, and Write. The final assessment follows the full learning path. AI Tutor and hints are blocked server-side during an active assessment.
+`/post-test` opens after all published required materials have been acknowledged/completed. Ten parallel questions cover the same three/four/three concept distribution with different cases/data. Grading is deterministic and server-side. Pass at 75/100; retries are allowed after the previous session ends. The published post-test has 100% course weight; pre-test is excluded. Course completion requires all required reading plus a passed post-test. A displayed score is not automatically an institution-approved grade.
 
-## Practice and assessment
+Historical checkpoints/final assessments are unpublished, not deleted, and cease gating the simplified course. Historical attempts/results remain intact. In-progress historical assessment sessions can still finish. Existing admin tools remain protected.
 
-Practice allows unlimited retries and immediate educational feedback. Deterministic required checks are graded and saved server-side. SQL Run stays local and formative; its browser-reported results are not trusted evidence for an official score. Assessment remains a separate, official scoring flow.
+## Test mode and security
 
-Assessments are separate sessions. Use deterministic server-graded questions such as schema/key identification, query/result prediction, selecting a correct query, selecting the intended DML target, predicting a bounded data change, and ordering query clauses. Do not execute arbitrary learner SQL on the server for scoring unless a separately reviewed trusted design is added.
+Pre-test/post-test sessions reuse the owned assessment session lifecycle. Only one active session per user is permitted by the start function. AI, hints, practice helpers and reading-progress mutations are blocked server-side while any assessment is IN_PROGRESS. Answer keys, test configuration and correct values stay server-only; public responses expose prompts/options and safe summaries only. Learners never submit trusted scores or passed/completion flags.
 
-## Curriculum coverage
+## Coverage
 
-Learning outcomes and submaterials are defined in docs/04-CURRICULUM.md. Lessons retain a compact Campus Mini anchor to reduce context switching, with optional transfer tasks on Katalog Buku or Toko Mini. Required completion stays tied to the existing mandatory practice.
+See docs/04-CURRICULUM.md for the eleven materials and synthetic datasets. Additional schema modeling, Playground and Chatbot are supporting tools accessible from the Lab, not required course stages.

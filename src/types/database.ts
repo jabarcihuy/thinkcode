@@ -759,6 +759,7 @@ export type Database = {
       }
     }
     Functions: {
+      acknowledge_material_read: { Args: { p_lesson_id: string }; Returns: undefined }
       consume_code_request_quota: { Args: { p_kind: string }; Returns: boolean }
       current_user_has_active_assessment: { Args: never; Returns: boolean }
       current_user_lesson_available: {
@@ -802,7 +803,7 @@ export type Database = {
     }
     Enums: {
       app_role: "USER" | "ADMIN"
-      assessment_type: "CHECKPOINT" | "FINAL"
+      assessment_type: "CHECKPOINT" | "FINAL" | "PRETEST"
       exercise_type:
         | "CODE_COMPLETION"
         | "PREDICT_OUTPUT"
@@ -943,7 +944,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["USER", "ADMIN"],
-      assessment_type: ["CHECKPOINT", "FINAL"],
+      assessment_type: ["CHECKPOINT", "FINAL", "PRETEST"],
       exercise_type: [
         "CODE_COMPLETION",
         "PREDICT_OUTPUT",

@@ -1,5 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { getCurrentAccount } from "@/lib/auth/session";
+import { createClient } from "@/lib/supabase/server";
 import { getLearningOverview } from "@/features/learning/data/learning-repository";
 import { lessonIdSchema } from "@/features/learning/validation/routes";
 import { getGradingExercise, recordGradedAttempt } from "@/features/practice/data/exercise-repository";
@@ -20,6 +21,10 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   catch { return Response.json({ error: "Jawaban tidak valid atau terlalu besar." }, { status: 400 }); }
 
   try {
+    const db = await createClient();
+    const active = await db.rpc("current_user_has_active_assessment");
+    if (active.error) throw active.error;
+    if (active.data) return Response.json({ error: "Latihan dijeda selama tes berlangsung." }, { status: 403 });
     const exercise = await getGradingExercise(id);
     if (!exercise) return Response.json({ error: "Latihan tidak ditemukan." }, { status: 404 });
     const submission = parseSubmission(exercise.type, body);

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { randomBytes, randomUUID } from "node:crypto";
 import { spawn } from "node:child_process";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir } from "node:fs/promises";
 import { createServerClient } from "@supabase/ssr";
 import { createClient } from "@supabase/supabase-js";
 import { chromium } from "playwright-core";
@@ -10,12 +10,12 @@ const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 const secretKey = process.env.SUPABASE_SECRET_KEY;
 assert.ok(url && publishableKey && secretKey, "Supabase URL, publishable key, and secret key are required.");
-const site = process.env.FLOW_TEST_SITE ?? "http://127.0.0.1:3212";
+const site = process.env.FLOW_TEST_SITE ?? "http://127.0.0.1:3219";
 const pathSlug = "database-fundamentals";
 const privileged = createClient(url, secretKey, { auth: { persistSession: false, autoRefreshToken: false } });
 const password = randomBytes(24).toString("base64url");
 const userIds = [];
-const server = spawn("npm", ["run", "start", "--", "-p", "3212"], { stdio: ["ignore", "pipe", "pipe"], env: process.env });
+const server = spawn("npm", ["run", "start", "--", "-p", "3219"], { stdio: ["ignore", "pipe", "pipe"], env: process.env });
 let serverLog = "";
 for (const stream of [server.stdout, server.stderr]) stream.on("data", (chunk) => { serverLog = (serverLog + chunk.toString()).slice(-4000); });
 let browser;
@@ -58,238 +58,92 @@ async function call(user, route, method = "GET", body) {
   return { response, payload: await response.json().catch(() => ({})) };
 }
 
-async function passPractice(user, exercise) {
-  const expected = exercise.config?.answer;
-  let answer;
-  if (exercise.type === "PREDICT_OUTPUT" && typeof expected?.output === "string") {
-    answer = { output: expected.output };
-  } else if (["PSEUDOCODE", "FLOWCHART"].includes(exercise.type) && typeof expected?.choiceId === "string") {
-    answer = { choiceId: expected.choiceId };
-  } else if (["PSEUDOCODE", "FLOWCHART"].includes(exercise.type) && Array.isArray(expected?.order)) {
-    answer = { order: expected.order };
-  } else {
-    assert.fail(`${exercise.title} has no supported deterministic answer fixture.`);
-  }
-  let result;
-  for (let retry = 0; retry < 2; retry++) {
-    result = await call(user, `/api/exercises/${exercise.id}/check`, "POST", { pathSlug, answer });
-    if (result.response.status !== 429 || retry === 1) break;
-    await new Promise((resolve) => setTimeout(resolve, 65_000));
-  }
-  assert.equal(result.response.status, 200, `${exercise.title}: ${JSON.stringify(result.payload)}`);
-  assert.equal(result.payload.passed, true, `${exercise.title} was not accepted.`);
-  assert.equal(result.payload.lessonCompleted, true, `${exercise.title} did not complete its lesson.`);
+async function assertPrivateSafe(payload) {
+  const serialized = JSON.stringify(payload);
+  for (const name of ['answer_config','expected_output','assessment_test_cases','entry_function','solution_code']) assert.ok(!serialized.includes(name), `${name} leaked to client`);
 }
-
-async function passAssessment(user, assessment, lessonId, exerciseId) {
-  const started = await call(user, `/api/assessments/${assessment.slug}/start`, "POST");
-  assert.equal(started.response.status, 200, `${assessment.slug}: ${JSON.stringify(started.payload)}`);
-  const session = await call(user, `/api/assessment-sessions/${started.payload.sessionId}`);
-  assert.equal(session.response.status, 200, JSON.stringify(session.payload));
-  const serialized = JSON.stringify(session.payload);
-  for (const privateField of ["answer_config", "expected_output", "is_hidden", "assessment_test_cases"]) {
-    assert.ok(!serialized.includes(privateField), `Private ${privateField} reached the learner payload.`);
-  }
-
-  const blockedTutor = await call(user, "/api/ai/tutor", "POST", {
-    lessonId, exerciseId, action: "hint", message: "Tolong beri petunjuk.",
-  });
-  assert.equal(blockedTutor.response.status, 403, "AI Tutor must be blocked during an active assessment.");
-  const blockedTutorHistory = await call(user, `/api/ai/tutor?lessonId=${lessonId}&exerciseId=${exerciseId}`);
-  assert.equal(blockedTutorHistory.response.status, 403, "Chatbot history must also be blocked during an active assessment.");
-  const pausedPlayground = await fetch(`${site}/playground`, { headers: { Cookie: user.cookie() } });
-  assert.equal(pausedPlayground.status, 200);
-  assert.match(await pausedPlayground.text(), /Playground dijeda/, "Standalone SQL Playground must pause during an active assessment.");
-
-  const { data: privateItems, error } = await privileged.from("assessment_items")
-    .select("id, answer_config").eq("assessment_id", assessment.id);
-  assert.ifError(error);
-  const answers = session.payload.items.map((item) => {
-    const answer = privateItems.find((entry) => entry.id === item.id)?.answer_config;
-    assert.ok(answer && typeof answer === "object", `Missing private test fixture for ${item.title}.`);
-    return { itemId: item.id, answer };
-  });
-  const submitted = await call(user, `/api/assessment-sessions/${started.payload.sessionId}/submit`, "POST", { answers });
-  assert.equal(submitted.response.status, 200, JSON.stringify(submitted.payload));
-  assert.equal(submitted.payload.score, 100, `${assessment.slug} trusted grading failed.`);
-  assert.equal(submitted.payload.passed, true);
-  for (const privateField of ["answer_config", "expected_output", "assessment_test_cases"]) {
-    assert.ok(!JSON.stringify(submitted.payload).includes(privateField), `Private ${privateField} reached assessment feedback.`);
+async function snapshot(page, route, name) {
+  for (const width of [360,768,1280]) {
+    await page.setViewportSize({width,height:900});
+    await page.goto(site+route); await page.locator('main h1').waitFor();
+    const dimensions = await page.evaluate(()=>({viewport:document.documentElement.clientWidth,content:document.documentElement.scrollWidth}));
+    assert.ok(dimensions.content <= dimensions.viewport, `${name} ${width}: page overflow`);
+    await page.screenshot({path:`.impeccable/review/pretest-flow/${name}-${width}.png`,fullPage:true});
   }
 }
-
 try {
-  await waitForSite();
-  const learner = await createAccount("USER");
-  const admin = await createAccount("ADMIN");
-  const path = await privileged.from("learning_paths").select("id").eq("slug", pathSlug).eq("is_published", true).single();
-  assert.ifError(path.error);
-  const chaptersResult = await privileged.from("chapters").select("id, position").eq("learning_path_id", path.data.id).eq("is_published", true).order("position");
-  assert.ifError(chaptersResult.error);
-  const chapterOrder = new Map(chaptersResult.data.map((chapter) => [chapter.id, chapter.position]));
-  const lessonsResult = await privileged.from("lessons").select("id, chapter_id, slug, title, is_preview, position")
-    .in("chapter_id", [...chapterOrder.keys()]).eq("is_published", true).order("position");
-  assert.ifError(lessonsResult.error);
-  const lessons = [...lessonsResult.data].sort((a, b) => chapterOrder.get(a.chapter_id) - chapterOrder.get(b.chapter_id) || a.position - b.position);
-  assert.equal(lessons.length, 11, "The published course should contain eleven lessons in three main topics.");
-  assert.deepEqual(chaptersResult.data.map((chapter) => chapter.position), [1, 2, 3]);
-  const lessonIds = lessons.map((lesson) => lesson.id);
-  const exercisesResult = await privileged.from("exercises").select("id, lesson_id, type, title, config, position")
-    .in("lesson_id", lessonIds).eq("is_published", true).eq("is_required", true).order("position");
-  assert.ifError(exercisesResult.error);
-  const exercisesByLesson = new Map();
-  for (const exercise of exercisesResult.data) {
-    const rows = exercisesByLesson.get(exercise.lesson_id) ?? [];
-    rows.push(exercise);
-    exercisesByLesson.set(exercise.lesson_id, rows);
-  }
-  assert.ok(lessons.every((lesson) => (exercisesByLesson.get(lesson.id) ?? []).length === 1), "Every required material needs exactly one mandatory practice check.");
+  await waitForSite(); await mkdir('.impeccable/review/pretest-flow',{recursive:true});
+  const learner=await createAccount('USER'), other=await createAccount('USER'), admin=await createAccount('ADMIN');
+  const path=await privileged.from('learning_paths').select('id').eq('slug',pathSlug).eq('is_published',true).single(); assert.ifError(path.error);
+  const chapters=await privileged.from('chapters').select('id,position').eq('learning_path_id',path.data.id).eq('is_published',true);assert.ifError(chapters.error);
+  const chapterOrder=new Map(chapters.data.map(c=>[c.id,c.position]));
+  const content=await privileged.from('lessons').select('id,slug,chapter_id,position').in('chapter_id',[...chapterOrder.keys()]).eq('is_published',true);assert.ifError(content.error);
+  const lessons=content.data.sort((a,b)=>chapterOrder.get(a.chapter_id)-chapterOrder.get(b.chapter_id)||a.position-b.position);assert.equal(lessons.length,11);
+  const tests=await privileged.from('assessments').select('id,slug,type,course_weight_percent').eq('learning_path_id',path.data.id).eq('is_published',true);assert.ifError(tests.error);
+  assert.equal(tests.data.length,2);const pre=tests.data.find(t=>t.type==='PRETEST'),post=tests.data.find(t=>t.type==='FINAL');assert.ok(pre&&post);assert.equal(pre.course_weight_percent,0);assert.equal(post.course_weight_percent,100);
+  for(const route of ['/dashboard','/lab','/pre-test','/post-test']) assert.equal((await call(null,route)).response.status,307);
+  assert.equal((await call(learner,'/admin')).response.status,307);
+  assert.equal((await call(learner,'/api/admin/users')).response.status,403);
+  assert.equal((await call(admin,'/api/admin/users')).response.status,200);
+  assert.equal((await call(null,`/api/materials/${lessons[0].id}/read`,'POST')).response.status,401);
+  assert.equal((await call(learner,`/api/materials/${lessons[1].id}/read`,'POST')).response.status,403);
+  assert.equal((await call(learner,`/api/assessments/${post.slug}/start`,'POST')).response.status,403);
 
-  const { data: assessments, error: assessmentsError } = await privileged.from("assessments")
-    .select("id, slug, type, gate_after_chapter, position").eq("learning_path_id", path.data.id).eq("is_published", true).order("position");
-  assert.ifError(assessmentsError);
-  assert.equal(assessments.length, 4, "The database course should have three checkpoints and a final assessment.");
-
-  assert.equal((await call(null, "/dashboard")).response.status, 307);
-  assert.equal((await call(null, "/chatbot")).response.status, 307, "Chatbot must require a signed-in account.");
-  assert.equal((await call(null, "/playground")).response.status, 307, "SQL Playground must require a signed-in account.");
-  assert.equal((await call(learner, "/dashboard")).response.status, 200);
-  assert.equal((await call(learner, "/chatbot")).response.status, 200);
-  assert.equal((await call(learner, "/playground")).response.status, 200);
-  assert.equal((await call(learner, "/admin")).response.status, 307);
-  assert.equal((await call(learner, "/api/admin/users")).response.status, 403);
-  const blockedBeforePrerequisite = await call(learner, `/api/assessments/${assessments[0].slug}/start`, "POST");
-  assert.equal(blockedBeforePrerequisite.response.status, 403, "A checkpoint must remain unavailable before its lesson requirements.");
-
-  browser = await chromium.launch({ executablePath: "/usr/bin/chromium", headless: true, args: ["--no-sandbox"] });
-  const context = await browser.newContext({ viewport: { width: 360, height: 800 } });
-  await context.addCookies(learner.cookie().split("; ").map((part) => {
-    const [name, ...value] = part.split("=");
-    return { name, value: decodeURIComponent(value.join("=")), url: site };
-  }));
-  const page = await context.newPage();
-  page.setDefaultNavigationTimeout(60_000);
-  const browserErrors = [];
-  page.on("pageerror", (error) => browserErrors.push(error.message));
-  await page.goto(`${site}/dashboard`, { waitUntil: "domcontentloaded" });
-  await page.getByRole("heading", { name: /Selamat datang kembali/ }).waitFor();
-  await page.locator('summary[aria-label="Lainnya"]').click();
-  await page.getByRole("navigation", { name: "Navigasi utama", exact: true }).getByRole("link", { name: "Chatbot", exact: true }).waitFor();
-  await page.getByRole("navigation", { name: "Navigasi utama", exact: true }).getByRole("link", { name: "SQL Playground", exact: true }).waitFor();
-  await page.locator('summary[aria-label="Lainnya"]').click();
-  await page.getByRole("link", { name: "Mulai belajar" }).click();
-  await page.waitForURL(`${site}/learn/${pathSlug}`);
-  await page.locator(`a[href="/learn/${pathSlug}/lessons/${lessons[0].slug}"]`).first().click();
-  await page.waitForURL(new RegExp(`/learn/${pathSlug}/lessons/${lessons[0].slug}$`));
-  await page.locator("main h1").filter({ hasText: lessons[0].title }).waitFor();
-  assert.equal(await page.locator("#lesson-practice, #database-sql").count(), 0, "Reading must not embed practice or lab.");
-  await page.getByRole("link", { name: "Buka latihan materi 1" }).click();
-  await page.waitForURL(`${site}/learn/${pathSlug}/lessons/${lessons[0].slug}/practice`);
-  const dataPreview = page.getByRole("region", { name: "Jelajahi tabel dan relasi", exact: true });
-  await dataPreview.waitFor();
-  assert.equal(await dataPreview.getByRole("table").count(), 1, "Relasi shows one selectable record table at a time.");
-  const tableChoices = dataPreview.getByRole("group", { name: "Pilih tabel untuk melihat record", exact: true });
-  await tableChoices.getByRole("button", { name: /^enrollments/ }).click();
-  await tableChoices.getByRole("button", { name: /^courses/ }).click();
-  await tableChoices.getByRole("button", { name: /^students/ }).click();
-  assert.equal(await page.locator("#database-sql").count(), 0, "Relasi should not show a SQL editor.");
-  await page.getByRole("heading", { name: "Latihan materi 1" }).waitFor();
-  await page.getByRole("heading", { name: exercisesByLesson.get(lessons[0].id)[0].title }).waitFor();
-  await page.getByRole("button", { name: "Mulai latihan" }).click();
-  await page.getByText("Sedang berjalan").waitFor();
-  const tutorHistory = await call(learner, `/api/ai/tutor?lessonId=${lessons[0].id}`);
-  assert.equal(tutorHistory.response.status, 200, `Contextual chatbot history failed: ${JSON.stringify(tutorHistory.payload)}`);
-  await page.goto(`${site}/chatbot`, { waitUntil: "domcontentloaded" });
-  await page.getByRole("heading", { name: "Chatbot", exact: true }).waitFor();
-  await page.getByText(lessons[0].title, { exact: true }).waitFor();
-  await page.getByRole("link", { name: "Buka lesson" }).waitFor();
-  const chatbotWidths = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));
-  assert.ok(chatbotWidths.content <= chatbotWidths.viewport, `Chatbot overflowed mobile width: ${JSON.stringify(chatbotWidths)}.`);
-  await page.goto(`${site}/playground`, { waitUntil: "domcontentloaded" });
-  await page.getByRole("heading", { name: "SQL Playground" }).waitFor();
-  const standaloneLab = page.getByRole("region", { name: "Praktik query basis data" });
-  await standaloneLab.locator("#database-sql").fill("SELECT name, cohort FROM students WHERE cohort = '2025' ORDER BY name;");
-  await standaloneLab.locator("#database-prediction").fill("2");
-  await standaloneLab.getByRole("button", { name: "Jalankan SELECT" }).click();
-  await page.locator("#lab-results").getByRole("cell", { name: "Alya" }).waitFor();
-  const playgroundWidths = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));
-  assert.ok(playgroundWidths.content <= playgroundWidths.viewport, `SQL Playground overflowed mobile width: ${JSON.stringify(playgroundWidths)}.`);
-  await page.goto(`${site}/learn/${pathSlug}/lessons/${lessons[0].slug}/practice`, { waitUntil: "domcontentloaded" });
-  await page.getByRole("button", { name: "Atur ulang" }).waitFor();
-  const relationCanvas = page.getByRole("group", { name: "Canvas struktur tabel basis data" });
-  const tableCanvas = relationCanvas.getByRole("group", { name: /^Area skema\./ });
-  await tableCanvas.waitFor();
-  await tableCanvas.scrollIntoViewIfNeeded();
-  const canvasWorkspace = tableCanvas.locator(":scope > div");
-  await relationCanvas.getByRole("button", { name: "Perbesar canvas" }).click();
-  assert.ok(parseInt(await relationCanvas.locator("span[aria-live]").innerText()) > 0);
-  await tableCanvas.press("ArrowRight");
-  assert.match(await canvasWorkspace.getAttribute("style"), /translate/, "Keyboard pan should move the schema workspace.");
-  await relationCanvas.getByRole("button", { name: "Atur ulang" }).click();
-  assert.ok(parseInt(await relationCanvas.locator("span[aria-live]").innerText()) > 0);
-  const mobileWidths = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));
-  assert.ok(mobileWidths.content <= mobileWidths.viewport, `Lesson overflowed mobile width: ${JSON.stringify(mobileWidths)}.`);
-  const exerciseData = page.locator("details > summary", { hasText: "Jelajahi tabel dan relasinya" }).first();
-  await exerciseData.scrollIntoViewIfNeeded();
-  await exerciseData.click();
-  await exerciseData.locator("xpath=..").getByRole("group", { name: "Canvas struktur tabel basis data" }).waitFor();
-
-  for (let index = 0; index < lessons.length; index++) {
-    const lesson = lessons[index];
-    for (const exercise of exercisesByLesson.get(lesson.id) ?? []) await passPractice(learner, exercise);
-    const chapterEndsHere = lessons[index + 1]?.chapter_id !== lesson.chapter_id;
-    if (chapterEndsHere) {
-      const gate = assessments.find((assessment) => assessment.type === "CHECKPOINT" && assessment.gate_after_chapter === chapterOrder.get(lesson.chapter_id));
-      if (gate) {
-        const trigger = exercisesByLesson.get(lesson.id)?.[0];
-        await passAssessment(learner, gate, lesson.id, trigger.id);
-      }
-    }
-  }
-  const finalAssessment = assessments.find((assessment) => assessment.type === "FINAL");
-  assert.ok(finalAssessment);
-  await passAssessment(learner, finalAssessment, lessons.at(-1).id, exercisesByLesson.get(lessons.at(-1).id)[0].id);
-
-  for (const [index, material] of lessons.entries()) {
-    const pdf = await fetch(`${site}/learn/${pathSlug}/lessons/${material.slug}/pdf`, { headers: { Cookie: learner.cookie() } });
-    assert.equal(pdf.status, 200, `PDF for material ${index + 1} failed.`);
-    assert.equal(pdf.headers.get("content-type"), "application/pdf");
-    const bytes = Buffer.from(await pdf.arrayBuffer());
-    await mkdir("/tmp/quethink-material-pdfs", { recursive: true });
-    await writeFile(`/tmp/quethink-material-pdfs/materi-${index + 1}.pdf`, bytes);
-  }
-  const readLesson = lessons.find((lesson) => lesson.slug === "memilih-sumber-dan-kolom");
-  assert.ok(readLesson, "The first Read material should be present.");
-  await page.goto(`${site}/learn/${pathSlug}/lessons/${readLesson.slug}/practice`, { waitUntil: "domcontentloaded" });
-  await page.getByRole("heading", { name: "Praktik di lab" }).waitFor();
-  const labRegion = page.getByRole("region", { name: "Praktik query basis data" });
-  const sqlEditor = labRegion.locator("#database-sql");
-  await sqlEditor.fill("SELECT name, cohort FROM students WHERE cohort = '2025' ORDER BY name;");
-  await labRegion.locator("#database-prediction").fill("2");
-  await labRegion.getByRole("button", { name: "Jalankan SELECT" }).click();
-  await page.locator("#lab-results").getByRole("cell", { name: "Alya" }).waitFor();
-
-  const guestLesson = lessons.find((lesson) => lesson.is_preview);
-  assert.ok(guestLesson, "At least one preview lesson should remain readable to guests.");
-  const guestRequest = await fetch(`${site}/learn/${pathSlug}/lessons/${guestLesson.slug}`);
-  assert.equal(guestRequest.status, 200);
-  const oldPath = await fetch(`${site}/learn/programming-logic-fundamentals`);
-  const oldPathBody = await oldPath.text();
-  assert.match(oldPathBody, /Lesson belum tersedia/, "Retired course routes must render the unavailable state.");
-  assert.doesNotMatch(oldPathBody, /Programming Logic Fundamentals|What is Computational Thinking\?/i, "Retired programming material must not be public.");
-  assert.deepEqual(browserErrors, [], `Database lesson browser errors: ${browserErrors.join("; ")}`);
-  await context.close();
-
-  const dashboard = await call(learner, "/dashboard");
-  assert.equal(dashboard.response.status, 200);
-  const grades = await call(admin, "/api/admin/users");
-  assert.equal(grades.response.status, 200, JSON.stringify(grades.payload));
-  const row = grades.payload.items.find((item) => item.id === learner.id);
-  assert.equal(row.completed_lessons, 11);
-  assert.equal(row.assessments_passed, 4);
-  console.log("Protected Chatbot/context history, standalone browser SQL Playground, Relasi/Read/Write learning flow, practice, checkpoint gates, assessment AI block, hidden-answer payload, and admin gradebook passed.");
+  browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
+  const context=await browser.newContext({viewport:{width:360,height:900}});
+  await context.addCookies(learner.cookie().split('; ').map(part=>{const [name,...value]=part.split('=');return{name,value:decodeURIComponent(value.join('=')),url:site};}));
+  const page=await context.newPage();const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  await snapshot(page,'/dashboard','dashboard');await snapshot(page,'/pre-test','pre-test');await snapshot(page,'/post-test','post-test-locked');await snapshot(page,'/lab','lab');
+  const [startOne,startTwo]=await Promise.all([call(learner,`/api/assessments/${pre.slug}/start`,'POST'),call(learner,`/api/assessments/${pre.slug}/start`,'POST')]);
+  assert.equal(startOne.response.status,200);assert.equal(startTwo.payload.sessionId,startOne.payload.sessionId);const preId=startOne.payload.sessionId;
+  const preSession=await call(learner,`/api/assessment-sessions/${preId}`);await assertPrivateSafe(preSession.payload);assert.equal(preSession.payload.items.length,10);
+  assert.equal((await call(other,`/api/assessment-sessions/${preId}`)).response.status,404);
+  const paused=await call(learner,'/api/ai/tutor','POST',{lessonId:lessons[0].id,action:'hint',message:'Beri petunjuk.'});assert.equal(paused.response.status,403);
+  assert.equal((await call(learner,`/api/materials/${lessons[0].id}/read`,'POST')).response.status,409);
+  await snapshot(page,`/assessments/sessions/${preId}`,'pre-test-session');
+  const baseline=await call(learner,`/api/assessment-sessions/${preId}/submit`,'POST',{answers:preSession.payload.items.map(item=>({itemId:item.id,answer:{choiceId:'unknown'}}))});
+  assert.equal(baseline.response.status,200);assert.equal(baseline.payload.score,0);assert.equal(baseline.payload.passed,false);await assertPrivateSafe(baseline.payload);
+  assert.equal((await call(learner,`/api/assessments/${pre.slug}/start`,'POST')).response.status,403,'Baseline cannot be retaken');
+  await snapshot(page,`/assessments/sessions/${preId}/result`,'pre-test-result');assert.equal(await page.getByText('Belum lulus',{exact:true}).count(),0);
+  const history=await call(learner,`/api/ai/tutor?lessonId=${lessons[0].id}`);assert.equal(history.response.status,200,'AI resumes after diagnostic');
+  const exercises=await privileged.from('exercises').select('id,lesson_id,type,config,is_required').in('lesson_id',lessons.map(l=>l.id)).eq('is_published',true);assert.ifError(exercises.error);assert.ok(exercises.data.every(e=>!e.is_required));
+  const exercise=exercises.data.find(e=>e.lesson_id===lessons[0].id);assert.ok(exercise);
+  const checked=await call(learner,`/api/exercises/${exercise.id}/check`,'POST',{pathSlug,answer:exercise.config.answer});assert.equal(checked.response.status,200);assert.equal(checked.payload.passed,true);assert.equal(checked.payload.lessonCompleted,false);
+  const before=await privileged.from('lesson_progress').select('id').eq('user_id',learner.id);assert.ifError(before.error);assert.equal(before.data.length,0,'Optional lab never completes reading');
+  const reading=`/learn/${pathSlug}/lessons/${lessons[0].slug}`;
+  await snapshot(page,reading,'reading');assert.equal(await page.locator('main textarea,#lesson-practice,#database-sql').count(),0);
+  await page.getByRole('button',{name:'Selesai dibaca',exact:true}).click();await page.getByText('Materi sudah selesai dibaca.',{exact:true}).waitFor();
+  for(const lesson of lessons.slice(1)) assert.equal((await call(learner,`/api/materials/${lesson.id}/read`,'POST')).response.status,200,`Read ${lesson.slug}`);
+  const own=await privileged.from('lesson_progress').select('lesson_id').eq('user_id',learner.id).eq('status','COMPLETED');assert.ifError(own.error);assert.equal(own.data.length,11);
+  const untouched=await privileged.from('lesson_progress').select('id').eq('user_id',other.id);assert.ifError(untouched.error);assert.equal(untouched.data.length,0);
+  for(const lesson of lessons){const pdf=await fetch(`${site}/learn/${pathSlug}/lessons/${lesson.slug}/pdf`,{headers:{Cookie:learner.cookie()}});assert.equal(pdf.status,200);assert.match(Buffer.from(await pdf.arrayBuffer()).subarray(0,8).toString(),/%PDF/);}
+  await snapshot(page,'/post-test','post-test-ready');
+  const postStarted=await call(learner,`/api/assessments/${post.slug}/start`,'POST');assert.equal(postStarted.response.status,200);const postId=postStarted.payload.sessionId;
+  assert.equal((await call(learner,`/api/ai/tutor?lessonId=${lessons[0].id}`)).response.status,403);
+  assert.equal((await call(learner,`/api/exercises/${exercise.id}/check`,'POST',{pathSlug,answer:exercise.config.answer})).response.status,403);
+  assert.equal((await call(learner,`/api/assessments/${pre.slug}/start`,'POST')).response.status,403,'Cannot create another active test');
+  const postSession=await call(learner,`/api/assessment-sessions/${postId}`);await assertPrivateSafe(postSession.payload);assert.equal(postSession.payload.items.length,10);
+  const forged=await call(learner,`/api/assessment-sessions/${postId}/submit`,'POST',{score:100,passed:true,answers:postSession.payload.items.map(item=>({itemId:item.id,answer:{choiceId:'not-a-valid-answer'}}))});
+  assert.equal(forged.response.status,400,'Client score fields are rejected by strict validation');
+  const wrongAnswer = await call(learner,`/api/assessment-sessions/${postId}/submit`,'POST',{answers:postSession.payload.items.map(item=>({itemId:item.id,answer:{choiceId:'not-a-valid-answer'}}))});
+  assert.equal(wrongAnswer.response.status,200);assert.equal(wrongAnswer.payload.score,0);assert.equal(wrongAnswer.payload.passed,false,'Wrong answers cannot earn a passing score');
+  const retry=await call(learner,`/api/assessments/${post.slug}/start`,'POST');assert.equal(retry.response.status,200);
+  const privateItems=await privileged.from('assessment_items').select('id,answer_config').eq('assessment_id',post.id);assert.ifError(privateItems.error);
+  const passed=await call(learner,`/api/assessment-sessions/${retry.payload.sessionId}/submit`,'POST',{answers:privateItems.data.map(item=>({itemId:item.id,answer:item.answer_config}))});assert.equal(passed.response.status,200);assert.equal(passed.payload.score,100);assert.equal(passed.payload.passed,true);await assertPrivateSafe(passed.payload);
+  await snapshot(page,`/assessments/sessions/${retry.payload.sessionId}/result`,'post-test-result');
+  await page.goto(site+'/dashboard');await page.getByRole('heading',{name:'Jalur belajar selesai',exact:true}).waitFor();
+  // Real browser SQL smoke stays independent of assessment scoring.
+  await page.setViewportSize({width:360,height:900});await page.goto(site+'/playground');
+  const lab=page.getByRole('region',{name:'Praktik query basis data'});await lab.locator('#database-sql').fill("SELECT name FROM students ORDER BY name;");await lab.locator('#database-prediction').fill('4');await lab.getByRole('button',{name:'Jalankan SELECT'}).click();await page.locator('#lab-results').getByRole('cell',{name:'Alya'}).waitFor();
+  const userClient=createClient(url,publishableKey,{auth:{persistSession:false,autoRefreshToken:false}});assert.ifError((await userClient.auth.signInWithPassword({email:other.email,password})).error);
+  const privateRead=await userClient.from('assessment_results').select('*').eq('user_id',learner.id);assert.ifError(privateRead.error);assert.deepEqual(privateRead.data,[]);
+  assert.ok((await userClient.from('assessment_results').update({latest_score:100}).eq('user_id',other.id)).error,'Direct score writes forbidden');
+  assert.ok((await userClient.from('assessment_items').select('answer_config')).error,'Private test keys not readable');
+  assert.ok((await userClient.rpc('acknowledge_material_read',{p_lesson_id:lessons[1].id})).error,'RPC cannot skip prerequisite');
+  const results=await privileged.from('assessment_results').select('assessment_id,passed,attempt_count').eq('user_id',learner.id);assert.ifError(results.error);assert.equal(results.data.find(r=>r.assessment_id===pre.id).passed,false);assert.equal(results.data.find(r=>r.assessment_id===post.id).attempt_count,2);
+  assert.deepEqual(errors,[]);
+  console.log('PASS: pre-test baseline/immutable/neutral result; pure material/PDF; explicit reading unlocks all 11; optional lab does not complete; trusted post-test/retry; forged score/hidden keys/other-user/RBAC denied; AI blocked in both test modes; SQLite browser smoke; 360/768/1280 screenshots.');
 } finally {
-  await browser?.close();
-  server.kill("SIGTERM");
-  for (const id of userIds) assert.ifError((await privileged.auth.admin.deleteUser(id)).error);
+  await browser?.close();server.kill('SIGTERM');
+  for(const id of userIds) assert.ifError((await privileged.auth.admin.deleteUser(id)).error);
 }

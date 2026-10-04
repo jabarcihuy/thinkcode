@@ -28,8 +28,8 @@ function initialAnswers(items: PublicAssessmentItem[]): Record<string, Assessmen
 }
 
 export function AssessmentWorkspace({
-  sessionId, assessmentTitle, instructions, passingScore, items,
-}: { sessionId: string; assessmentTitle: string; instructions: string; passingScore: number; items: PublicAssessmentItem[] }) {
+  sessionId, assessmentTitle, instructions, passingScore, items, diagnostic = false,
+}: { sessionId: string; assessmentTitle: string; instructions: string; passingScore: number; diagnostic?: boolean; items: PublicAssessmentItem[] }) {
   const router = useRouter();
   const [answers, setAnswers] = useState<Record<string, AssessmentAnswer>>(() => initialAnswers(items));
   const [activeIndex, setActiveIndex] = useState(0);
@@ -85,9 +85,9 @@ export function AssessmentWorkspace({
         </div>
       </div>
     </div>
-    <p className="mb-6 rounded-md bg-muted px-4 py-3 text-sm">Mode assessment · Lulus pada skor {passingScore}+ · AI Tutor dan petunjuk dinonaktifkan</p>
+    <p className="mb-6 rounded-md bg-muted px-4 py-3 text-sm">{diagnostic ? "Pre-test · Tanpa syarat lulus · AI dan petunjuk dinonaktifkan" : `Post-test · Lulus pada skor ${passingScore}+ · AI dan petunjuk dinonaktifkan`}</p>
 
-    <div className="grid items-start gap-6 md:grid-cols-[12rem_minmax(0,1fr)]">
+    <div className="grid min-w-0 grid-cols-1 items-start gap-6 md:grid-cols-[12rem_minmax(0,1fr)]">
       <QuestionNavigator items={items} answers={answers} activeIndex={activeIndex} onSelect={(index) => { setActiveIndex(index); setRunResult(null); }} />
       <div className="min-w-0">
         <AssessmentQuestionView item={current} answer={currentAnswer} onAnswer={updateAnswer} />
@@ -100,7 +100,7 @@ export function AssessmentWorkspace({
           <Button type="button" variant="outline" disabled={activeIndex === 0 || submitPending} onClick={() => { setActiveIndex((index) => index - 1); setRunResult(null); }}><ArrowLeft size={15} aria-hidden="true" />Sebelumnya</Button>
           {activeIndex < items.length - 1
             ? <Button type="button" variant="outline" disabled={submitPending} onClick={() => { setActiveIndex((index) => index + 1); setRunResult(null); }}>Berikutnya<ArrowRight size={15} aria-hidden="true" /></Button>
-            : <Button type="button" disabled={submitPending || completeCount !== items.length} onClick={() => confirmationRef.current?.showModal()}><Send size={15} aria-hidden="true" />Kirim assessment</Button>}
+            : <Button type="button" disabled={submitPending || completeCount !== items.length} onClick={() => confirmationRef.current?.showModal()}><Send size={15} aria-hidden="true" />{diagnostic ? "Kirim pre-test" : "Kirim post-test"}</Button>}
         </div>
         {error && <p role="alert" className="mt-4 text-sm text-destructive">{error}</p>}
       </div>

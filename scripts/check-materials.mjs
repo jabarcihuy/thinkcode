@@ -72,7 +72,7 @@ try {
         assert.equal(await download.failure(), null);
         }
       }
-      if (name === "practice") await page.getByRole("heading", { name: "Latihan materi 1", exact: true }).waitFor();
+      if (name === "practice") await page.getByRole("heading", { name: "Cek pemahaman · opsional", exact: true }).waitFor();
       const size = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));
       assert.ok(size.content <= size.viewport, `${name} ${width} overflow: ${JSON.stringify(size)}`);
       await page.screenshot({ path: `.impeccable/review/material-reading/${name}-${width}.png`, fullPage: true });

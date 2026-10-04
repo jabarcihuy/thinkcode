@@ -6,7 +6,7 @@ Help beginning university learners understand relational data and answer practic
 
 ## Core learner flow
 
-Landing → account → dashboard → Materi 1–11 → reading/PDF → separate practice → separate assessments. Knowledge still progresses Relasi → Read → Write.
+Landing → account → dashboard → Pre-test → Materi 1–11 / reading/PDF → separate Lab SQL → Post-test. Knowledge still progresses Relasi → Read → Write.
 
 ## Learners can
 
@@ -18,8 +18,8 @@ Landing → account → dashboard → Materi 1–11 → reading/PDF → separate
 - Predict results, run queries, compare outcomes, and explain their reasoning.
 - Read one complete material without embedded labs/forms, download its PDF, and optionally watch its Indonesian video.
 - Retry formative practice without penalty.
-- Take checkpoints and a final assessment separately from practice.
-- See their progress and next available lesson.
+- Take a diagnostic pre-test and a separately scored post-test.
+- Explicitly acknowledge reading and see the next available material.
 
 ## Three main learning topics
 

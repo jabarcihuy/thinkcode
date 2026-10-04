@@ -11,10 +11,10 @@ export function isAssessmentAnswerComplete(answer: AssessmentAnswer | undefined)
 export function QuestionNavigator({
   items, answers, activeIndex, onSelect,
 }: { items: PublicAssessmentItem[]; answers: Record<string, AssessmentAnswer>; activeIndex: number; onSelect: (index: number) => void }) {
-  return <nav aria-label="Navigasi soal" className="border-b border-border pb-5 md:border-b-0 md:border-r md:pb-0 md:pr-5">
+  return <nav aria-label="Navigasi soal" className="min-w-0 border-b border-border pb-5 md:border-b-0 md:border-r md:pb-0 md:pr-5">
     <h2 className="text-sm font-semibold">Soal</h2>
-    <ol className="mt-3 flex gap-2 overflow-x-auto md:block md:space-y-1">
-      {items.map((item, index) => <li key={item.id}>
+    <ol className="mt-3 flex max-w-full gap-2 overflow-x-auto md:block md:space-y-1">
+      {items.map((item, index) => <li key={item.id} className="shrink-0">
         <button type="button" aria-current={index === activeIndex ? "step" : undefined}
           onClick={() => onSelect(index)}
           className={`flex min-h-11 min-w-24 items-center gap-2 rounded-md px-3 text-left text-sm md:w-full ${index === activeIndex ? "bg-secondary font-semibold text-secondary-foreground" : "text-muted-foreground hover:bg-muted"}`}>
