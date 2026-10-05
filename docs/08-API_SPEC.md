@@ -3,8 +3,8 @@
 ## Learner routes
 
 - GET /pre-test: diagnostic baseline with no passing gate, one completed result.
-- GET /post-test: scored final test after required reading.
-- GET /lab: index of optional concept-aligned labs.
+- GET /post-test: scored final test after required material completion.
+- GET /lab: index of paired core labs and optional supporting tools.
 - GET /assessments: redirects to /post-test; historical session/result URLs remain valid.
 - POST /api/materials/[lessonId]/read: authenticated reading acknowledgement; checks sequence/publication and denies while any test is active. Does not accept a user ID or score.
 
@@ -12,7 +12,7 @@
 - GET /learn/[pathSlug]/lessons/[lessonSlug]: reading-only published/preview prose and examples, with server-side lock checks.
 - GET /learn/[pathSlug]/lessons/[lessonSlug]/practice: authenticated, lock-checked lab and practice; paused during active assessment.
 - GET /learn/[pathSlug]/lessons/[lessonSlug]/pdf: dynamic A4 PDF of public material, authorized identically to reading. Returns application/pdf with attachment filename and private/no-store; 404 for unavailable/locked material, safe 503 on generation failure. No progress mutation or private grading data.
-- POST /api/exercises/[id]/check: validates a practice answer, records the user's own attempt, and returns safe visible feedback. Browser SQL results are formative and are not trusted as assessment evidence.
+- POST /api/exercises/[id]/check: validates a practice answer, requires baseline, available material and read_at, records the user's own attempt, and returns safe visible feedback plus lessonCompleted. Required deterministic checks can complete the material; optional checks alone cannot. Browser SQL results are formative and are not trusted as assessment evidence.
 - GET /api/ai/tutor?lessonId=…: authenticated, no-store conversation history for the selected available lesson; also rejects during an active assessment.
 - POST /api/ai/tutor: authenticated, bounded database tutoring. Rejects during an active assessment.
 - POST /api/assessments/[slug]/start: verifies prerequisites and creates one owned session.
@@ -37,6 +37,9 @@ Admin routes under /api/admin require a valid session and ADMIN role for every o
 
 Bound SQL text, statement count, practice payloads, AI context, answer count, affected rows, result rows/cells, and assessment attempts. Do not return hidden answers/test values or raw provider errors.
 
-## Current course progression
 
-Pre-test → Materi → optional Lab SQL → Post-test. The authoritative behavior is defined in docs/03-LEARNING_SYSTEM.md. Reading acknowledgement replaces practice completion; historical checkpoints are unpublished and no longer gate the course. Existing history is retained.
+## Revisi alur wajib — 5 Oktober 2026
+
+**Pre-test wajib sekali → Materi membaca → Lab latihan inti → materi berikutnya → Post-test (lulus ≥75) → selesai.**
+
+Aturan aktif dan transisi pengguna lama mengikuti [03-LEARNING_SYSTEM.md](03-LEARNING_SYSTEM.md). Materi tetap halaman membaca/PDF; Lab, tes, dan AI berada di halaman terpisah.

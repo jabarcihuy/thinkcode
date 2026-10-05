@@ -1,35 +1,37 @@
-# Learning System
+# Sistem Pembelajaran Quethink
 
-## Learner flow
+## Alur wajib
 
-**Pre-test → Materi → Lab SQL → Post-test.** These are separate pages. Learners see one flat list, Materi 1–11, ordered Relasi → Read → Write.
+**Pre-test wajib sekali → Materi membaca → Lab latihan inti → materi berikutnya → Post-test (lulus ≥75) → selesai.**
 
-## Pre-test
+Pre-test diagnostik menyimpan satu baseline, wajib selesai sebelum materi baru, tanpa ambang lulus atau bobot nilai. Satu sesi tes aktif per pengguna. Dashboard selalu melanjutkan sesi aktif terlebih dahulu.
 
-`/pre-test` measures starting understanding with ten selected/adapted questions from the existing concept bank: three Relasi, four Read, three Write. It uses a different question/data variant from the post-test. Each question offers “Belum tahu”. A completed baseline is immutable and cannot be retaken. The score is diagnostic, has no passing threshold and has zero course weight. It never blocks learning. Learners who have already studied can take it, but the page must explain that this is no longer a before-learning baseline. Completion date and topic summary are retained. This instrument is a product baseline, not a psychometrically validated test or proof of causal learning gain.
+Materi 1–11 adalah daftar datar dalam urutan Relasi → Read → Write. Halaman materi hanya berisi bacaan, contoh statis, video pendamping opsional, dan Unduh PDF. Tidak ada submateri, latihan, editor query atau panel AI pada bacaan.
 
-## Materi
+## Ketuntasan materi
 
-Reading pages contain explanations, static examples/tables, summary and optional video, and have per-material PDF downloads. No exercises, missions, SQL editor or AI panel is embedded in reading. Headings organize prose, not submateri.
+1. Pengguna membuka materi yang tersedia dan menandai Selesai dibaca.
+2. Server menyimpan read_at dan status IN_PROGRESS, bukan langsung COMPLETED.
+3. Pengguna masuk ke Lab terkait, mengamati data/diagram dan menyelesaikan satu latihan inti.
+4. Server memeriksa jawaban deterministik. Materi COMPLETED jika read_at terisi dan semua latihan required/published passed.
+5. Materi prerequisite berikutnya tersedia. Latihan tambahan tidak menghalangi progres; retry tanpa penalti.
 
-Reading or downloading alone writes no progress. An authenticated learner explicitly chooses **Selesai dibaca** to acknowledge reading and unlock the next required material. This is reading progress, not mastery or an official score. The server and a narrowly granted database function enforce publication, ownership, prerequisite order and assessment pause. Optional materials never block. Previously earned completion/history is preserved.
+SQL eksplorasi dan Run tetap lokal dalam SQLite Worker. Hasil eksekusi browser tidak menjadi bukti ketuntasan. Latihan inti memakai jawaban deterministik server (prediksi tabel, pilihan, urutan, atau struktur model). Admin hanya boleh mempublikasikan latihan required yang dapat dinilai server.
 
-## Lab SQL
+## Latihan inti
 
-`/lab` is the separate index of available concept-aligned labs. Existing `/learn/[pathSlug]/lessons/[lessonSlug]/practice` URLs remain compatible. All checks there are optional formative practice: inspect → predict → try SQL → see result/change → explain. They may be retried freely and attempts are saved, but neither a passing check nor browser output completes a material or changes an official score.
+Materi 1: membedakan record dan schema. Materi 2: menyusun model peminjaman buku dengan tabel, PK, FK dan relasi. Materi 3–11: latihan posisi 3 pada bank existing (SELECT/FROM, filter, urutan/limit, JOIN, agregasi, laporan, INSERT, UPDATE, DELETE). Latihan lain opsional. Model wajib menyertakan tabel/kolom yang ditetapkan prompt; identifier internal bebas. Pemeriksa membandingkan struktur, bukan jumlah tabel saja.
 
-Relasi labs inspect records, PK/FK and relationships without SQL. Read/Write labs use only the selected synthetic SQLite Worker dataset. Preview target rows before UPDATE/DELETE, confirm one-row changes and allow deterministic reset. SQL never reaches Supabase or a server execution runtime.
+## Tes dan selesai
 
-## Post-test
+Post-test terbuka setelah baseline dan semua materi wajib tuntas. Nilai dihitung server, lulus minimal 75; retry setelah sesi sebelumnya selesai. Course complete membutuhkan seluruh materi required complete dan post-test passed. Pre-test tidak masuk nilai akhir.
 
-`/post-test` opens after all published required materials have been acknowledged/completed. Ten parallel questions cover the same three/four/three concept distribution with different cases/data. Grading is deterministic and server-side. Pass at 75/100; retries are allowed after the previous session ends. The published post-test has 100% course weight; pre-test is excluded. Course completion requires all required reading plus a passed post-test. A displayed score is not automatically an institution-approved grade.
+Saat tes IN_PROGRESS: AI, latihan, pengakuan membaca dan pembuat skema dijeda oleh backend. Materi yang sudah selesai boleh ditinjau. Hidden keys server-only; pengguna hanya memperoleh skor dan feedback aman.
 
-Historical checkpoints/final assessments are unpublished, not deleted, and cease gating the simplified course. Historical attempts/results remain intact. In-progress historical assessment sessions can still finish. Existing admin tools remain protected.
+## Transisi pengguna lama
 
-## Test mode and security
+Status COMPLETED yang tercatat sebelum migration dipertahankan, read_at dibackfill dari completed_at/started_at. Progres tersebut adalah ketuntasan historis, bukan bukti lulus latihan inti baru. Materi historis tetap dapat ditinjau. Sebelum membuka materi baru atau memulai post-test baru, baseline tetap wajib. Riwayat attempt, skor, hasil dan checkpoint lama tidak dihapus. Pengguna yang sudah belajar sebelum baseline diberi keterangan bahwa hasil mengukur pemahaman saat ini.
 
-Pre-test/post-test sessions reuse the owned assessment session lifecycle. Only one active session per user is permitted by the start function. AI, hints, practice helpers and reading-progress mutations are blocked server-side while any assessment is IN_PROGRESS. Answer keys, test configuration and correct values stay server-only; public responses expose prompts/options and safe summaries only. Learners never submit trusted scores or passed/completion flags.
+## Pengawasan akses
 
-## Coverage
-
-See docs/04-CURRICULUM.md for the eleven materials and synthetic datasets. Additional schema modeling, Playground and Chatbot are supporting tools accessible from the Lab, not required course stages.
+RLS membatasi progres/hasil ke pemilik. Mutasi ketuntasan melalui RPC server; pengguna tidak menulis score/status bebas. Validasi URL, pre-test, prerequisite, read_at dan tes aktif ada di server dan database. ADMIN preview terpisah dapat meninjau draft tanpa memengaruhi progres siswa.

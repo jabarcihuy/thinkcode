@@ -1,4 +1,5 @@
 import "server-only";
+import { createPrivilegedClient } from "@/lib/supabase/privileged";
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { calculateLearningMetrics, deriveLessonStates, ownsProgress } from "@/features/learning/domain/progression";
@@ -51,16 +52,20 @@ async function loadOverview(pathSlug: string, userId: string | null): Promise<Le
 
   let progress: ProgressRecord[] = [];
   if (userId && outlines.length > 0) {
-    const result = await supabase.from("lesson_progress").select("lesson_id, status").eq("user_id", userId).in("lesson_id", outlines.map((lesson) => lesson.id));
+    const result = await supabase.from("lesson_progress").select("lesson_id, status, read_at").eq("user_id", userId).in("lesson_id", outlines.map((lesson) => lesson.id));
     if (result.error) throw result.error;
     progress = result.data ?? [];
   }
 
-  const lessonsWithState = deriveLessonStates(outlines, progress);
+  const baseline = userId ? await createPrivilegedClient().rpc("course_has_baseline", { p_path_id: path.id, p_user_id: userId }) : { data: false, error: null };
+  if (baseline.error) throw baseline.error;
+  const baselineComplete = Boolean(baseline.data);
+  const lessonsWithState = deriveLessonStates(outlines, progress, [], baselineComplete);
   return {
     path: path as LearningPath,
     chapters: chapterRows,
     lessons: lessonsWithState,
+    baselineComplete,
     metrics: calculateLearningMetrics(lessonsWithState),
   };
 }

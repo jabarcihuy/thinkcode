@@ -23,7 +23,7 @@ When replacing the current seven-chapter shape, preserve accounts, progress, exe
 
 ## Local SQL dataset
 
-The two Relasi materials do not have a SQL starter or query lab. They show synthetic table records and key structure first. The query lab begins in the Read topic; Write uses the selected registered local dataset for bounded changes. Transfer exercises select `campus`, `library`, or `shop` using `config.public.datasetId`, exposed through public_config; answers and grading configuration stay private. Lesson examples and exercise identities remain unchanged; all checks are now optional.
+The two Relasi materials do not have a SQL starter or query lab. They show synthetic table records and key structure first. The query lab begins in the Read topic; Write uses the selected registered local dataset for bounded changes. Transfer exercises select `campus`, `library`, or `shop` using `config.public.datasetId`, exposed through public_config; answers and grading configuration stay private. Lesson examples and exercise identities remain unchanged; one published core per material is required; other checks remain optional.
 
 The browser Worker creates an in-memory synthetic schema:
 
@@ -45,10 +45,20 @@ Use additive migrations and preserve accounts, progress, and historical attempts
 
 ## Diagnostic and post-test data
 
-Assessment enum includes PRETEST. A published ten-item PRETEST has zero weight/passing score; a published ten-item FINAL serves as post-test, weight 100 and threshold 75. Both reuse assessment_items/sessions/results and their existing private-content/owner-only RLS. Historical checkpoint/final rows are unpublished. Existing exercises are optional and phase3_record_attempt only saves attempts, never lesson_progress. acknowledge_material_read is authenticated-only, checks availability and active sessions, and writes the caller’s reading status. Serialized starts prevent multiple active tests and a completed PRETEST cannot restart. Historical content IDs, attempts and results are preserved.
+Assessment enum includes PRETEST. A published ten-item PRETEST has zero weight/passing score; a published ten-item FINAL serves as post-test, weight 100 and threshold 75. Both reuse assessment_items/sessions/results and their existing private-content/owner-only RLS. Historical checkpoint/final rows are unpublished. phase3_record_attempt stores attempts and completes a read material when all published required deterministic checks passed. Browser runtime outcomes cannot provide completion evidence. acknowledge_material_read is authenticated-only, checks availability and active sessions, and stores the caller’s read_at/IN_PROGRESS without completion. Serialized starts prevent multiple active tests and a completed PRETEST cannot restart. Historical content IDs, attempts and results are preserved.
 
-## Current course progression
-
-Pre-test → Materi → optional Lab SQL → Post-test. The authoritative behavior is defined in docs/03-LEARNING_SYSTEM.md. Reading acknowledgement replaces practice completion; historical checkpoints are unpublished and no longer gate the course. Existing history is retained.
+## Constrained server-side writes
 
 The security advisor flags authenticated SECURITY DEFINER RPCs as intentional review points. Reading acknowledgement needs constrained elevated writes because clients have no arbitrary progress-write grant. It derives the caller with auth.uid(), uses an empty search_path, checks publication/prerequisites/assessment state, and grants only authenticated execution. Anonymous access and client finalization are denied in live tests. Private assessment tables intentionally have no client policies/grants.
+
+## Revisi alur wajib — 5 Oktober 2026
+
+**Pre-test wajib sekali → Materi membaca → Lab latihan inti → materi berikutnya → Post-test (lulus ≥75) → selesai.**
+
+Aturan aktif dan transisi pengguna lama mengikuti [03-LEARNING_SYSTEM.md](03-LEARNING_SYSTEM.md). Materi tetap halaman membaca/PDF; Lab, tes, dan AI berada di halaman terpisah.
+
+## Mandatory core migration
+
+`20261005091218_mandatory_learning_core.sql`: additive nullable `lesson_progress.read_at`, backfill historical COMPLETED, one required published core per material, one new FLOWCHART schema task. `course_has_baseline` service-only lookup; availability checks baseline and sequence; authenticated read RPC derives auth.uid(); service-only attempt RPC requires read_at and excludes browser coding types from completion. Start RPC requires baseline and all required completion for post-test. Existing RLS, ownership and active-session unique index are preserved.
+
+Admin publication: required lessons must have a published deterministic core before publication. Draft exercise editors retain is_required and validate schema-model keys/edges.

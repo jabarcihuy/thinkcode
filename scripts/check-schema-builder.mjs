@@ -1,3 +1,4 @@
+import { completeTestBaseline } from "./test-baseline-helper.mjs";
 import assert from "node:assert/strict";
 import { randomBytes, randomUUID } from "node:crypto";
 import { mkdir } from "node:fs/promises";
@@ -138,6 +139,7 @@ try {
   await memoryPage.screenshot({ path: ".impeccable/review/schema-mobile-unsaved.png" });
   await unavailableStorage.close();
   await page.setViewportSize({ width: 360, height: 800 });
+  await completeTestBaseline(privileged, userId);
   await page.goto(`${site}/learn/database-fundamentals/lessons/membaca-bentuk-data`);
   await page.getByRole("button", { name: "Putar video", exact: true }).waitFor();
   assert.equal(await page.locator('iframe[src*="youtube"]').count(), 0);

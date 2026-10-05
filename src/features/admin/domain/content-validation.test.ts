@@ -51,3 +51,8 @@ describe("admin CMS content validation", () => {
     expect(assessmentItemInput.safeParse({ assessment_id: id, type: "PREDICT_OUTPUT", title: "Predict", topic: "variables", prompt: "What prints?", position: 1, weight: 1, public_config: {}, answer_config: { output: "2" } }).success).toBe(true);
   });
 });
+
+it("preserves deterministic core flags instead of silently making them optional", () => {
+  const parsed = exerciseInput.parse({ ...exerciseBase, type: "PREDICT_OUTPUT", config: { answer: { output: "Alya" } } });
+  expect(parsed.is_required).toBe(true);
+});

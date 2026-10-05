@@ -24,13 +24,13 @@ export async function CourseTestPage({ diagnostic }: { diagnostic: boolean }) {
     <p className="mt-4 max-w-[65ch] leading-7 text-muted-foreground">{diagnostic ? "Sepuluh pertanyaan tentang relasi, membaca, dan mengubah data. Jawab sesuai yang kamu tahu; belum tahu juga boleh." : "Sepuluh pertanyaan setelah belajar. Kerjakan mandiri; nilai dihitung di server dengan batas lulus 75/100."}</p>
     {diagnostic && studied && !test?.result && <p role="note" className="mt-5 rounded-md bg-secondary p-4 text-sm leading-6">Kamu sudah mulai belajar. Hasil ini mencatat pemahaman saat ini, bukan kemampuan sebelum membaca materi.</p>}
     <section className="mt-8 border-y border-border py-6" aria-label="Status tes">
-      {!test ? <p className="text-sm text-muted-foreground">Tes sedang disiapkan. Kamu tetap dapat membaca materi.</p> : <>
+      {!test ? <p className="text-sm text-muted-foreground">Tes sedang disiapkan. Coba kembali nanti.</p> : <>
         <h2 className="text-xl font-semibold">{test.title}</h2>
-        <p className="mt-3 text-sm leading-6 text-muted-foreground">{diagnostic ? "Tidak ada syarat lulus dan tidak memengaruhi nilai akhir. Satu hasil disimpan sebagai catatan awal." : "Terbuka setelah seluruh materi wajib selesai dibaca. Kamu dapat mencoba lagi setelah sesi sebelumnya selesai."}</p>
+        <p className="mt-3 text-sm leading-6 text-muted-foreground">{diagnostic ? "Tidak ada syarat lulus dan tidak memengaruhi nilai akhir. Wajib diselesaikan sekali sebelum mulai materi." : "Terbuka setelah seluruh materi dan latihan inti tuntas. Kamu dapat mencoba lagi setelah sesi sebelumnya selesai."}</p>
         {test.result && <p className="mt-4 text-sm tabular-nums">{diagnostic ? `Pemahaman tercatat: ${test.result.latestScore}/100` : `Terbaru ${test.result.latestScore}/100 · Tertinggi ${test.result.highestScore}/100 · ${test.result.passed ? "Lulus" : "Belum lulus"}`}</p>}
         {test.completedSessionId && <Link className="mt-2 inline-flex min-h-11 items-center text-sm font-medium text-accent hover:underline" href={`/assessments/sessions/${test.completedSessionId}/result`}>Lihat hasil dan ringkasan topik</Link>}
         {(test.available || test.activeSessionId) && <StartAssessmentButton slug={test.slug} activeSessionId={test.activeSessionId} label={test.result ? "Ulangi post-test" : diagnostic ? "Mulai pre-test" : "Mulai post-test"} />}
-        {!test.available && !test.result && !test.activeSessionId && <p className="mt-4 text-sm text-muted-foreground">Selesaikan {overview ? overview.metrics.totalRequiredLessons - overview.metrics.completedRequiredLessons : "semua"} materi yang tersisa terlebih dahulu.</p>}
+        {!test.available && !test.result && !test.activeSessionId && <p className="mt-4 text-sm text-muted-foreground">Selesaikan {overview ? overview.metrics.totalRequiredLessons - overview.metrics.completedRequiredLessons : "semua"} materi beserta latihan inti yang tersisa terlebih dahulu.</p>}
       </>}
     </section>
     {!diagnostic && baseline?.result && <p className="mt-6 text-sm leading-6 text-muted-foreground">Catatan pre-test: {baseline.result.latestScore}/100. Kedua tes memakai kasus berbeda; selisih skor bukan bukti tunggal keberhasilan belajar.</p>}

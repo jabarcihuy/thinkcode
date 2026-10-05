@@ -13,30 +13,32 @@ Quethink membantu mahasiswa memahami basis data relasional dengan melihat tabel,
 ## Alur pengguna: dari login sampai selesai
 
 ```text
-Login → Dashboard → Pre-test → Materi 1–11 → Lab SQL → Post-test → Selesai
+Login → Dashboard → Pre-test sekali
+→ [Materi N → Selesai dibaca → Lab inti lulus → Materi berikutnya]
+→ Post-test ≥75 → Selesai
 ```
 
 ### Pre-test
 
-Buka `/pre-test` untuk mencatat pemahaman awal tentang Relasi, Read, dan Write melalui sepuluh pertanyaan. Pilih **Belum tahu** bila belum mengenal konsepnya. Tidak ada syarat lulus atau bobot nilai; hasil yang sudah dikirim tidak dapat diulang. Pre-test tidak mengunci materi. Jika belajar sudah dimulai, halaman menjelaskan bahwa hasil bukan lagi baseline sebelum belajar.
+Buka `/pre-test` untuk mencatat pemahaman awal tentang Relasi, Read, dan Write melalui sepuluh pertanyaan. Pilih **Belum tahu** bila belum mengenal konsepnya. Tidak ada syarat lulus atau bobot nilai; hasil yang sudah dikirim tidak dapat diulang. Pre-test wajib diselesaikan sebelum materi baru terbuka; nilainya tidak menentukan kelulusan. Jika belajar sudah dimulai, halaman menjelaskan bahwa hasil bukan lagi baseline sebelum belajar.
 
 ### Materi dan PDF
 
 Materi 1–11 disajikan sebagai daftar datar, tanpa submateri. Halaman hanya berisi penjelasan, contoh, tabel statis, ringkasan dan video opsional. Setiap materi dapat diunduh sebagai PDF. Urutan konsep: **Relasi → Read → Write**.
 
-Pilih **Selesai dibaca** untuk mencatat progres dan membuka materi berikutnya. Membuka halaman atau mengunduh PDF saja tidak mengubah progres. Ini merupakan pengakuan membaca, bukan bukti penguasaan materi. Server memeriksa urutan, publication dan akun; URL langsung tidak melewati lock.
+Pilih **Selesai dibaca** untuk mencatat bacaan, lalu lulus satu latihan inti di Lab untuk membuka materi berikutnya. Pre-test wajib selesai sekali sebelum materi baru terbuka. Membuka halaman atau mengunduh PDF saja tidak mengubah progres. Ini merupakan pengakuan membaca, bukan bukti penguasaan materi. Server memeriksa urutan, publication dan akun; URL langsung tidak melewati lock.
 
 ### Lab SQL
 
-Buka `/lab` untuk eksplorasi visual dan mencoba query. Lab Relasi menggunakan tabel/key tanpa SQL; Read dan Write memakai SQLite sintetis di browser Worker. Lab tetap vertikal: data → query → hasil. Check pemahaman di Lab bersifat opsional dan bisa diulang. Hasilnya tidak menyelesaikan materi atau menentukan nilai post-test. Bookmark halaman `/practice` lama tetap bekerja.
+Buka `/lab` untuk eksplorasi visual dan mencoba query. Lab Relasi menggunakan tabel/key tanpa SQL; Read dan Write memakai SQLite sintetis di browser Worker. Lab tetap vertikal: data → query → hasil. Satu check inti per materi wajib lulus dan dapat diulang. Check tambahan opsional. Skor latihan terpisah dari nilai post-test. Bookmark halaman `/practice` lama tetap bekerja.
 
 SQL Playground, Pembuat Skema, dan Tutor tersedia sebagai alat bantu dari Lab. Navigasi mobile: **Beranda · Materi · Lab · Tes · Profil**.
 
 ### Post-test dan penyelesaian
 
-Buka `/post-test` setelah seluruh materi wajib selesai dibaca. Sepuluh pertanyaan menguji konsep yang sama dengan pre-test menggunakan kasus berbeda. Skor dihitung server-side, lulus pada **75/100**, dan percobaan dapat diulang setelah sesi sebelumnya selesai. Post-test memiliki bobot nilai 100%; pre-test tidak dihitung.
+Buka `/post-test` setelah seluruh materi wajib dan latihan intinya tuntas. Sepuluh pertanyaan menguji konsep yang sama dengan pre-test menggunakan kasus berbeda. Skor dihitung server-side, lulus pada **75/100**, dan percobaan dapat diulang setelah sesi sebelumnya selesai. Post-test memiliki bobot nilai 100%; pre-test tidak dihitung.
 
-Jalur selesai setelah semua materi wajib selesai dibaca dan post-test lulus. Skor produk tidak otomatis menjadi nilai yang disahkan kampus. Kedua instrumen belum divalidasi secara psikometrik; selisih skor bukan bukti tunggal efektivitas belajar.
+Jalur selesai setelah semua materi wajib dan latihan intinya tuntas dan post-test lulus. Skor produk tidak otomatis menjadi nilai yang disahkan kampus. Kedua instrumen belum divalidasi secara psikometrik; selisih skor bukan bukti tunggal efektivitas belajar.
 
 AI, hints, Lab/check dan pencatatan progres membaca dijeda selama sesi tes aktif. Private answer key tidak dikirim ke browser. Hanya satu sesi aktif dapat dimulai per akun. Checkpoint/tes akhir lama kini tidak terbit tetapi riwayat sesi, nilai, latihan dan progres tetap disimpan.
 
@@ -66,4 +68,8 @@ Buka **Admin CMS → Lesson → Buka pratinjau**. Admin dapat meninjau draft ata
 
 ### Uji alur sederhana
 
-`npm run test:flow:integration` memeriksa baseline pre-test, pembacaan seluruh materi, Lab opsional, post-test/retry, manipulasi skor, private key, ownership, RBAC, AI block, query SQLite dan layout 360/768/1280px pada production build. Akun sementara dibersihkan setelah tes. Perubahan alur disediakan dalam dua migration: enum PRETEST lalu reading progress/seed pertanyaan; jalankan berurutan. Tidak ada environment variable baru.
+`npm run test:flow:integration` memeriksa baseline pre-test, pembacaan seluruh materi, Lab inti dan tambahan, post-test/retry, manipulasi skor, private key, ownership, RBAC, AI block, query SQLite dan layout 360/768/1280px pada production build. Akun sementara dibersihkan setelah tes. Migration alur terbaru `20261005091218_mandatory_learning_core.sql` diterapkan setelah migration PRETEST dan reading sebelumnya. Tidak ada environment variable baru.
+
+## Tampilan dan transisi
+
+Tema mobile LMS menggunakan Indigo–apricot dan DM Sans lokal. Navigasi bawah maksimal lima tujuan. Dashboard melanjutkan tes aktif atau tahap membaca/Lab yang tepat. Migration mempertahankan ketuntasan historis; pengguna lama perlu baseline sebelum materi baru, sedangkan materi historis tetap dapat ditinjau.

@@ -37,8 +37,13 @@ Programming-language lessons, PTI mapping, external/paid query runner, arbitrary
 
 ## Simplified learning flow
 
-Implemented target: separate diagnostic pre-test, numbered reading/PDF, optional Lab SQL and server-graded post-test. Pre-test adapts existing question concepts; post-test uses parallel cases. Reading acknowledgement replaces mandatory practice completion. Historical checkpoints are unpublished and attempts/results preserved. No additional course stage is required.
 
 ## Completion gate
 
 The published path presents numbered Materi 1–11 in prerequisite order without chapter/submateri navigation. Relasi/Read/Write remain internal content groups. Reading and PDF stay separate from interactive practice. User practice can inspect, predict, read, safely modify, verify, and reset the synthetic dataset. Progression, video, assessment, admin content flow, mobile usability, RLS, lint, typecheck, tests, and production build remain valid. No unrelated feature phase starts automatically.
+
+## Revisi alur wajib — 5 Oktober 2026
+
+**Pre-test wajib sekali → Materi membaca → Lab latihan inti → materi berikutnya → Post-test (lulus ≥75) → selesai.**
+
+Aturan aktif dan transisi pengguna lama mengikuti [03-LEARNING_SYSTEM.md](03-LEARNING_SYSTEM.md). Materi tetap halaman membaca/PDF; Lab, tes, dan AI berada di halaman terpisah.

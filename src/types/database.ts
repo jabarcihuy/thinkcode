@@ -546,6 +546,7 @@ export type Database = {
       }
       lesson_progress: {
         Row: {
+          read_at: string | null
           completed_at: string | null
           id: string
           lesson_id: string
@@ -554,6 +555,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          read_at?: string | null
           completed_at?: string | null
           id?: string
           lesson_id: string
@@ -562,6 +564,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          read_at?: string | null
           completed_at?: string | null
           id?: string
           lesson_id?: string
@@ -759,6 +762,7 @@ export type Database = {
       }
     }
     Functions: {
+      course_has_baseline: { Args: { p_path_id: string; p_user_id: string }; Returns: boolean }
       acknowledge_material_read: { Args: { p_lesson_id: string }; Returns: undefined }
       consume_code_request_quota: { Args: { p_kind: string }; Returns: boolean }
       current_user_has_active_assessment: { Args: never; Returns: boolean }

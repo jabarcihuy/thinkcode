@@ -32,6 +32,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     const overview = await getLearningOverview(submission.pathSlug, account.userId);
     const lesson = overview?.lessons.find((item) => item.id === exercise.lessonId);
     if (!lesson || lesson.state === "LOCKED") return Response.json({ error: "Lesson belum tersedia." }, { status: 403 });
+    if (!lesson.readAt) return Response.json({ error: "Selesaikan membaca materi sebelum memeriksa latihan." }, { status: 403 });
     if (!await consumeCodeQuota("check")) return Response.json({ error: "Terlalu banyak pemeriksaan. Coba lagi sebentar." }, { status: 429 });
 
     const graded = gradeExercise(exercise, submission);
@@ -50,6 +51,8 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     });
     revalidatePath(`/learn/${submission.pathSlug}`);
     revalidatePath(`/learn/${submission.pathSlug}/lessons/${lesson.slug}`);
+    revalidatePath(`/learn/${submission.pathSlug}/lessons/${lesson.slug}/practice`);
+    revalidatePath("/post-test");
     revalidatePath("/dashboard");
     return Response.json({ ...graded, lessonCompleted });
   } catch (error) {

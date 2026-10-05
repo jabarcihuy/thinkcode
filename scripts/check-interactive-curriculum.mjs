@@ -1,3 +1,4 @@
+import { completeTestBaseline } from "./test-baseline-helper.mjs";
 import assert from "node:assert/strict";
 import { randomBytes, randomUUID } from "node:crypto";
 import { spawn } from "node:child_process";
@@ -64,6 +65,8 @@ async function passPractice(user, exercise) {
     answer = { choiceId: expected.choiceId };
   } else if (["PSEUDOCODE", "FLOWCHART"].includes(exercise.type) && Array.isArray(expected?.order)) {
     answer = { order: expected.order };
+  } else if (expected?.model) {
+    answer = {schema:{version:1,tables:Object.entries(expected.model.tables).map(([name,columns])=>({id:name,name,columns:Object.entries(columns).map(([col,spec])=>({id:name+'-'+col,name:col,...spec}))})),relations:expected.model.relations.map(([pt,pc,ct,cc],i)=>({id:'edge-'+i,parentTable:pt,parentColumn:pt+'-'+pc,childTable:ct,childColumn:ct+'-'+cc}))}};
   } else {
     assert.fail(`${exercise.title} has no supported deterministic answer fixture.`);
   }
@@ -120,6 +123,7 @@ try {
   await waitForSite();
   const learner = await createAccount("USER");
   const other = await createAccount("USER");
+  await completeTestBaseline(privileged, learner.id);
   const path = await privileged.from("learning_paths").select("id").eq("slug", pathSlug).eq("is_published", true).single();
   assert.ifError(path.error);
   const chapters = await privileged.from("chapters").select("id,position").eq("learning_path_id", path.data.id).eq("is_published", true).order("position");
@@ -132,13 +136,14 @@ try {
   assert.ifError(exerciseResult.error);
   const exercises = exerciseResult.data;
   assert.equal(lessons.length,11);
-  assert.equal(exercises.length,44);
-  assert.equal(exercises.filter((row)=>row.is_required).length,0);
+  assert.equal(exercises.length,45);
+  assert.equal(exercises.filter((row)=>row.is_required).length,11);
   const first = exercises.filter((row)=>row.lesson_id === lessons[0].id);
   const second = exercises.find((row)=>row.lesson_id === lessons[1].id && row.position === 3);
   assert.equal((await call(null, `/api/exercises/${first[0].id}/check`, "POST", {pathSlug, answer:first[0].config.answer})).response.status,401);
   assert.equal((await call(learner, `/api/exercises/${second.id}/check`, "POST", {pathSlug, answer:second.config.answer})).response.status,403);
   assert.equal((await call(learner, "/api/admin/users")).response.status,403);
+  assert.equal((await call(learner, `/api/materials/${lessons[0].id}/read`, "POST")).response.status,200);
   for (const optional of first.filter((row)=>!row.is_required)) {
     const result = await passPractice(learner,optional);
     assert.equal(result.lessonCompleted,false,"Optional practice must not complete a lesson");
@@ -162,10 +167,10 @@ try {
   assert.ifError(assessmentResult.error);
   for(let i=0;i<lessons.length;i++) {
     const lesson=lessons[i];
-    const required=exercises.find((row)=>row.lesson_id===lesson.id&&row.position===3);
-    const result = await passPractice(learner,required);
-    assert.equal(result.lessonCompleted,false);
+    const required=exercises.find((row)=>row.lesson_id===lesson.id&&row.is_required);
     assert.equal((await call(learner, `/api/materials/${lesson.id}/read`, "POST")).response.status,200);
+    const result = await passPractice(learner,required);
+    assert.equal(result.lessonCompleted,true);
     const chapterEnded=lessons[i+1]?.chapter_id!==lesson.chapter_id;
     if(chapterEnded) {
       const checkpoint=assessmentResult.data.find((row)=>row.type==="CHECKPOINT"&&row.gate_after_chapter===positions.get(lesson.chapter_id));
@@ -183,7 +188,7 @@ try {
   assert.ifError((await otherJar.auth.signInWithPassword({email:other.email,password})).error);
   const stolen=await otherJar.from("exercise_attempts").select("id").eq("user_id",learner.id);
   assert.ifError(stolen.error); assert.equal(stolen.data.length,0);
-  console.log("PASS: 11 lessons / 44 checks; optional does not unlock; reading acknowledgement unlocks; post-test passes; assessment AI/Playground blocked; private answers absent; attempts owner-only; guest/admin guards intact.");
+  console.log("PASS: 11 lessons / 45 checks; optional does not unlock; reading plus trusted core unlocks; post-test passes; assessment AI/Playground blocked; private answers absent; attempts owner-only; guest/admin guards intact.");
 } finally {
   server.kill("SIGTERM");
   for(const id of userIds) assert.ifError((await privileged.auth.admin.deleteUser(id)).error);

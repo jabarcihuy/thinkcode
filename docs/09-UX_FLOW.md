@@ -7,12 +7,12 @@ Explain in one sentence that Quethink teaches learners to understand relationshi
 ## Learner
 
 1. Register/sign in and see the next step on the dashboard.
-2. Open `/pre-test`: ten diagnostic questions, including Belum tahu; no passing gate, no course weight, one completed baseline. Learning can proceed without passing or taking it.
+2. Open `/pre-test`: ten diagnostic questions, including Belum tahu; no passing gate, no course weight, one completed baseline. Complete it before opening new materials; no passing score is required.
 3. Open numbered Materi 1–11. Read prose/examples/video or download PDF.
-4. Choose Selesai dibaca explicitly to record reading and unlock the next material. This does not demonstrate mastery.
-5. Open `/lab` separately when ready to explore tables or query; all checks there are optional.
-6. After all required reading, take `/post-test`. Score is server-graded, pass ≥75, retry after the previous session ends.
-7. Course complete means reading complete plus post-test passed. Historical checkpoint gates are unpublished.
+4. Choose Selesai dibaca to store read_at. The next material stays locked until the core check passes.
+5. Open the paired Lab to inspect tables/query and pass its required core. Additional checks remain optional.
+6. After all required material completion, take `/post-test`. Score is server-graded, pass ≥75, retry after the previous session ends.
+7. Course complete means reading and core completion plus post-test passed. Historical checkpoint gates are unpublished.
 
 Mobile navigation has five items: Beranda, Materi, Lab (center), Tes, Profil (rightmost). Lab links to Playground, schema builder and tutor. Tes opens pre-test with a post-test switch; each has its own page.
 
@@ -50,7 +50,7 @@ Use one simple content navigation. Editors support lesson Markdown, SQL starter 
 
 ## Investigasi Kampus Mini
 
-Each material links to separate practice: optional concept and consolidation checks. Use a concrete campus question, inspect → predict → try → explain, then change one variable and compare. Optional attempts are saved but never block unlocking.
+Each material links to separate practice: one required core plus optional supporting checks. Use a concrete campus question, inspect → predict → try → explain, then change one variable and compare. Optional attempts are saved but never block unlocking.
 
 Use one 2D schema visualizer with table names, SQLite column types, PK/FK labels, and relationship lines attached to columns. Selecting a table opens its records below the canvas. Selecting a key explains the relationship; selecting a record enables following or filtering its linked records. Mobile table buttons focus one schema node at readable scale; vertical touch gestures still scroll the page. Keep data → SQL → output vertical and exercise exploration collapsible.
 
@@ -58,6 +58,8 @@ Use one 2D schema visualizer with table names, SQLite column types, PK/FK labels
 
 Relasi: choose Campus Mini, Katalog Buku, or Toko Mini to compare keys and relationships without SQL. Read/Write: use the original campus lab, then select its concept-aligned alternate task. Practice: an optional transfer exercise fixes the canvas to its own schema. Playground: choose any registered dataset. A schema switch restarts local data, query, prediction, and output; it never changes saved progress.
 
-## Current course progression
+## Revisi alur wajib — 5 Oktober 2026
 
-Pre-test → Materi → optional Lab SQL → Post-test. The authoritative behavior is defined in docs/03-LEARNING_SYSTEM.md. Reading acknowledgement replaces practice completion; historical checkpoints are unpublished and no longer gate the course. Existing history is retained.
+**Pre-test wajib sekali → Materi membaca → Lab latihan inti → materi berikutnya → Post-test (lulus ≥75) → selesai.**
+
+Aturan aktif dan transisi pengguna lama mengikuti [03-LEARNING_SYSTEM.md](03-LEARNING_SYSTEM.md). Materi tetap halaman membaca/PDF; Lab, tes, dan AI berada di halaman terpisah.

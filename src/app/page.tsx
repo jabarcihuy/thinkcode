@@ -3,105 +3,33 @@ import type { Metadata } from "next";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SiteHeader } from "@/components/layout/site-header";
-import { Reveal } from "@/components/motion/reveal";
 import { DatabaseLabPreview } from "@/features/landing/components/database-lab-preview";
 import { DEFAULT_LEARNING_PATH_SLUG } from "@/features/learning/config";
 
 export const metadata: Metadata = {
-  title: "Quethink — Belajar Basis Data dengan SQL Interaktif",
-  description: "Amati tabel, prediksi hasil, tulis query SQL, dan lihat bagaimana relasi data membentuk jawaban.",
+  title: "Quethink — Pahami data, buktikan dengan query",
+  description: "Belajar basis data melalui materi, skema visual 2D, praktik SQL, dan tes pemahaman.",
 };
-
-const units = [
-  "Membaca Data sebagai Relasi",
-  "Mengambil Kolom yang Dibutuhkan",
-  "Menyaring Record",
-  "Mengurutkan dan Membatasi",
-  "Menghubungkan Tabel",
-  "Merangkum Data",
-  "Tantangan Query Kampus",
+const journey = [
+  ["Kenali titik awal", "Pre-test singkat untuk mencatat pemahamanmu, tanpa syarat lulus."],
+  ["Pelajari satu materi", "Baca dengan tenang. Unduh PDF atau gunakan video pendamping yang tersedia."],
+  ["Buktikan di Lab", "Amati data, coba query, lalu tuntaskan satu latihan inti untuk lanjut."],
+  ["Uji pemahaman", "Post-test mandiri setelah semua materi tuntas. Lulus dengan nilai minimal 75."],
 ];
-
+const topics = [
+  ["Relasi", "Kenali tabel, record, kolom, dan kunci. Susun modelmu sendiri sebelum menulis query.", "2 materi"],
+  ["Read", "Pilih, saring, hubungkan, dan rangkum data untuk menjawab pertanyaan nyata.", "6 materi"],
+  ["Write", "Tambah dan ubah data latihan dengan aman. Periksa target, amati perubahan, lalu reset.", "3 materi"],
+];
 export default function HomePage() {
-  return (
-    <div className="min-h-dvh">
-      <SiteHeader />
-      <main id="main-content">
-        <section className="relative isolate overflow-hidden border-b border-border bg-background">
-          <div className="perf-rail" aria-hidden="true" />
-          <Reveal as="div" stagger revealOnScroll className="rail-inset mx-auto grid max-w-6xl items-center gap-12 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[0.82fr_1.18fr] lg:gap-14 lg:py-28">
-            <div className="max-w-xl">
-              <h1 className="max-w-[12ch] text-4xl font-semibold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.65rem]">
-                Pahami hubungan data. Buktikan dengan query.
-              </h1>
-              <p className="mt-6 max-w-[42ch] text-base leading-7 text-muted-foreground sm:text-lg">
-                Amati tabel, prediksi hasil, lalu uji query SQL.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Button asChild size="lg" className="min-h-11"><Link href="/register">Mulai belajar<ArrowRight size={16} aria-hidden="true" /></Link></Button>
-                <Button asChild variant="outline" size="lg" className="min-h-11"><Link href="#path-title">Lihat jalur</Link></Button>
-              </div>
-            </div>
-            <DatabaseLabPreview />
-          </Reveal>
-        </section>
-
-        <section className="border-b border-border bg-secondary/30" aria-labelledby="learning-cycle-title">
-          <Reveal as="div" stagger revealOnScroll className="rail-inset mx-auto grid max-w-6xl gap-8 px-5 py-16 sm:px-8 sm:py-20 md:grid-cols-[0.72fr_1.28fr] md:gap-16 lg:py-24">
-            <div className="max-w-sm">
-              <h2 id="learning-cycle-title" className="text-2xl font-semibold tracking-tight sm:text-3xl">Belajar lewat satu siklus</h2>
-            </div>
-            <Reveal as="ol" stagger revealOnScroll className="divide-y divide-border border-y border-border">
-              <li className="grid grid-cols-[2.5rem_1fr] gap-3 py-5 sm:grid-cols-[3rem_1fr] sm:gap-4 sm:py-6"><span className="pt-0.5 font-mono text-xs tabular-nums text-muted-foreground">01</span><div><p className="text-sm font-medium">Amati tabel dan relasi</p><p className="mt-1 text-sm leading-6 text-muted-foreground">Kenali kolom, baris, dan kunci penghubung tabel.</p></div></li>
-              <li className="grid grid-cols-[2.5rem_1fr] gap-3 py-5 sm:grid-cols-[3rem_1fr] sm:gap-4 sm:py-6"><span className="pt-0.5 font-mono text-xs tabular-nums text-muted-foreground">02</span><div><p className="text-sm font-medium">Prediksi hasil query</p><p className="mt-1 text-sm leading-6 text-muted-foreground">Tebak baris yang muncul sebelum query dijalankan.</p></div></li>
-              <li className="grid grid-cols-[2.5rem_1fr] gap-3 py-5 sm:grid-cols-[3rem_1fr] sm:gap-4 sm:py-6"><span className="pt-0.5 font-mono text-xs tabular-nums text-muted-foreground">03</span><div><p className="text-sm font-medium">Jalankan SQL</p><p className="mt-1 text-sm leading-6 text-muted-foreground">Coba query pada dataset latihan langsung di dalam lesson.</p></div></li>
-              <li className="grid grid-cols-[2.5rem_1fr] gap-3 py-5 sm:grid-cols-[3rem_1fr] sm:gap-4 sm:py-6"><span className="pt-0.5 font-mono text-xs tabular-nums text-muted-foreground">04</span><div><p className="text-sm font-medium">Telusuri hasil</p><p className="mt-1 text-sm leading-6 text-muted-foreground">Bandingkan hasil dengan prediksi dan pahami alasannya.</p></div></li>
-            </Reveal>
-          </Reveal>
-        </section>
-
-        <section className="border-b border-border" aria-labelledby="path-title">
-          <Reveal as="div" stagger revealOnScroll className="rail-inset mx-auto grid max-w-6xl gap-8 px-5 py-16 sm:px-8 sm:py-20 md:grid-cols-[0.8fr_1.2fr] md:gap-14 lg:py-24">
-            <div>
-              <h2 id="path-title" className="text-2xl font-semibold tracking-tight sm:text-3xl">Jalur belajar</h2>
-              <p className="mt-3 max-w-[38ch] text-sm leading-6 text-muted-foreground">Tujuh unit dari relasi tabel hingga tantangan query.</p>
-              <Button asChild variant="outline" className="mt-5"><Link href={`/learn/${DEFAULT_LEARNING_PATH_SLUG}`}>Lihat semua unit<ArrowRight size={15} aria-hidden="true" /></Link></Button>
-            </div>
-            <Reveal as="ol" stagger revealOnScroll className="divide-y divide-border border-y border-border">
-              {units.map((unit, index) => (
-                <li key={unit} className="grid grid-cols-[2.5rem_1fr] gap-3 py-3 text-sm sm:grid-cols-[3rem_1fr] sm:gap-4">
-                  <span className="font-mono text-xs tabular-nums text-muted-foreground">{String(index + 1).padStart(2, "0")}</span>
-                  <span className="font-medium">{unit}</span>
-                </li>
-              ))}
-            </Reveal>
-          </Reveal>
-        </section>
-
-        <section className="border-b border-border" aria-label="Fitur belajar">
-          <div className="rail-inset mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20 lg:py-24">
-            <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">Materi, praktik, asesmen</h2>
-            <Reveal as="div" stagger revealOnScroll className="mt-8 grid gap-8 sm:grid-cols-2 md:mt-10 md:grid-cols-3 md:gap-10">
-              <div className="border-t border-border pt-4"><h3 className="text-sm font-semibold">Materi dan video</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">Konsep ringkas dan video pendukung.</p></div>
-              <div className="border-t border-border pt-4"><h3 className="text-sm font-semibold">Lab SQL</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">Jalankan query pada dataset latihan.</p></div>
-              <div className="border-t border-border pt-4"><h3 className="text-sm font-semibold">Latihan dan asesmen</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">Latihan mandiri, lalu asesmen pemahaman.</p></div>
-            </Reveal>
-          </div>
-        </section>
-
-        <section className="border-b border-border" aria-labelledby="start-title">
-          <Reveal as="div" stagger revealOnScroll className="rail-inset mx-auto flex max-w-6xl flex-col gap-5 px-5 py-16 sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-20">
-            <h2 id="start-title" className="text-lg font-semibold">Mulai dari satu pertanyaan tentang data.</h2>
-            <Button asChild size="lg" className="min-h-11"><Link href="/register">Buat akun<ArrowRight size={15} aria-hidden="true" /></Link></Button>
-          </Reveal>
-        </section>
-
-      </main>
-      <footer className="border-t border-border">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-5 py-5 text-xs text-muted-foreground sm:px-8">
-          <span>Quethink · Belajar Basis Data</span><span>Data latihan bersifat sintetis.</span>
-        </div>
-      </footer>
-    </div>
-  );
+  return <div className="min-h-dvh"><SiteHeader /><main id="main-content">
+    <section className="mx-auto grid max-w-6xl items-center gap-10 px-5 pb-14 pt-12 sm:px-8 sm:py-20 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16 lg:py-24">
+      <div><h1 className="max-w-[13ch] text-[2.65rem] font-semibold leading-[1.12] tracking-tight sm:text-6xl">Pahami data.<br /><span className="text-primary">Buktikan dengan query.</span></h1><p className="mt-5 max-w-[45ch] text-base leading-7 text-muted-foreground sm:text-lg">Belajar basis data lewat skema yang bisa diamati, query yang bisa dicoba, dan latihan yang membuatmu paham.</p><div className="mt-7 flex flex-col gap-3 min-[400px]:flex-row"><Button asChild size="lg"><Link href="/register">Mulai belajar<ArrowRight size={17} aria-hidden="true" /></Link></Button><Button asChild variant="outline" size="lg"><Link href="#materi">Lihat materi</Link></Button></div></div>
+      <DatabaseLabPreview />
+    </section>
+    <section className="border-y border-border bg-white" aria-labelledby="journey-title"><div className="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-20"><div className="max-w-xl"><h2 id="journey-title" className="text-3xl font-semibold tracking-tight">Selalu tahu langkah berikutnya.</h2><p className="mt-3 leading-7 text-muted-foreground">Satu alur yang terarah, dengan ruang untuk mencoba lagi.</p></div><ol className="mt-8 grid gap-0 md:grid-cols-4 md:gap-6">{journey.map(([title, body], i) => <li key={title} className="flex gap-4 border-t border-border py-6 md:block"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-primary">{i + 1}</span><div><h3 className="font-semibold md:mt-4">{title}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{body}</p></div></li>)}</ol></div></section>
+    <section id="materi" aria-labelledby="topics-title" className="mx-auto grid max-w-6xl scroll-mt-6 gap-8 px-5 py-14 sm:px-8 sm:py-20 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16"><div><h2 id="topics-title" className="text-3xl font-semibold tracking-tight">Dari bentuk data<br />hingga perubahan data.</h2><p className="mt-4 max-w-[40ch] leading-7 text-muted-foreground">11 materi untuk membangun pemahaman dasar. Pelajari relasi lebih dulu, baca data, lalu ubah dengan aman.</p><Link href={`/learn/${DEFAULT_LEARNING_PATH_SLUG}`} className="mt-5 inline-flex min-h-11 items-center gap-2 font-semibold text-primary hover:underline">Lihat seluruh materi<ArrowRight size={16} aria-hidden="true" /></Link></div><div className="divide-y divide-border border-y border-border">{topics.map(([name, body, count]) => <section key={name} className="py-6"><div className="flex items-center justify-between gap-4"><h3 className="text-xl font-semibold">{name}</h3><span className="text-sm text-muted-foreground">{count}</span></div><p className="mt-3 max-w-[55ch] text-sm leading-7 text-muted-foreground">{body}</p></section>)}</div></section>
+    <section className="bg-secondary" aria-labelledby="lab-title"><div className="mx-auto grid max-w-6xl gap-8 px-5 py-14 sm:px-8 sm:py-20 md:grid-cols-2 md:gap-16"><div><h2 id="lab-title" className="text-3xl font-semibold tracking-tight">Data terasa lebih nyata<br />ketika bisa dieksplorasi.</h2><p className="mt-4 max-w-[48ch] leading-7 text-muted-foreground">Di Lab, lihat hubungan antartabel, prediksi hasil query, lalu bandingkan dengan hasilnya. Dataset latihan bisa direset kapan saja.</p><p className="mt-5 text-sm font-medium text-primary">Skema 2D · Query SQL · Hasil langsung</p></div><div className="space-y-7"><section><h3 className="text-xl font-semibold">Petunjuk saat diperlukan</h3><p className="mt-2 text-sm leading-7 text-muted-foreground">Tutor AI membantu menjelaskan konsep dan memberi petunjuk di Lab. Kamu tetap yang mencoba dan mengambil keputusan.</p></section><section className="border-t border-primary/15 pt-6"><h3 className="text-xl font-semibold">Latihan dan tes punya peran berbeda</h3><p className="mt-2 text-sm leading-7 text-muted-foreground">Ulangi latihan sesukamu. Saat tes, kerjakan mandiri: AI dijeda dan nilai diperiksa di server.</p></section></div></div></section>
+    <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20"><div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between"><div><h2 className="text-3xl font-semibold tracking-tight">Mulai dari rasa ingin tahu.</h2><p className="mt-3 leading-7 text-muted-foreground">Satu materi, satu percobaan, satu pemahaman baru.</p></div><Button asChild size="lg" className="w-full sm:w-auto"><Link href="/register">Buat akun<ArrowRight size={17} aria-hidden="true" /></Link></Button></div></section>
+  </main><footer className="border-t border-border bg-white"><div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-2 px-5 py-6 text-xs text-muted-foreground sm:px-8"><span>Quethink · Belajar Basis Data</span><span>Dataset latihan sintetis.</span></div></footer></div>;
 }

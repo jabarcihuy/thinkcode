@@ -1,3 +1,4 @@
+import { draftSchema, type SchemaDraft } from "@/features/schema-builder/domain/schema-draft";
 import { z } from "zod";
 import { pathSlugSchema } from "@/features/learning/validation/routes";
 import type { ClientTestResult, ExerciseType } from "@/features/practice/types";
@@ -18,7 +19,7 @@ const outputAnswer = z.object({ output: z.string().max(4_000) }).strict();
 const choiceAnswer = z.object({ choiceId: z.string().min(1).max(80) }).strict();
 const orderAnswer = z.object({ order: z.array(z.string().min(1).max(80)).min(2).max(20) }).strict();
 
-export type SubmissionInput = { pathSlug: string; sourceCode: string | null; answer: { output: string } | { choiceId: string } | { order: string[] } | null; runResults: ClientTestResult[] | null };
+export type SubmissionInput = { pathSlug: string; sourceCode: string | null; answer: { output: string } | { choiceId: string } | { order: string[] } | { schema: SchemaDraft } | null; runResults: ClientTestResult[] | null };
 
 export function parseSubmission(type: ExerciseType, value: unknown): SubmissionInput | null {
   const base = baseSchema.safeParse(value);
@@ -32,6 +33,8 @@ export function parseSubmission(type: ExerciseType, value: unknown): SubmissionI
     const answer = outputAnswer.safeParse(base.data.answer);
     return answer.success ? { pathSlug: base.data.pathSlug, sourceCode: null, answer: answer.data, runResults: null } : null;
   }
+  const model = z.object({ schema: draftSchema }).strict().safeParse(base.data.answer);
+  if (model.success) return { pathSlug: base.data.pathSlug, sourceCode: null, answer: model.data, runResults: null };
   const choice = choiceAnswer.safeParse(base.data.answer);
   if (choice.success) return { pathSlug: base.data.pathSlug, sourceCode: null, answer: choice.data, runResults: null };
   const order = orderAnswer.safeParse(base.data.answer);

@@ -74,3 +74,18 @@ describe("learning authorization", () => {
     expect(ownsProgress(null, "user-b")).toBe(false);
   });
 });
+
+describe("mandatory learning journey", () => {
+  it("requires baseline for new material and retains historical review", () => {
+    const states = deriveLessonStates(lessons, completed("first"), [], false);
+    expect(states[0]!.state).toBe("COMPLETED");
+    expect(states[2]!.state).toBe("LOCKED");
+    expect(deriveLessonStates(lessons, [], [], false)[0]!.state).toBe("LOCKED");
+  });
+  it("reading alone leaves the next lesson locked", () => {
+    const states = deriveLessonStates(lessons, [{ lesson_id: "first", status: "IN_PROGRESS", read_at: "2026-10-05" }]);
+    expect(states[0]).toMatchObject({ state: "IN_PROGRESS", readAt: "2026-10-05" });
+    expect(states[2]!.state).toBe("LOCKED");
+    expect(calculateLearningMetrics(states).percentage).toBe(0);
+  });
+});

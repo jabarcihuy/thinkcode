@@ -26,6 +26,15 @@ export async function PATCH(request: Request, context: { params: Promise<{ resou
     if (body.action === "publish" || body.action === "unpublish") {
       if (!["paths", "chapters", "lessons", "exercises", "assessments"].includes(resource)) return NextResponse.json({ error: "Item ini tidak memiliki status publikasi." }, { status: 422 });
       const publish = body.action === "publish";
+      if (publish && resource === "lessons") {
+        const { data: lesson, error: lessonError } = await client.from("lessons").select("is_required").eq("id", id).single();
+        if (lessonError) throw lessonError;
+        if (lesson.is_required) {
+          const { data: cores, error: coreError } = await client.from("exercises").select("type").eq("lesson_id", id).eq("is_required", true).eq("is_published", true);
+          if (coreError) throw coreError;
+          if (!cores?.length || cores.some((core) => !["PREDICT_OUTPUT", "PSEUDOCODE", "FLOWCHART"].includes(core.type))) return NextResponse.json({ error: "Publikasikan latihan inti yang dinilai server sebelum menerbitkan materi wajib." }, { status: 422 });
+        }
+      }
       if (publish && resource === "assessments") {
         const { data: items, error } = await client.from("assessment_items").select("id, title, type, entry_function").eq("assessment_id", id);
         if (error) throw error;

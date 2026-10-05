@@ -1,3 +1,4 @@
+import { SchemaExercise } from "./schema-exercise";
 import { CodingExercise } from "@/features/practice/components/coding-exercise";
 import { PredictOutputExercise } from "@/features/practice/components/predict-output-exercise";
 import { BlockExercise } from "@/features/practice/components/block-exercise";
@@ -16,6 +17,8 @@ export function exerciseKind(type: ExerciseType): "coding" | "prediction" | "blo
 }
 
 export function ExerciseRenderer({ exercise, pathSlug, previewOnly = false }: { exercise: PublicExercise; pathSlug: string; previewOnly?: boolean }) {
+  const config = exercise.publicConfig;
+  if (config && typeof config === "object" && !Array.isArray(config) && config.mode === "schema") return <SchemaExercise exercise={exercise} pathSlug={pathSlug} previewOnly={previewOnly} />;
   const kind = exerciseKind(exercise.type);
   if (previewOnly && kind === "coding") return <p className="mt-6 text-sm text-muted-foreground">Latihan pemrograman lama tidak digunakan pada materi basis data.</p>;
   if (kind === "coding") return <CodingExercise exercise={exercise} pathSlug={pathSlug} />;

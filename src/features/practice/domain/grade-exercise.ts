@@ -1,3 +1,4 @@
+import { schemaMatches } from "./grade-schema";
 import type { GradeResult, GradingExercise, GradingTest, VisibleTestResult } from "@/features/practice/types";
 import type { SubmissionInput } from "@/features/practice/validation/submission";
 import { compareTableOutput } from "./compare-table-output";
@@ -44,6 +45,7 @@ function gradeBlocks(exercise: GradingExercise, submission: SubmissionInput): Gr
   const expected = answerConfig(exercise.config);
   const answer = submission.answer;
   let passed = false;
+  if (answer && "schema" in answer && expected.model) passed = schemaMatches(answer.schema, expected.model);
   if (answer && "choiceId" in answer && typeof expected.choiceId === "string") passed = answer.choiceId === expected.choiceId;
   const expectedOrder = expected.order;
   if (answer && "order" in answer && Array.isArray(expectedOrder)) {

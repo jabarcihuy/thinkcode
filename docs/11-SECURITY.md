@@ -42,8 +42,10 @@ Reading, practice and PDF share published-material and sequential-unlock authori
 
 ## Reading and tests
 
-Diagnostic baseline uses PRETEST and cannot be retaken once completed; it never counts as a passing prerequisite. Assessment start and reading acknowledgement serialize per user with transaction advisory locks. A start reuses the caller’s existing same-test session and rejects a different active test. The submit function is service-role-only; client score fields never determine recorded results. Reading acknowledgement takes only lesson ID, derives auth.uid(), verifies availability and denies active assessments. Optional checks store attempts and cannot update reading completion. PRETEST weight and threshold are constrained to zero. Private grading configuration retains revoked client grants and owner-only RLS on session/results.
+Diagnostic baseline uses PRETEST and cannot be retaken once completed; it is a completion prerequisite, never a pass/fail or score prerequisite. Assessment start and reading acknowledgement serialize per user with transaction advisory locks. A start reuses the caller’s existing same-test session and rejects a different active test. The submit function is service-role-only; client score fields never determine recorded results. Reading acknowledgement takes only lesson ID, derives auth.uid(), verifies availability and denies active assessments. Optional checks alone cannot complete a material. Completion requires read_at and all required deterministic checks; browser output cannot grant completion. PRETEST weight and threshold are constrained to zero. Private grading configuration retains revoked client grants and owner-only RLS on session/results.
 
-## Current course progression
+## Revisi alur wajib — 5 Oktober 2026
 
-Pre-test → Materi → optional Lab SQL → Post-test. The authoritative behavior is defined in docs/03-LEARNING_SYSTEM.md. Reading acknowledgement replaces practice completion; historical checkpoints are unpublished and no longer gate the course. Existing history is retained.
+**Pre-test wajib sekali → Materi membaca → Lab latihan inti → materi berikutnya → Post-test (lulus ≥75) → selesai.**
+
+Aturan aktif dan transisi pengguna lama mengikuti [03-LEARNING_SYSTEM.md](03-LEARNING_SYSTEM.md). Materi tetap halaman membaca/PDF; Lab, tes, dan AI berada di halaman terpisah.

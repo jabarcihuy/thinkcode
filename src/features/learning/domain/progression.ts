@@ -11,25 +11,26 @@ export interface AssessmentGate {
   passed: boolean;
 }
 
-export function deriveLessonStates(lessons: LessonOutline[], progress: ProgressRecord[], assessmentGates: AssessmentGate[] = []): LessonWithState[] {
-  const progressByLesson = new Map(progress.map((item) => [item.lesson_id, item.status]));
+export function deriveLessonStates(lessons: LessonOutline[], progress: ProgressRecord[], assessmentGates: AssessmentGate[] = [], baselineComplete = true): LessonWithState[] {
+  const progressByLesson = new Map(progress.map((item) => [item.lesson_id, item]));
   let requiredPrerequisitesComplete = true;
 
   return orderLessons(lessons).map((lesson) => {
-    const saved = progressByLesson.get(lesson.id);
+    const record = progressByLesson.get(lesson.id);
+    const saved = record?.status;
     const assessmentPrerequisitesComplete = assessmentGates.every((gate) =>
       lesson.chapterPosition <= gate.gateAfterChapter || gate.passed,
     );
     const state = saved === "COMPLETED"
       ? "COMPLETED"
-      : requiredPrerequisitesComplete && assessmentPrerequisitesComplete
+      : baselineComplete && requiredPrerequisitesComplete && assessmentPrerequisitesComplete
         ? saved === "IN_PROGRESS" ? "IN_PROGRESS" : "AVAILABLE"
         : "LOCKED";
 
     if (lesson.chapterIsRequired && lesson.is_required && state !== "COMPLETED") {
       requiredPrerequisitesComplete = false;
     }
-    return { ...lesson, state };
+    return { ...lesson, state, readAt: record?.read_at ?? null };
   });
 }
 

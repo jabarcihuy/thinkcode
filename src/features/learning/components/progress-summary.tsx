@@ -1,17 +1,5 @@
 import type { LearningMetrics } from "@/features/learning/types";
 
-/**
- * Progress as a position on a strip, not a generic filled bar.
- *
- * The world is a film strip, so progress is shown as discrete numbered frames:
- * the ones already run are solid, the live one carries the accent, the rest are
- * hairline. Discrete frames are also more honest than a continuous bar here,
- * because lessons are countable units, not a percentage of fluid.
- *
- * State is carried by line weight and fill, never by hue alone, so it survives
- * greyscale. The percentage remains for screen readers and for the numeric
- * readout a learner can act on.
- */
 export function ProgressSummary({ metrics, compact = false }: { metrics: LearningMetrics; compact?: boolean }) {
   const total = metrics.totalRequiredLessons;
   const done = metrics.completedRequiredLessons;
@@ -21,7 +9,7 @@ export function ProgressSummary({ metrics, compact = false }: { metrics: Learnin
     <section aria-label="Progres pembelajaran" className={compact ? "space-y-3" : "space-y-4"}>
       <div className="flex items-end justify-between gap-3">
         <div>
-          <p className="text-sm font-medium text-muted-foreground">Progres membaca</p>
+          <p className="text-sm font-medium text-muted-foreground">Progres belajar</p>
           <p className="mt-1 text-3xl font-semibold tabular-nums tracking-tight">{metrics.percentage}%</p>
         </div>
         <p className="text-sm tabular-nums text-muted-foreground">{done} dari {total} selesai</p>
@@ -38,7 +26,7 @@ export function ProgressSummary({ metrics, compact = false }: { metrics: Learnin
         aria-valuenow={metrics.percentage}
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-label="Progres membaca"
+        aria-label="Progres belajar"
         className="flex gap-1"
       >
         {Array.from({ length: cells }, (_, i) => {
@@ -50,14 +38,14 @@ export function ProgressSummary({ metrics, compact = false }: { metrics: Learnin
               key={i}
               aria-hidden="true"
               className={`h-1.5 flex-1 rounded-full ${
-                complete ? "bg-foreground" : live ? "bg-live" : "bg-border"
+                complete ? "bg-primary" : live ? "bg-live" : "bg-border"
               }`}
             />
           );
         })}
       </div>
 
-      {!compact && <p className="text-sm leading-relaxed text-muted-foreground">Status membaca dicatat terpisah dari nilai post-test.</p>}
+      {!compact && <p className="text-sm leading-relaxed text-muted-foreground">Materi tuntas setelah membaca dan lulus latihan inti.</p>}
     </section>
   );
 }

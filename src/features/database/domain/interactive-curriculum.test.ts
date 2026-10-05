@@ -40,7 +40,7 @@ describe("interactive course contract", () => {
       const result = gradeExercise(gradingExercise, submission);
       expect(result.passed).toBe(true);
       expect(result.visibleTests).toEqual([]);
-      const wrong = "output" in exercise.config.answer ? { output: "WRONG" } : "choiceId" in exercise.config.answer ? { choiceId: "WRONG" } : { order: [...exercise.config.answer.order].reverse() };
+      const wrong = "output" in exercise.config.answer ? { output: "WRONG" } : "choiceId" in exercise.config.answer ? { choiceId: "WRONG" } : { order: ("order" in exercise.config.answer ? [...exercise.config.answer.order].reverse() : []) };
       const failed = gradeExercise(gradingExercise, { ...submission, answer: wrong });
       expect(failed.passed).toBe(false);
       expect(failed.feedback).toBe(exercise.config.feedback.retry);

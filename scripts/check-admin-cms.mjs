@@ -81,6 +81,9 @@ try {
   let result = await call(adminCookie(), "/api/admin/paths", "POST", { title: "CMS test path", slug: pathSlug, description: "Temporary integration content.", position: 9_999 });
   assert.equal(result.response.status, 201, JSON.stringify(result.payload));
   pathId = result.payload.item.id;
+  const baselineTest = await privileged.from("assessments").insert({ learning_path_id: pathId, slug: "cms-pre-test", title: "CMS diagnostic", type: "PRETEST", passing_score: 0, course_weight_percent: 0, gate_after_chapter: 1, position: 9998, is_published: true }).select("id").single();
+  assert.ifError(baselineTest.error);
+  assert.ifError((await privileged.from("assessment_sessions").insert({ user_id: ids[1], assessment_id: baselineTest.data.id, status: "COMPLETED", completed_at: new Date().toISOString(), score: 0 })).error);
   result = await call(adminCookie(), `/api/admin/paths/${pathId}`, "PATCH", { action: "publish" });
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   result = await call(adminCookie(), "/api/admin/chapters", "POST", { learning_path_id: pathId, title: "Chapter", position: 1, is_required: true });
@@ -109,7 +112,7 @@ try {
   assert.ifError(noPreviewProgress.error);
   assert.equal(noPreviewProgress.data.length, 0, "Preview must not create learner progress.");
 
-  assert.equal((await call(adminCookie(), `/api/admin/lessons/${lessonId}`, "PATCH", { action: "publish" })).response.status, 200);
+  assert.equal((await call(adminCookie(), `/api/admin/lessons/${lessonId}`, "PATCH", { action: "publish" })).response.status, 422,"Required material needs a published core");
   result = await call(adminCookie(), "/api/admin/exercises", "POST", {
     lesson_id: lessonId, type: "PREDICT_OUTPUT", title: "Prediksi hasil query", prompt: "Tulis satu nama per baris.", starter_code: "SELECT name FROM students ORDER BY student_id;",
     config: { answer: { output: "Alya\nBima\nCitra\nDanu" } }, public_config: {}, position: 1, is_required: true,
@@ -119,6 +122,7 @@ try {
   assert.deepEqual(result.payload.item.config.public, {}, "Visible configuration must be stored through the generated public field.");
   assert.equal((await call(adminCookie(), `/api/admin/exercises/${exerciseId}`, "PATCH", { action: "publish" })).response.status, 200);
 
+  assert.equal((await call(adminCookie(), `/api/admin/lessons/${lessonId}`, "PATCH", { action: "publish" })).response.status, 200);
   const block = (id, text) => ({ id, text });
   const exerciseFixtures = [
     { type: "PREDICT_OUTPUT", title: "Prediksi nama mahasiswa", starter_code: "SELECT name FROM students;", config: { answer: { output: "Alya\nBima\nCitra\nDanu" } } },

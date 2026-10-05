@@ -3,7 +3,7 @@ import type { Tables } from "@/types/database";
 export type LearningPath = Pick<Tables<"learning_paths">, "id" | "slug" | "title" | "description">;
 export type Chapter = Pick<Tables<"chapters">, "id" | "title" | "description" | "position" | "is_required">;
 export type LessonRecord = Pick<Tables<"lessons">, "id" | "chapter_id" | "slug" | "title" | "summary" | "position" | "is_required" | "is_preview">;
-export type ProgressRecord = Pick<Tables<"lesson_progress">, "lesson_id" | "status">;
+export type ProgressRecord = Pick<Tables<"lesson_progress">, "lesson_id" | "status"> & { read_at?: string | null };
 
 export interface LessonOutline extends LessonRecord {
   chapterPosition: number;
@@ -15,6 +15,7 @@ export type LessonState = "COMPLETED" | "IN_PROGRESS" | "AVAILABLE" | "LOCKED";
 
 export interface LessonWithState extends LessonOutline {
   state: LessonState;
+  readAt?: string | null;
 }
 
 export interface LearningMetrics {
@@ -30,4 +31,5 @@ export interface LearningOverview {
   chapters: Chapter[];
   lessons: LessonWithState[];
   metrics: LearningMetrics;
+  baselineComplete?: boolean;
 }

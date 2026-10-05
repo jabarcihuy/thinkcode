@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useSyncExternalStore, type FormEvent, type KeyboardEvent } from "react";
+import { useMemo, useState, useSyncExternalStore, type FormEvent, type KeyboardEvent, type ReactNode } from "react";
 import { Plus, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,8 +27,8 @@ export function SchemaBuilder() {
   </div>;
 }
 
-function ScenarioWorkspace({ scenario }: { scenario: ModelingScenario }) {
-  const store = useMemo(() => createDraftStore(scenario.id), [scenario.id]);
+export function ScenarioWorkspace({ scenario, storageKey = scenario.id, renderCheck }: { scenario: ModelingScenario; storageKey?: string; renderCheck?: (draft: SchemaDraft) => ReactNode }) {
+  const store = useMemo(() => createDraftStore(storageKey), [storageKey]);
   const raw = useSyncExternalStore(store.subscribe, store.getSnapshot, () => null);
   const parsed = useMemo(() => readDraft(raw), [raw]);
   const draft = useMemo(() => parsed ?? emptyDraft(), [parsed]);
@@ -62,7 +62,7 @@ function ScenarioWorkspace({ scenario }: { scenario: ModelingScenario }) {
 
   return <>
     <div className="mt-4 flex items-center justify-between gap-2 border-y border-border py-2">
-      <p role="status" className="min-w-0 flex-1 text-xs leading-5 text-muted-foreground">{!storageAvailable ? "Draft belum tersimpan; hanya tersedia selama halaman ini terbuka." : raw && parsed ? "Draft tersimpan di browser." : "Draft baru."}<span className="block">Tidak mengubah progres atau nilai.</span></p>
+      <p role="status" className="min-w-0 flex-1 text-xs leading-5 text-muted-foreground">{!storageAvailable ? "Draft belum tersimpan; hanya tersedia selama halaman ini terbuka." : raw && parsed ? "Draft tersimpan di browser." : "Draft baru."}<span className="block">{renderCheck ? "Periksa model untuk menuntaskan latihan inti." : "Tidak mengubah progres atau nilai."}</span></p>
       <Button type="button" variant="ghost" className="shrink-0 px-2" disabled={!draft.tables.length && !raw} onClick={() => setConfirmReset(true)}><RotateCcw size={15} aria-hidden="true" />Mulai ulang</Button>
     </div>
     {confirmReset && <div className="mt-4" role="group" aria-label="Konfirmasi mulai ulang"><p className="text-sm leading-6">Kosongkan draft untuk kasus {scenario.title.toLowerCase()}?</p><div className="mt-2 flex gap-2"><Button type="button" variant="outline" onClick={() => { change(emptyDraft()); setError(""); setActiveId(null); setConfirmReset(false); }}>Ya, kosongkan</Button><Button type="button" variant="ghost" onClick={() => setConfirmReset(false)}>Batal</Button></div></div>}
@@ -79,7 +79,7 @@ function ScenarioWorkspace({ scenario }: { scenario: ModelingScenario }) {
       </section>
       <div className="min-w-0">
         <div id="schema-panel-diagram" role="tabpanel" aria-labelledby="schema-tab-diagram" className={`${tab === "diagram" ? "block" : "hidden"} lg:block`}><ModelDiagram draft={draft} /></div>
-        <div id="schema-panel-feedback" role="tabpanel" aria-labelledby="schema-tab-feedback" className={`${tab === "feedback" ? "block" : "hidden"} lg:mt-8 lg:block`}><ModelFeedback draft={draft} scenario={scenario} /></div>
+        <div id="schema-panel-feedback" role="tabpanel" aria-labelledby="schema-tab-feedback" className={`${tab === "feedback" ? "block" : "hidden"} lg:mt-8 lg:block`}>{renderCheck ? renderCheck(draft) : <ModelFeedback draft={draft} scenario={scenario} />}</div>
       </div>
     </div>
   </>;

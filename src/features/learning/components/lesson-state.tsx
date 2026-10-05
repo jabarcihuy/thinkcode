@@ -1,18 +1,5 @@
 import type { LessonState } from "@/features/learning/types";
 
-/**
- * Lesson state, expressed in the world's own vocabulary: line form.
- *
- * A film frame carries its state in the shape of its tick, so a learner can
- * read the list without relying on hue. Each state gets a distinct mark:
- *   completed  solid long bar (the frame has been run)
- *   live       short accent bar (this is the frame in the gate)
- *   available  hairline bar (loaded, not yet run)
- *   locked     dashed hairline (not on the reel yet)
- *
- * Every mark is aria-hidden and the state is always spelled out in text beside
- * it, so nothing depends on seeing the shape.
- */
 const marks: Record<LessonState, string> = {
   COMPLETED: "w-5 bg-foreground",
   IN_PROGRESS: "w-3 bg-live",
@@ -21,8 +8,8 @@ const marks: Record<LessonState, string> = {
 };
 
 const labels: Record<LessonState, string> = {
-  COMPLETED: "Selesai dibaca",
-  IN_PROGRESS: "Sedang berjalan",
+  COMPLETED: "Tuntas",
+  IN_PROGRESS: "Sedang dipelajari",
   AVAILABLE: "Tersedia",
   LOCKED: "Terkunci",
 };

@@ -82,6 +82,8 @@ The active learning path is Database Fundamentals. Old programming/PTI paths are
 
 The learner catalog is flat (Materi 1–11). Chapters remain internal grouping for internal content categories. `/learn/[pathSlug]/lessons/[lessonSlug]` loads public prose only. `/practice` under that material loads the existing labs and allowlisted exercises after login and lock checks, and pauses during assessment. `/pdf` is a dynamic Node.js route using the shared material access helper; it renders only public Markdown into an A4 document, with bundled Geist fonts and no remote resource fetching. It never loads private exercise configuration or changes progress. PDFs use private/no-store responses. The server owns PDF generation and font dependencies; neither reaches browser execution.
 
-## Current course progression
+## Revisi alur wajib — 5 Oktober 2026
 
-Pre-test → Materi → optional Lab SQL → Post-test. The authoritative behavior is defined in docs/03-LEARNING_SYSTEM.md. Reading acknowledgement replaces practice completion; historical checkpoints are unpublished and no longer gate the course. Existing history is retained.
+**Pre-test wajib sekali → Materi membaca → Lab latihan inti → materi berikutnya → Post-test (lulus ≥75) → selesai.**
+
+Aturan aktif dan transisi pengguna lama mengikuti [03-LEARNING_SYSTEM.md](03-LEARNING_SYSTEM.md). Materi tetap halaman membaca/PDF; Lab, tes, dan AI berada di halaman terpisah.

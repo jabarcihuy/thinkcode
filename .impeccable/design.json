@@ -1,0 +1,444 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-05T09:56:15.450938+00:00",
+  "title": "Design System: Quethink",
+  "extensions": {
+    "colorMeta": {
+      "background": {
+        "role": "neutral",
+        "displayName": "Lavender Paper",
+        "tonalRamp": [
+          "oklch(15% 0.00669 295.45)",
+          "oklch(26.43% 0.00669 295.45)",
+          "oklch(37.86% 0.00669 295.45)",
+          "oklch(49.29% 0.00669 295.45)",
+          "oklch(60.71% 0.00669 295.45)",
+          "oklch(72.14% 0.00669 295.45)",
+          "oklch(83.57% 0.00669 295.45)",
+          "oklch(95% 0.00669 295.45)"
+        ]
+      },
+      "foreground": {
+        "role": "neutral",
+        "displayName": "Deep Plum Ink",
+        "tonalRamp": [
+          "oklch(15% 0.04951 287.68)",
+          "oklch(26.43% 0.04951 287.68)",
+          "oklch(37.86% 0.04951 287.68)",
+          "oklch(49.29% 0.04951 287.68)",
+          "oklch(60.71% 0.04951 287.68)",
+          "oklch(72.14% 0.04951 287.68)",
+          "oklch(83.57% 0.04951 287.68)",
+          "oklch(95% 0.04951 287.68)"
+        ]
+      },
+      "primary": {
+        "role": "primary",
+        "displayName": "Learning Indigo",
+        "tonalRamp": [
+          "oklch(15% 0.23005 276.97)",
+          "oklch(26.43% 0.23005 276.97)",
+          "oklch(37.86% 0.23005 276.97)",
+          "oklch(49.29% 0.23005 276.97)",
+          "oklch(60.71% 0.23005 276.97)",
+          "oklch(72.14% 0.23005 276.97)",
+          "oklch(83.57% 0.23005 276.97)",
+          "oklch(95% 0.23005 276.97)"
+        ]
+      },
+      "primary-foreground": {
+        "role": "primary",
+        "displayName": "White Action Ink",
+        "tonalRamp": [
+          "oklch(15% 0.00000 89.88)",
+          "oklch(26.43% 0.00000 89.88)",
+          "oklch(37.86% 0.00000 89.88)",
+          "oklch(49.29% 0.00000 89.88)",
+          "oklch(60.71% 0.00000 89.88)",
+          "oklch(72.14% 0.00000 89.88)",
+          "oklch(83.57% 0.00000 89.88)",
+          "oklch(95% 0.00000 89.88)"
+        ]
+      },
+      "secondary": {
+        "role": "neutral",
+        "displayName": "Pale Indigo",
+        "tonalRamp": [
+          "oklch(15% 0.02014 292.14)",
+          "oklch(26.43% 0.02014 292.14)",
+          "oklch(37.86% 0.02014 292.14)",
+          "oklch(49.29% 0.02014 292.14)",
+          "oklch(60.71% 0.02014 292.14)",
+          "oklch(72.14% 0.02014 292.14)",
+          "oklch(83.57% 0.02014 292.14)",
+          "oklch(95% 0.02014 292.14)"
+        ]
+      },
+      "secondary-foreground": {
+        "role": "neutral",
+        "displayName": "Indigo Ink",
+        "tonalRamp": [
+          "oklch(15% 0.08298 285.46)",
+          "oklch(26.43% 0.08298 285.46)",
+          "oklch(37.86% 0.08298 285.46)",
+          "oklch(49.29% 0.08298 285.46)",
+          "oklch(60.71% 0.08298 285.46)",
+          "oklch(72.14% 0.08298 285.46)",
+          "oklch(83.57% 0.08298 285.46)",
+          "oklch(95% 0.08298 285.46)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Quiet Lavender",
+        "tonalRamp": [
+          "oklch(15% 0.00937 292.80)",
+          "oklch(26.43% 0.00937 292.80)",
+          "oklch(37.86% 0.00937 292.80)",
+          "oklch(49.29% 0.00937 292.80)",
+          "oklch(60.71% 0.00937 292.80)",
+          "oklch(72.14% 0.00937 292.80)",
+          "oklch(83.57% 0.00937 292.80)",
+          "oklch(95% 0.00937 292.80)"
+        ]
+      },
+      "muted-foreground": {
+        "role": "neutral",
+        "displayName": "Muted Plum",
+        "tonalRamp": [
+          "oklch(15% 0.04131 291.87)",
+          "oklch(26.43% 0.04131 291.87)",
+          "oklch(37.86% 0.04131 291.87)",
+          "oklch(49.29% 0.04131 291.87)",
+          "oklch(60.71% 0.04131 291.87)",
+          "oklch(72.14% 0.04131 291.87)",
+          "oklch(83.57% 0.04131 291.87)",
+          "oklch(95% 0.04131 291.87)"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Lavender Divider",
+        "tonalRamp": [
+          "oklch(15% 0.01771 293.11)",
+          "oklch(26.43% 0.01771 293.11)",
+          "oklch(37.86% 0.01771 293.11)",
+          "oklch(49.29% 0.01771 293.11)",
+          "oklch(60.71% 0.01771 293.11)",
+          "oklch(72.14% 0.01771 293.11)",
+          "oklch(83.57% 0.01771 293.11)",
+          "oklch(95% 0.01771 293.11)"
+        ]
+      },
+      "input": {
+        "role": "neutral",
+        "displayName": "Field Stroke",
+        "tonalRamp": [
+          "oklch(15% 0.02725 295.39)",
+          "oklch(26.43% 0.02725 295.39)",
+          "oklch(37.86% 0.02725 295.39)",
+          "oklch(49.29% 0.02725 295.39)",
+          "oklch(60.71% 0.02725 295.39)",
+          "oklch(72.14% 0.02725 295.39)",
+          "oklch(83.57% 0.02725 295.39)",
+          "oklch(95% 0.02725 295.39)"
+        ]
+      },
+      "ring": {
+        "role": "primary",
+        "displayName": "Focus Indigo",
+        "tonalRamp": [
+          "oklch(15% 0.23005 276.97)",
+          "oklch(26.43% 0.23005 276.97)",
+          "oklch(37.86% 0.23005 276.97)",
+          "oklch(49.29% 0.23005 276.97)",
+          "oklch(60.71% 0.23005 276.97)",
+          "oklch(72.14% 0.23005 276.97)",
+          "oklch(83.57% 0.23005 276.97)",
+          "oklch(95% 0.23005 276.97)"
+        ]
+      },
+      "destructive": {
+        "role": "neutral",
+        "displayName": "Error Red",
+        "tonalRamp": [
+          "oklch(15% 0.17916 20.66)",
+          "oklch(26.43% 0.17916 20.66)",
+          "oklch(37.86% 0.17916 20.66)",
+          "oklch(49.29% 0.17916 20.66)",
+          "oklch(60.71% 0.17916 20.66)",
+          "oklch(72.14% 0.17916 20.66)",
+          "oklch(83.57% 0.17916 20.66)",
+          "oklch(95% 0.17916 20.66)"
+        ]
+      },
+      "code-surface": {
+        "role": "neutral",
+        "displayName": "White Code Surface",
+        "tonalRamp": [
+          "oklch(15% 0.00000 89.88)",
+          "oklch(26.43% 0.00000 89.88)",
+          "oklch(37.86% 0.00000 89.88)",
+          "oklch(49.29% 0.00000 89.88)",
+          "oklch(60.71% 0.00000 89.88)",
+          "oklch(72.14% 0.00000 89.88)",
+          "oklch(83.57% 0.00000 89.88)",
+          "oklch(95% 0.00000 89.88)"
+        ]
+      },
+      "code-foreground": {
+        "role": "neutral",
+        "displayName": "Code Indigo Ink",
+        "tonalRamp": [
+          "oklch(15% 0.08298 285.46)",
+          "oklch(26.43% 0.08298 285.46)",
+          "oklch(37.86% 0.08298 285.46)",
+          "oklch(49.29% 0.08298 285.46)",
+          "oklch(60.71% 0.08298 285.46)",
+          "oklch(72.14% 0.08298 285.46)",
+          "oklch(83.57% 0.08298 285.46)",
+          "oklch(95% 0.08298 285.46)"
+        ]
+      },
+      "live": {
+        "role": "secondary",
+        "displayName": "Warm Apricot",
+        "tonalRamp": [
+          "oklch(15% 0.13973 53.01)",
+          "oklch(26.43% 0.13973 53.01)",
+          "oklch(37.86% 0.13973 53.01)",
+          "oklch(49.29% 0.13973 53.01)",
+          "oklch(60.71% 0.13973 53.01)",
+          "oklch(72.14% 0.13973 53.01)",
+          "oklch(83.57% 0.13973 53.01)",
+          "oklch(95% 0.13973 53.01)"
+        ]
+      },
+      "live-surface": {
+        "role": "secondary",
+        "displayName": "Apricot Ground",
+        "tonalRamp": [
+          "oklch(15% 0.02373 63.50)",
+          "oklch(26.43% 0.02373 63.50)",
+          "oklch(37.86% 0.02373 63.50)",
+          "oklch(49.29% 0.02373 63.50)",
+          "oklch(60.71% 0.02373 63.50)",
+          "oklch(72.14% 0.02373 63.50)",
+          "oklch(83.57% 0.02373 63.50)",
+          "oklch(95% 0.02373 63.50)"
+        ]
+      },
+      "card": {
+        "role": "neutral",
+        "displayName": "White Panel",
+        "tonalRamp": [
+          "oklch(15% 0.00000 89.88)",
+          "oklch(26.43% 0.00000 89.88)",
+          "oklch(37.86% 0.00000 89.88)",
+          "oklch(49.29% 0.00000 89.88)",
+          "oklch(60.71% 0.00000 89.88)",
+          "oklch(72.14% 0.00000 89.88)",
+          "oklch(83.57% 0.00000 89.88)",
+          "oklch(95% 0.00000 89.88)"
+        ]
+      },
+      "selection": {
+        "role": "neutral",
+        "displayName": "Selection Lavender",
+        "tonalRamp": [
+          "oklch(15% 0.05325 289.99)",
+          "oklch(26.43% 0.05325 289.99)",
+          "oklch(37.86% 0.05325 289.99)",
+          "oklch(49.29% 0.05325 289.99)",
+          "oklch(60.71% 0.05325 289.99)",
+          "oklch(72.14% 0.05325 289.99)",
+          "oklch(83.57% 0.05325 289.99)",
+          "oklch(95% 0.05325 289.99)"
+        ]
+      },
+      "scrollbar-thumb": {
+        "role": "neutral",
+        "displayName": "Scrollbar Lavender",
+        "tonalRamp": [
+          "oklch(15% 0.03556 294.73)",
+          "oklch(26.43% 0.03556 294.73)",
+          "oklch(37.86% 0.03556 294.73)",
+          "oklch(49.29% 0.03556 294.73)",
+          "oklch(60.71% 0.03556 294.73)",
+          "oklch(72.14% 0.03556 294.73)",
+          "oklch(83.57% 0.03556 294.73)",
+          "oklch(95% 0.03556 294.73)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Landing headline; expands at 640px."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Page and section headings."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Reading subheads and task titles."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Learning prose; maximum 72ch."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Control labels and compact interface wording."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "SQL, data values, and schema identifiers."
+      }
+    },
+    "shadows": [
+      {
+        "name": "surface",
+        "value": "0 1px 2px hsl(var(--shadow-color, 245 22% 25%) / 0.06), 0 8px 24px -12px hsl(var(--shadow-color, 245 22% 25%) / 0.12)",
+        "purpose": "Diffuse elevation for the confirmation dialog and keyboard skip link."
+      }
+    ],
+    "motion": [
+      {
+        "name": "control-colors",
+        "value": "150ms cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Shared color, background, and border transitions."
+      },
+      {
+        "name": "loading-travel",
+        "value": "1.15s cubic-bezier(0.4, 0, 0.2, 1) infinite",
+        "purpose": "Loading track; disabled under prefers-reduced-motion."
+      },
+      {
+        "name": "query-trace",
+        "value": "200ms",
+        "purpose": "Conceptual query trace width and color changes."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "hero-actions",
+        "value": "400px"
+      },
+      {
+        "name": "schema-compact",
+        "value": "480px"
+      },
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Shared primary action with hover, keyboard focus, and disabled treatment.",
+      "html": "<button type=\"button\" class=\"ds-btn-primary\">Mulai belajar</button>",
+      "css": ".ds-btn-primary{display:inline-flex;min-height:44px;height:44px;align-items:center;justify-content:center;gap:8px;border-radius:var(--radius-md,12px);padding:0 20px;font-size:14px;font-weight:600;transition:color 150ms cubic-bezier(.4,0,.2,1),background-color 150ms cubic-bezier(.4,0,.2,1),border-color 150ms cubic-bezier(.4,0,.2,1);font-family:var(--font-dm-sans,\"DM Sans\"),ui-sans-serif,system-ui,sans-serif;border:0;background:var(--primary,#4f46e5);color:var(--primary-foreground,#ffffff);}.ds-btn-primary:hover:not(:disabled){background:color-mix(in oklab,var(--primary,#4f46e5) 90%,transparent);}.ds-btn-primary:focus-visible{outline:2px solid var(--ring,#4f46e5);outline-offset:2px;}.ds-btn-primary:disabled{pointer-events:none;opacity:.5;cursor:not-allowed;}"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Shared outline action with hover, keyboard focus, and disabled treatment.",
+      "html": "<button type=\"button\" class=\"ds-btn-outline\">Lihat materi</button>",
+      "css": ".ds-btn-outline{display:inline-flex;min-height:44px;height:44px;align-items:center;justify-content:center;gap:8px;border-radius:var(--radius-md,12px);padding:0 20px;font-size:14px;font-weight:600;transition:color 150ms cubic-bezier(.4,0,.2,1),background-color 150ms cubic-bezier(.4,0,.2,1),border-color 150ms cubic-bezier(.4,0,.2,1);font-family:var(--font-dm-sans,\"DM Sans\"),ui-sans-serif,system-ui,sans-serif;border:1px solid var(--border,#dedce9);background:var(--background,#f8f7fc);color:var(--foreground,#25223d);}.ds-btn-outline:hover:not(:disabled){background:var(--muted,#f1f0f7);}.ds-btn-outline:focus-visible{outline:2px solid var(--ring,#4f46e5);outline-offset:2px;}.ds-btn-outline:disabled{pointer-events:none;opacity:.5;cursor:not-allowed;}"
+    },
+    {
+      "name": "Labeled Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "A readable mobile field with visible label, muted placeholder, and indigo focus.",
+      "html": "<div class=\"ds-field\"><label class=\"ds-field-label\" for=\"ds-name\">Nama tampilan</label><input class=\"ds-input\" id=\"ds-name\" placeholder=\"Namamu\" type=\"text\" /></div>",
+      "css": ".ds-field{max-width:320px;font-family:var(--font-dm-sans,\"DM Sans\"),ui-sans-serif,system-ui,sans-serif;}.ds-field-label{display:block;margin-bottom:8px;color:var(--foreground,#25223d);font-size:14px;font-weight:500;}.ds-input{width:100%;height:44px;border:1px solid var(--input,#b0acbf);border-radius:var(--radius-md,12px);background:var(--background,#f8f7fc);padding:8px 12px;color:var(--foreground,#25223d);caret-color:var(--primary,#4f46e5);font-size:16px;outline:none;font-family:var(--font-dm-sans,\"DM Sans\"),ui-sans-serif,system-ui,sans-serif;}.ds-input::placeholder{color:var(--muted-foreground,#625e78);}.ds-input:focus-visible{border-color:var(--ring,#4f46e5);box-shadow:0 0 0 2px color-mix(in oklab,var(--ring,#4f46e5) 20%,transparent);}.ds-input:disabled{opacity:.5;cursor:not-allowed;}@media(min-width:640px){.ds-input{font-size:14px;}}"
+    },
+    {
+      "name": "Mobile Navigation",
+      "kind": "nav",
+      "refersTo": "mobile-nav-active",
+      "description": "Five equal destinations with central Lab, icon labels, and a written current-page relationship.",
+      "html": "<nav class=\"ds-mobile-nav\" aria-label=\"Navigasi utama\"><a class=\"ds-mobile-item\" href=\"/dashboard\"><svg viewBox=\"0 0 24 24\" width=\"19\" height=\"19\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z\"/></svg><span>Beranda</span></a><a class=\"ds-mobile-item\" href=\"/learn/basis-data\"><svg viewBox=\"0 0 24 24\" width=\"19\" height=\"19\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 7v14M3 3h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5v17h-5a4 4 0 0 0-4 1 4 4 0 0 0-4-1H3Z\"/></svg><span>Materi</span></a><a class=\"ds-mobile-item\" href=\"/lab\" aria-current=\"page\"><svg viewBox=\"0 0 24 24\" width=\"19\" height=\"19\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><ellipse cx=\"12\" cy=\"5\" rx=\"9\" ry=\"3\"/><path d=\"M3 5v14a9 3 0 0 0 18 0V5M3 12a9 3 0 0 0 18 0\"/></svg><span>Lab</span></a><a class=\"ds-mobile-item\" href=\"/pre-test\"><svg viewBox=\"0 0 24 24\" width=\"19\" height=\"19\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"5\" y=\"4\" width=\"14\" height=\"18\" rx=\"2\"/><path d=\"M9 4V2h6v2M9 13l2 2 4-4\"/></svg><span>Tes</span></a><a class=\"ds-mobile-item\" href=\"/profile\"><svg viewBox=\"0 0 24 24\" width=\"19\" height=\"19\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"7\" r=\"4\"/><path d=\"M4 21v-2a8 8 0 0 1 16 0v2\"/></svg><span>Profil</span></a></nav>",
+      "css": ".ds-mobile-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;max-width:576px;padding:4px 8px env(safe-area-inset-bottom);border-top:1px solid var(--border,#dedce9);background:var(--card,#ffffff);font-family:var(--font-dm-sans,\"DM Sans\"),ui-sans-serif,system-ui,sans-serif;}.ds-mobile-item{display:flex;min-height:56px;min-width:0;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:0 4px;border-radius:var(--radius-md,12px);color:var(--muted-foreground,#625e78);text-decoration:none;transition:color 150ms cubic-bezier(.4,0,.2,1),background-color 150ms cubic-bezier(.4,0,.2,1);}.ds-mobile-item span{white-space:nowrap;font-size:12px;font-weight:500;line-height:1;}.ds-mobile-item:hover,.ds-mobile-item[aria-current=\"page\"]{background:var(--secondary,#eeecfb);}.ds-mobile-item[aria-current=\"page\"]{color:var(--primary,#4f46e5);}.ds-mobile-item:focus-visible{outline:2px solid var(--ring,#4f46e5);outline-offset:2px;}"
+    },
+    {
+      "name": "Lesson State Labels",
+      "kind": "chip",
+      "refersTo": "lesson-state",
+      "description": "Informational labels use text plus distinct completed, in-progress, available, and locked marks.",
+      "html": "<div class=\"ds-state-list\"><span class=\"ds-state\" data-state=\"completed\"><i aria-hidden=\"true\"></i>Tuntas</span><span class=\"ds-state\" data-state=\"progress\"><i aria-hidden=\"true\"></i>Sedang dipelajari</span><span class=\"ds-state\" data-state=\"available\"><i aria-hidden=\"true\"></i>Tersedia</span><span class=\"ds-state\" data-state=\"locked\"><i aria-hidden=\"true\"></i>Terkunci</span></div>",
+      "css": ".ds-state-list{display:flex;flex-wrap:wrap;gap:16px;font-family:var(--font-dm-sans,\"DM Sans\"),ui-sans-serif,system-ui,sans-serif;}.ds-state{display:inline-flex;align-items:center;gap:8px;color:var(--foreground,#25223d);font-size:12px;font-weight:600;}.ds-state i{width:20px;height:2px;border-radius:9999px;background:var(--foreground,#25223d);}.ds-state[data-state=\"progress\"]{color:var(--primary,#4f46e5);}.ds-state[data-state=\"progress\"] i{width:12px;background:var(--live,#c56a25);}.ds-state[data-state=\"available\"] i{background:color-mix(in oklab,var(--muted-foreground,#625e78) 50%,transparent);}.ds-state[data-state=\"locked\"]{color:var(--muted-foreground,#625e78);}.ds-state[data-state=\"locked\"] i{opacity:.7;background:repeating-linear-gradient(to right,currentColor 0 3px,transparent 3px 6px);}"
+    },
+    {
+      "name": "Learning Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "Flat white grouped content with a quiet boundary and a keyboard reachable supporting link.",
+      "html": "<section class=\"ds-panel\" aria-labelledby=\"ds-panel-title\"><h2 id=\"ds-panel-title\">Lanjutkan belajarmu</h2><p>Satu materi, satu percobaan, satu pemahaman baru.</p><a class=\"ds-panel-link\" href=\"/lab\">Lanjut ke Lab →</a></section>",
+      "css": ".ds-panel{max-width:520px;border:1px solid color-mix(in oklab,var(--primary,#4f46e5) 15%,transparent);border-radius:var(--radius-lg,16px);background:var(--card,#ffffff);padding:24px;color:var(--foreground,#25223d);font-family:var(--font-dm-sans,\"DM Sans\"),ui-sans-serif,system-ui,sans-serif;}.ds-panel h2{margin:12px 0 0;font-size:24px;font-weight:600;line-height:32px;}.ds-panel p{max-width:55ch;margin:12px 0 0;color:var(--muted-foreground,#625e78);font-size:16px;line-height:28px;}.ds-panel-link{display:inline-flex;min-height:44px;align-items:center;margin-top:16px;color:var(--primary,#4f46e5);font-size:14px;font-weight:500;text-decoration:none;}.ds-panel-link:hover{text-decoration:underline;text-underline-offset:.2em;}.ds-panel-link:focus-visible{outline:2px solid var(--ring,#4f46e5);outline-offset:2px;}@media(min-width:640px){.ds-panel{padding:32px;}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Calm Learning Lab",
+    "overview": "Quethink uses the approved Eduline-inspired Indigo–apricot direction: welcoming, educational, and calm. Light lavender ground, white panels, generous reading space, and clear indigo actions help a beginner recognize the next step without decoding a dense interface.\n\nRounded controls and quiet dividers give the interface a friendly, practical character. Warm apricot highlights learning examples; compact 2D table diagrams connect the visual explanation with SQL and actual records. The interface remains focused on learning, with restrained motion and clear written states.",
+    "keyCharacteristics": [
+      "Light lavender ground with flat white panels.",
+      "Indigo actions and navigation; apricot learning accents.",
+      "DM Sans reading and interface text; Geist Mono SQL and identifiers.",
+      "Touch sized controls and five mobile destinations.",
+      "Local 2D schema diagrams with written learning states."
+    ],
+    "rules": [
+      {
+        "name": "The Written State Rule",
+        "body": "Pair learning and assessment states with visible text or a distinct mark; color alone must never carry the meaning.",
+        "section": "colors"
+      },
+      {
+        "name": "The Reading Measure Rule",
+        "body": "Keep long learning prose in one column with the observed 72ch maximum; allow data tables to scroll within their own region.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Panel Rule",
+        "body": "Use borders, spacing, and tonal surfaces for ordinary panels; reserve the shared shadow for surfaces that actually float.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use the recorded Indigo–apricot palette and local DM Sans interface type.",
+      "Do give each screen a clear primary next action and keep supporting copy short.",
+      "Do retain visible labels, keyboard focus, and at least 44px touch controls.",
+      "Do keep reading in one calm column and table overflow within its own region.",
+      "Do pair status color with text or a distinct mark.",
+      "Do keep the dotted grid and pan/zoom interaction inside the 2D schema workspace."
+    ],
+    "donts": [
+      "Don't restore the discarded dark/orange film identity.",
+      "Don't add decorative 3D, glassmorphism, excessive gradients, or an app-wide canvas.",
+      "Don't turn every list row or reading paragraph into a separate card.",
+      "Don't use apricot as a substitute for error or completion meaning.",
+      "Don't hide the next action in an overflowing navigation strip."
+    ]
+  }
+}

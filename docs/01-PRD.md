@@ -19,7 +19,7 @@ Landing → account → dashboard → Pre-test → Materi 1–11 / reading/PDF �
 - Read one complete material without embedded labs/forms, download its PDF, and optionally watch its Indonesian video.
 - Retry formative practice without penalty.
 - Take a diagnostic pre-test and a separately scored post-test.
-- Explicitly acknowledge reading and see the next available material.
+- Acknowledge reading, pass the paired core check, and unlock the next material.
 
 ## Three main learning topics
 
@@ -49,3 +49,9 @@ No JavaScript or general programming course; no PTI mapping; no C++, Python, DOM
 ## Success criteria
 
 A new learner can complete the Relasi → Read → Write path, inspect the data before and after a safe change, retry practice, and understand what to learn next without seeing programming-course or PTI-specific content.
+
+## Revisi alur wajib — 5 Oktober 2026
+
+**Pre-test wajib sekali → Materi membaca → Lab latihan inti → materi berikutnya → Post-test (lulus ≥75) → selesai.**
+
+Aturan aktif dan transisi pengguna lama mengikuti [03-LEARNING_SYSTEM.md](03-LEARNING_SYSTEM.md). Materi tetap halaman membaca/PDF; Lab, tes, dan AI berada di halaman terpisah.

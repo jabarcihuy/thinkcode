@@ -1,3 +1,4 @@
+import { completeTestBaseline } from "./test-baseline-helper.mjs";
 import assert from "node:assert/strict";
 import { randomBytes, randomUUID } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -35,6 +36,7 @@ try {
   const email = `quethink-materials-${randomUUID()}@example.invalid`, password = randomBytes(24).toString("base64url");
   const created = await db.auth.admin.createUser({ email, password, email_confirm: true });
   assert.ifError(created.error); userId = created.data.user.id;
+  await completeTestBaseline(db, userId);
   const jar = new Map();
   const client = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, { cookies: { getAll: () => [...jar].map(([name, value]) => ({ name, value })), setAll: (cookies) => cookies.forEach(({ name, value }) => jar.set(name, value)) } });
   assert.ifError((await client.auth.signInWithPassword({ email, password })).error);
@@ -72,7 +74,7 @@ try {
         assert.equal(await download.failure(), null);
         }
       }
-      if (name === "practice") await page.getByRole("heading", { name: "Cek pemahaman · opsional", exact: true }).waitFor();
+      if (name === "practice") await page.getByRole("heading", { name: "Latihan inti", exact: true }).waitFor();
       const size = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));
       assert.ok(size.content <= size.viewport, `${name} ${width} overflow: ${JSON.stringify(size)}`);
       await page.screenshot({ path: `.impeccable/review/material-reading/${name}-${width}.png`, fullPage: true });

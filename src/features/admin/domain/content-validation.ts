@@ -1,3 +1,4 @@
+import { expectedSchema } from "@/features/practice/domain/grade-schema";
 import { z } from "zod";
 import { isDatasetId } from "@/features/database/data/datasets";
 
@@ -27,7 +28,7 @@ export const exerciseInput = z.object({
   lesson_id: z.uuid(), type: exerciseType, title: z.string().trim().min(1).max(160),
   prompt: z.string().trim().min(1).max(8_000), starter_code: z.string().max(16_000).nullable().default(null),
   solution_code: z.string().max(16_000).nullable().default(null), config,
-  public_config: config.nullable().default(null), position, is_required: z.boolean().default(false).transform(() => false),
+  public_config: config.nullable().default(null), position, is_required: z.boolean().default(false),
   is_published: z.boolean().default(false),
 }).superRefine((value, context) => {
   if (value.public_config?.datasetId !== undefined && !isDatasetId(value.public_config.datasetId)) {
@@ -41,6 +42,12 @@ export const exerciseInput = z.object({
     if (!answer || typeof answer !== "object" || Array.isArray(answer) || typeof (answer as Record<string, unknown>).output !== "string") {
       context.addIssue({ code: "custom", path: ["config", "answer", "output"], message: "Predict Output memerlukan config.answer.output." });
     }
+  }
+  if (value.type === "FLOWCHART" && value.public_config?.mode === "schema") {
+    const answer = value.config.answer;
+    const model = answer && typeof answer === "object" && !Array.isArray(answer) ? (answer as Record<string, unknown>).model : null;
+    if (!expectedSchema.safeParse(model).success) context.addIssue({ code: "custom", path: ["config"], message: "Lengkapi model tabel, kolom dan relasi pada jawaban privat." });
+    return;
   }
   if (["PSEUDOCODE", "FLOWCHART"].includes(value.type)) {
     const publicConfig = value.public_config;

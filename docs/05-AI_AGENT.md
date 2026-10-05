@@ -42,10 +42,16 @@ The tutor cannot run arbitrary SQL, change progress, publish content, change sco
 
 ## Safety and limits
 
-The API checks authentication, active assessment state, per-user rate limits, prompt/source size, and trimmed conversation history before using the server-only AIProvider. AI is unavailable during checkpoints and the final assessment. Provider keys stay server-side.
+The API checks authentication, active assessment state, per-user rate limits, prompt/source size, and trimmed conversation history before using the server-only AIProvider. AI is unavailable during every IN_PROGRESS test, including diagnostic pre-test and post-test. Provider keys stay server-side.
 
 Write feedback must encourage a target preview before `UPDATE` or `DELETE` and must not claim a change happened unless the visible Worker result confirms it.
 
 ## Provider and admin drafting
 
 Use the existing provider-agnostic AIProvider. The current OpenAI-compatible adapter reads AI_API_URL, AI_API_KEY, and AI_MODEL only on the server. Admin suggestions cover database explanations, SQL examples, practice prompts, and summaries; every suggestion remains a draft for admin review.
+
+## Revisi alur wajib — 5 Oktober 2026
+
+**Pre-test wajib sekali → Materi membaca → Lab latihan inti → materi berikutnya → Post-test (lulus ≥75) → selesai.**
+
+Aturan aktif dan transisi pengguna lama mengikuti [03-LEARNING_SYSTEM.md](03-LEARNING_SYSTEM.md). Materi tetap halaman membaca/PDF; Lab, tes, dan AI berada di halaman terpisah.
