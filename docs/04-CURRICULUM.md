@@ -113,3 +113,9 @@ Four optional Indonesian video references are curated for Membaca Bentuk Data, S
 **Pre-test wajib sekali → Materi membaca → Lab latihan inti → materi berikutnya → Post-test (lulus ≥75) → selesai.**
 
 Aturan aktif dan transisi pengguna lama mengikuti [03-LEARNING_SYSTEM.md](03-LEARNING_SYSTEM.md). Materi tetap halaman membaca/PDF; Lab, tes, dan AI berada di halaman terpisah.
+
+## Assessment alignment audit — 6 October 2026
+
+The active pre-test and post-test each contain ten choice-based questions: Relasi (3), Read (4), Write (3). The eleven core tasks comprise two choices, five result predictions, three ordered procedures and one structural schema model. These provide evidence of concept recognition, predicted results, safe procedure and modeling; they do not independently demonstrate authoring a SQL query from a new problem. Browser SQL exploration remains formative and cannot provide a trusted official score.
+
+Learning outcomes 4–5 therefore have a remaining evidence gap for independent SQL authoring and execution. Do not describe a passing concept test as certification of that capability. Before extending official assessment, design a bounded, trusted SQL-authoring checker and task blueprint within the documented cost/security model; do not repurpose browser result claims or the legacy JavaScript runner. The current diagnostic/75-point passing/progression rules are unchanged. See [coverage audit](research/2026-10-06-audit-keselarasan-asesmen.md).

@@ -1,0 +1,15 @@
+/** Public worked examples; deliberately different from the graded core answers. */
+const examples: Record<string, { explanation: string; example: string }> = {
+  "membaca-bentuk-data": { explanation: "Kolom menjelaskan atribut yang tersedia. Record adalah satu kejadian atau objek yang dicatat. Menambahkan record tidak berarti menambah atribut.", example: "books\nKolom: book_id | title | stock\nRecord: 7 | Dasar SQL | 2" },
+  "key-dan-hubungan-antar-tabel": { explanation: "PK mengidentifikasi satu record. FK merujuk PK di tabel lain. Untuk relasi satu-ke-banyak, FK berada pada sisi banyak.", example: "authors.author_id (PK) ← books.author_id (FK)\nSatu penulis dapat memiliki beberapa buku." },
+  "memilih-sumber-dan-kolom": { explanation: "Mulai dari informasi yang diminta: FROM memilih tabel sumber, SELECT memilih kolom hasil. Mengurangi kolom tidak otomatis mengurangi jumlah baris.", example: "SELECT name FROM students;" },
+  "menyaring-record": { explanation: "Uji kondisi pada setiap record. Perhatikan apakah batasnya termasuk, lalu gabungkan syarat dengan AND atau OR sesuai pertanyaan.", example: "SELECT name FROM students WHERE cohort = 2025;" },
+  "mengurutkan-dan-membatasi": { explanation: "Urutkan dahulu, baru ambil jumlah baris yang dibutuhkan. Gunakan kolom pembeda ketika dua nilai sama.", example: "SELECT name FROM students ORDER BY name ASC, student_id ASC LIMIT 2;" },
+  "menghubungkan-tabel": { explanation: "Pasangkan nilai FK dengan PK, bukan nomor urut baris. Satu record induk dapat muncul beberapa kali ketika memiliki beberapa pasangan.", example: "SELECT s.name, e.score\nFROM students s\nINNER JOIN enrollments e ON e.student_id = s.student_id;" },
+  "merangkum-data": { explanation: "Tentukan apa yang diwakili satu grup sebelum menghitung. COUNT menghitung record; AVG merangkum nilai numerik di grup tersebut.", example: "SELECT cohort, COUNT(*) FROM students GROUP BY cohort;" },
+  "tantangan-query-kampus": { explanation: "Uraikan permintaan menjadi sumber, kondisi, kelompok, dan kolom hasil. Periksa setiap bagian sebelum menggabungkannya.", example: "SELECT cohort, COUNT(*)\nFROM students WHERE cohort >= 2025\nGROUP BY cohort ORDER BY cohort;" },
+  "menambahkan-record-dengan-insert": { explanation: "Pasangkan setiap kolom dengan nilainya. Gunakan PK baru dan pastikan nilai FK benar-benar ada. Verifikasi record setelah menerapkan perubahan.", example: "INSERT → tinjau kolom dan nilai → terapkan → SELECT untuk verifikasi" },
+  "mengubah-record-dengan-update": { explanation: "SET menyatakan perubahan; WHERE menentukan target. Pratinjau target dengan SELECT sebelum menerapkan UPDATE, lalu bandingkan sebelum dan sesudah.", example: "SELECT target → tinjau satu record → UPDATE dengan PK → verifikasi" },
+  "menghapus-record-dengan-delete": { explanation: "Pastikan target boleh dihapus dan tidak masih dirujuk record lain. Menghapus induk dapat ditolak oleh foreign key; itu perlindungan konsistensi data.", example: "SELECT target → tinjau relasi → DELETE dengan PK → verifikasi → reset" },
+};
+export function corePreparation(slug: string) { return examples[slug] ?? null; }

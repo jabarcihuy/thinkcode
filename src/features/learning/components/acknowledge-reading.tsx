@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export function AcknowledgeReading({ lessonId, completed }: { lessonId: string; completed: boolean }) {
+export function AcknowledgeReading({ lessonId, completed, labHref }: { lessonId: string; completed: boolean; labHref: string }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -15,13 +17,13 @@ export function AcknowledgeReading({ lessonId, completed }: { lessonId: string; 
       const response = await fetch(`/api/materials/${lessonId}/read`, { method: "POST" });
       const data = await response.json() as { error?: string };
       if (!response.ok) throw new Error(data.error ?? "Progres belum tersimpan.");
-      router.refresh();
+      router.push(labHref);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Progres belum tersimpan. Coba lagi.");
     } finally { setPending(false); }
   }
   return <div>
-    {completed ? <p role="status" className="text-sm font-medium">Materi sudah selesai dibaca.</p> : <Button type="button" className="w-full sm:w-auto" disabled={pending} onClick={acknowledge}>{pending ? "Menyimpan…" : "Selesai dibaca"}</Button>}
+    {completed ? <Button asChild className="w-full sm:w-auto"><Link href={labHref}>Lanjut ke latihan inti<ArrowRight size={16} aria-hidden="true" /></Link></Button> : <Button type="button" className="w-full whitespace-normal sm:w-auto" disabled={pending} onClick={acknowledge}>{pending ? "Menyimpan bacaan…" : "Selesai membaca, lanjut ke Lab"}<ArrowRight size={16} aria-hidden="true" /></Button>}
     {error && <p role="alert" className="mt-3 text-sm text-destructive">{error}</p>}
   </div>;
 }

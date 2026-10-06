@@ -9,8 +9,8 @@ Explain in one sentence that Quethink teaches learners to understand relationshi
 1. Register/sign in and see the next step on the dashboard.
 2. Open `/pre-test`: ten diagnostic questions, including Belum tahu; no passing gate, no course weight, one completed baseline. Complete it before opening new materials; no passing score is required.
 3. Open numbered Materi 1–11. Read prose/examples/video or download PDF.
-4. Choose Selesai dibaca to store read_at. The next material stays locked until the core check passes.
-5. Open the paired Lab to inspect tables/query and pass its required core. Additional checks remain optional.
+4. Choose **Selesai membaca, lanjut ke Lab**. Store read_at on the server, then navigate directly to the paired core. If saving fails, stay on reading and offer retry. Previously acknowledged reading has a direct **Lanjut ke latihan inti** link.
+5. Inspect tables/query and pass the required core. Optional worked examples explain concepts without revealing graded answers. Feedback offers retry and a link back to reading. After success, the next-material action appears immediately after the core, before optional AI/exercises.
 6. After all required material completion, take `/post-test`. Score is server-graded, pass ≥75, retry after the previous session ends.
 7. Course complete means reading and core completion plus post-test passed. Historical checkpoint gates are unpublished.
 
@@ -22,7 +22,7 @@ The signed-in navigation provides separate **Chatbot** and **SQL Playground** en
 
 ## Pembuat Skema
 
-Open it from the mobile Lainnya menu, SQL Playground, or the key/relationship practice page. Choose one guided case, add a table, edit its columns, mark one PK, and use selects to connect a FK to another table's compatible PK. On mobile use Susun → Diagram → Periksa; keyboard arrows/Home/End switch tabs. The diagram has native scrolling, zoom/reset, and a table-focus selector. Larger screens show editor and diagram/feedback side by side.
+Open it from Lab, SQL Playground, or the key/relationship practice page. Choose one guided case, add a table, edit its columns, mark one PK, and use selects to connect a FK to another table's compatible PK. On mobile use Susun → Diagram → Periksa; keyboard arrows/Home/End switch tabs. The diagram has native scrolling, zoom/reset, and a table-focus selector. Larger screens show editor and diagram/feedback side by side.
 
 Each case preserves its own local draft. Reset requires confirmation, storage failure is explained, and invalid stored data can be discarded explicitly. Feedback points to incomplete structure and asks for an explanation; after trying, learners can reveal a reference model. This optional tool does not complete lessons or determine scores and is paused during an active assessment.
 
@@ -63,3 +63,11 @@ Relasi: choose Campus Mini, Katalog Buku, or Toko Mini to compare keys and relat
 **Pre-test wajib sekali → Materi membaca → Lab latihan inti → materi berikutnya → Post-test (lulus ≥75) → selesai.**
 
 Aturan aktif dan transisi pengguna lama mengikuti [03-LEARNING_SYSTEM.md](03-LEARNING_SYSTEM.md). Materi tetap halaman membaca/PDF; Lab, tes, dan AI berada di halaman terpisah.
+
+## Input recovery
+
+Assessment answers and the active question are saved synchronously in browser storage, scoped to the signed-in user and session. Practice answers are scoped to user/exercise, query/prediction to user/lesson/dataset. Restore only bounded, validated data compatible with the current public question content. No scores, hidden keys, credentials, output results or SQLite mutations are stored in drafts.
+
+Show recovery/loading, stored, failed, and invalid-draft states. Failed storage retains the current in-memory answers with an explicit retry; assessment warns before closing when storage has failed. Final submission failure does not clear a draft. A successful submission clears its session draft. If the server has already completed a submission whose response was lost, retry confirms server status before opening the result.
+
+Drafts apply only to this browser profile; they are not cross-device saves or an offline version of the app. Clearing site data/private browsing can remove drafts. Avoid using the same task simultaneously in multiple tabs. Schema modeling already persists local drafts; the required model now also scopes its key to the account/exercise. Query drafts restore text/prediction only: re-entry creates fresh synthetic data and results must be run again. Reset discards this query/prediction draft. Dashboard points to the active session without promising a save it cannot verify.

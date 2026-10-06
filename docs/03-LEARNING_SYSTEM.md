@@ -10,7 +10,7 @@ Materi 1–11 adalah daftar datar dalam urutan Relasi → Read → Write. Halama
 
 ## Ketuntasan materi
 
-1. Pengguna membuka materi yang tersedia dan menandai Selesai dibaca.
+1. Pengguna membuka materi yang tersedia dan memilih Selesai membaca, lanjut ke Lab.
 2. Server menyimpan read_at dan status IN_PROGRESS, bukan langsung COMPLETED.
 3. Pengguna masuk ke Lab terkait, mengamati data/diagram dan menyelesaikan satu latihan inti.
 4. Server memeriksa jawaban deterministik. Materi COMPLETED jika read_at terisi dan semua latihan required/published passed.

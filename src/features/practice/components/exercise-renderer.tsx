@@ -16,12 +16,12 @@ export function exerciseKind(type: ExerciseType): "coding" | "prediction" | "blo
   }
 }
 
-export function ExerciseRenderer({ exercise, pathSlug, previewOnly = false }: { exercise: PublicExercise; pathSlug: string; previewOnly?: boolean }) {
+export function ExerciseRenderer({ exercise, pathSlug, userId, reviewHref, previewOnly = false }: { exercise: PublicExercise; pathSlug: string; userId?: string; reviewHref?: string; previewOnly?: boolean }) {
   const config = exercise.publicConfig;
-  if (config && typeof config === "object" && !Array.isArray(config) && config.mode === "schema") return <SchemaExercise exercise={exercise} pathSlug={pathSlug} previewOnly={previewOnly} />;
+  if (config && typeof config === "object" && !Array.isArray(config) && config.mode === "schema") return <SchemaExercise exercise={exercise} reviewHref={reviewHref} userId={userId} pathSlug={pathSlug} previewOnly={previewOnly} />;
   const kind = exerciseKind(exercise.type);
   if (previewOnly && kind === "coding") return <p className="mt-6 text-sm text-muted-foreground">Latihan pemrograman lama tidak digunakan pada materi basis data.</p>;
   if (kind === "coding") return <CodingExercise exercise={exercise} pathSlug={pathSlug} />;
-  if (kind === "prediction") return <PredictOutputExercise previewOnly={previewOnly} exercise={exercise} pathSlug={pathSlug} />;
-  return <BlockExercise previewOnly={previewOnly} exercise={exercise} pathSlug={pathSlug} label={exerciseTypeLabel(exercise.type)} />;
+  if (kind === "prediction") return <PredictOutputExercise previewOnly={previewOnly} reviewHref={reviewHref} userId={userId} exercise={exercise} pathSlug={pathSlug} />;
+  return <BlockExercise previewOnly={previewOnly} reviewHref={reviewHref} userId={userId} exercise={exercise} pathSlug={pathSlug} label={exerciseTypeLabel(exercise.type)} />;
 }

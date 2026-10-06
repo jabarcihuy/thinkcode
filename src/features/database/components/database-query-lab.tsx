@@ -1,7 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Play, RotateCcw, StepBack, StepForward } from "lucide-react";
+import { DraftStatus } from "@/components/forms/draft-status";
+import { useLocalDraft } from "@/lib/browser/use-local-draft";
+import { readQueryDraft } from "../domain/query-draft";
 import { Button } from "@/components/ui/button";
 import { getDataset } from "../data/datasets";
 import type { DatasetId } from "../data/dataset-types";
@@ -73,19 +76,23 @@ export function DatabaseQueryLab({
   prompt = "Prediksi hasilnya, ubah query, lalu jalankan pada data latihan.",
   starterSql: suppliedStarterSql,
   datasetId = "campus",
-  lessonId,
+  lessonId, userId,
 }: {
   title?: string;
   prompt?: string;
   starterSql?: string;
   datasetId?: DatasetId;
   lessonId?: string;
+  userId?: string;
 }) {
   const dataset = getDataset(datasetId);
   const starterSql = suppliedStarterSql ?? dataset.starterSql;
   const [snapshot, setSnapshot] = useState(() => initialDatasetSnapshot(dataset));
-  const [queryText, setQueryText] = useState(starterSql);
-  const [prediction, setPrediction] = useState("");
+  const initialDraft = useMemo(() => ({ queryText: starterSql, prediction: "" }), [starterSql]);
+  const draft = useLocalDraft({ key: userId ? `quethink:query-draft:v1:${userId}:${lessonId ?? "playground"}:${datasetId}` : null, signature: starterSql, initial: initialDraft, parse: readQueryDraft });
+  const { queryText, prediction } = draft.value;
+  function setQueryText(queryText: string) { draft.save({ ...draft.value, queryText }); }
+  function setPrediction(prediction: string) { draft.save({ ...draft.value, prediction }); }
   const [run, setRun] = useState<LabRun | null>(null);
   const [queryError, setQueryError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -104,8 +111,7 @@ export function DatabaseQueryLab({
     runnerRef.current?.dispose();
     runnerRef.current = null;
     setSnapshot(initialDatasetSnapshot(dataset));
-    setQueryText(starterSql);
-    setPrediction("");
+    draft.clear();
     setRun(null);
     setQueryError(null);
     setVisualStep(0);
@@ -198,19 +204,20 @@ export function DatabaseQueryLab({
         <label htmlFor="database-sql" className="sr-only">Query SQL pada data latihan</label>
         <textarea id="database-sql" value={queryText} onChange={(event) => { setQueryText(event.target.value); setRun(null); setQueryError(null); setVisualStep(0); }}
           onKeyDown={(event) => { if ((event.ctrlKey || event.metaKey) && event.key === "Enter") { event.preventDefault(); void runQuery(); } }}
-          maxLength={4_096} spellCheck={false} autoCapitalize="off" autoCorrect="off" disabled={pending || Boolean(preview)} rows={7}
+          maxLength={4_096} spellCheck={false} autoCapitalize="off" autoCorrect="off" disabled={pending || draft.status === "loading" || Boolean(preview)} rows={7}
           className="mt-3 min-h-40 w-full resize-y rounded-md border border-input bg-code-surface p-4 font-mono text-base leading-6 text-code-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-70 sm:text-sm" />
+        {userId && <div className="mt-3"><DraftStatus status={draft.status} restored={draft.restored} onRetry={() => draft.save(draft.value)} onReset={draft.clear} /><p className="mt-1 text-xs leading-5 text-muted-foreground">Draf menyimpan query dan prediksi. Saat halaman dibuka ulang, data kembali ke kondisi awal; jalankan query untuk melihat hasil.</p></div>}
         <p className="mt-2 text-xs leading-5 text-muted-foreground">{isMutation ? "Pratinjau sebelum menerapkan perubahan." : "SELECT membaca data tanpa mengubahnya."} Ctrl/⌘ + Enter untuk Run.</p>
 
         <label htmlFor="database-prediction" className="mt-6 block text-sm font-semibold">Sebelum Run, berapa {isMutation ? "record yang akan berubah" : "baris hasilnya"}?</label>
         <input id="database-prediction" type="number" min="0" max="100" step="1" value={prediction}
           onChange={(event) => setPrediction(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); void runQuery(); } }}
-          disabled={pending || Boolean(preview)} placeholder={isMutation ? "Contoh: 1" : "Contoh: 2"} aria-describedby="database-prediction-help"
+          disabled={pending || draft.status === "loading" || Boolean(preview)} placeholder={isMutation ? "Contoh: 1" : "Contoh: 2"} aria-describedby="database-prediction-help"
           className="mt-2 min-h-11 w-full max-w-40 rounded-md border border-input bg-background px-3 py-2 font-mono text-base outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-70 sm:text-sm" />
         <p id="database-prediction-help" className="mt-2 text-xs leading-5 text-muted-foreground">Hasil baru terlihat setelah kamu membuat prediksi.</p>
 
         <div className="mt-5 flex flex-wrap gap-2">
-          {!preview && <Button type="button" disabled={pending || !prediction.trim()} onClick={() => void runQuery()}><Play size={15} aria-hidden="true" />{pending ? "Menjalankan…" : isMutation ? "Pratinjau perubahan" : "Jalankan SELECT"}</Button>}
+          {!preview && <Button type="button" disabled={pending || draft.status === "loading" || !prediction.trim()} onClick={() => void runQuery()}><Play size={15} aria-hidden="true" />{pending ? "Menjalankan…" : isMutation ? "Pratinjau perubahan" : "Jalankan SELECT"}</Button>}
           {preview && <><Button type="button" disabled={pending} onClick={() => void confirmMutation()}>{pending ? "Menerapkan…" : "Terapkan perubahan"}</Button><Button type="button" variant="outline" disabled={pending} onClick={() => void cancelMutation()}>Batalkan</Button></>}
           <Button type="button" variant="outline" disabled={pending} onClick={resetData}><RotateCcw size={15} aria-hidden="true" />Reset data</Button>
         </div>

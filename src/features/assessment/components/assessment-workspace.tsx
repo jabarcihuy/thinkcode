@@ -1,11 +1,15 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Play, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { QuestionNavigator, isAssessmentAnswerComplete } from "@/features/assessment/components/question-navigator";
 import { AssessmentQuestionView } from "@/features/assessment/components/question-view";
+import { DraftStatus } from "@/components/forms/draft-status";
+import { useLocalDraft } from "@/lib/browser/use-local-draft";
+import { assessmentDraftSignature, initialAssessmentDraft, readAssessmentDraft } from "../domain/assessment-draft";
 import type { AssessmentAnswer, PublicAssessmentItem } from "@/features/assessment/types";
 import { BrowserJavaScriptRunner } from "@/lib/providers/browser-javascript-runner";
 import type { CodeRunResult } from "@/lib/providers/code-runner";
@@ -13,26 +17,25 @@ import { OutputPanel } from "@/features/workspace/components/output-panel";
 
 const browserRunner = new BrowserJavaScriptRunner();
 
-function initialAnswers(items: PublicAssessmentItem[]): Record<string, AssessmentAnswer> {
-  return Object.fromEntries(items.map((item) => {
-    if (item.type === "CODE_COMPLETION" || item.type === "DEBUGGING" || item.type === "PROBLEM_SOLVING") {
-      return [item.id, { sourceCode: item.starterCode ?? "" }];
-    }
-    if (item.type === "PREDICT_OUTPUT") return [item.id, { output: "" }];
-    const config = item.publicConfig && typeof item.publicConfig === "object" && !Array.isArray(item.publicConfig) ? item.publicConfig : {};
-    const options = config.options;
-    if (config.mode === "choice" && Array.isArray(options)) return [item.id, { choiceId: "" }];
-    const blocks = config.blocks;
-    return [item.id, { order: Array.isArray(blocks) ? blocks.flatMap((block) => block && typeof block === "object" && !Array.isArray(block) && typeof block.id === "string" ? [block.id] : []) : [] }];
-  }));
-}
-
 export function AssessmentWorkspace({
-  sessionId, assessmentTitle, instructions, passingScore, items, diagnostic = false,
-}: { sessionId: string; assessmentTitle: string; instructions: string; passingScore: number; diagnostic?: boolean; items: PublicAssessmentItem[] }) {
+  sessionId, userId, assessmentTitle, instructions, passingScore, items, diagnostic = false,
+}: { sessionId: string; userId: string; assessmentTitle: string; instructions: string; passingScore: number; diagnostic?: boolean; items: PublicAssessmentItem[] }) {
   const router = useRouter();
-  const [answers, setAnswers] = useState<Record<string, AssessmentAnswer>>(() => initialAnswers(items));
-  const [activeIndex, setActiveIndex] = useState(0);
+  const initial = useMemo(() => initialAssessmentDraft(items), [items]);
+  const parse = useMemo(() => (value: unknown) => readAssessmentDraft(value, items), [items]);
+  const draft = useLocalDraft({ key: `quethink:assessment-draft:v1:${userId}:${sessionId}`, signature: assessmentDraftSignature(items), initial, parse });
+  const { answers, activeIndex } = draft.value;
+  const [loginExpired, setLoginExpired] = useState(false);
+  useEffect(() => {
+    if (draft.status !== "failed") return;
+    const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [draft.status]);
+  function selectQuestion(index: number) {
+    draft.save({ ...draft.value, activeIndex: index });
+    setRunResult(null);
+  }
   const [runResult, setRunResult] = useState<CodeRunResult | null>(null);
   const [runPending, setRunPending] = useState(false);
   const [submitPending, setSubmitPending] = useState(false);
@@ -45,7 +48,7 @@ export function AssessmentWorkspace({
 
   function updateAnswer(answer: AssessmentAnswer) {
     if (!current) return;
-    setAnswers((previous) => ({ ...previous, [current.id]: answer }));
+    draft.save({ ...draft.value, answers: { ...answers, [current.id]: answer } });
     setRunResult(null);
   }
 
@@ -66,10 +69,25 @@ export function AssessmentWorkspace({
         body: JSON.stringify({ answers: items.map((item) => ({ itemId: item.id, answer: answers[item.id] })) }),
       });
       const payload = await response.json() as { error?: string };
+      if (response.status === 401) {
+        setLoginExpired(true);
+        throw new Error("Sesi login habis. Masuk kembali untuk melanjutkan tes; jawaban tidak dihapus dari halaman ini.");
+      }
+      if (response.status === 409) {
+        // The server may have finished grading before a previous response was lost.
+        const saved = await fetch(`/api/assessment-sessions/${sessionId}`, { cache: "no-store" });
+        const state = await saved.json() as { session?: { status?: string } };
+        if (saved.ok && state.session?.status === "COMPLETED") {
+          draft.clear();
+          router.replace(`/assessments/sessions/${sessionId}/result`);
+          return;
+        }
+      }
       if (!response.ok) throw new Error(payload.error ?? "Jawaban belum dapat dikirim.");
+      draft.clear();
       router.replace(`/assessments/sessions/${sessionId}/result`);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Jawaban belum dapat dikirim.");
+      setError(cause instanceof Error && !(cause instanceof TypeError) ? cause.message : "Koneksi terputus. Jawaban tidak dihapus; periksa koneksi lalu kirim lagi.");
       setSubmitPending(false);
     }
   }
@@ -87,8 +105,9 @@ export function AssessmentWorkspace({
     </div>
     <p className="mb-6 rounded-md bg-muted px-4 py-3 text-sm">{diagnostic ? "Pre-test · Tanpa syarat lulus · AI dan petunjuk dinonaktifkan" : `Post-test · Lulus pada skor ${passingScore}+ · AI dan petunjuk dinonaktifkan`}</p>
 
-    <div className="grid min-w-0 grid-cols-1 items-start gap-6 md:grid-cols-[12rem_minmax(0,1fr)]">
-      <QuestionNavigator items={items} answers={answers} activeIndex={activeIndex} onSelect={(index) => { setActiveIndex(index); setRunResult(null); }} />
+    <div className="mb-6"><DraftStatus status={draft.status} restored={draft.restored} onRetry={() => draft.save(draft.value)} onReset={draft.clear} /></div>
+    {draft.status === "loading" ? <p role="status">Menyiapkan jawaban tes…</p> : <div className="grid min-w-0 grid-cols-1 items-start gap-6 md:grid-cols-[12rem_minmax(0,1fr)]">
+      <QuestionNavigator items={items} answers={answers} activeIndex={activeIndex} onSelect={selectQuestion} />
       <div className="min-w-0">
         <AssessmentQuestionView item={current} answer={currentAnswer} onAnswer={updateAnswer} />
         {isCode && <div className="mt-5 flex flex-wrap items-center gap-3">
@@ -97,20 +116,22 @@ export function AssessmentWorkspace({
         </div>}
         {isCode && <div className="mt-5"><OutputPanel result={runResult} error={error} pending={runPending} /></div>}
         <div className="mt-7 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-5">
-          <Button type="button" variant="outline" disabled={activeIndex === 0 || submitPending} onClick={() => { setActiveIndex((index) => index - 1); setRunResult(null); }}><ArrowLeft size={15} aria-hidden="true" />Sebelumnya</Button>
+          <Button type="button" variant="outline" disabled={activeIndex === 0 || submitPending} onClick={() => selectQuestion(activeIndex - 1)}><ArrowLeft size={15} aria-hidden="true" />Sebelumnya</Button>
           {activeIndex < items.length - 1
-            ? <Button type="button" variant="outline" disabled={submitPending} onClick={() => { setActiveIndex((index) => index + 1); setRunResult(null); }}>Berikutnya<ArrowRight size={15} aria-hidden="true" /></Button>
+            ? <Button type="button" variant="outline" disabled={submitPending} onClick={() => selectQuestion(activeIndex + 1)}>Berikutnya<ArrowRight size={15} aria-hidden="true" /></Button>
             : <Button type="button" disabled={submitPending || completeCount !== items.length} onClick={() => confirmationRef.current?.showModal()}><Send size={15} aria-hidden="true" />{diagnostic ? "Kirim pre-test" : "Kirim post-test"}</Button>}
         </div>
         {error && <p role="alert" className="mt-4 text-sm text-destructive">{error}</p>}
       </div>
-    </div>
+    </div>}
+    {loginExpired && <Button asChild variant="outline" className="mt-4"><Link href="/login">Masuk kembali</Link></Button>}
     <dialog ref={confirmationRef} aria-labelledby="assessment-confirm-title" className="m-auto w-[min(28rem,calc(100%-2rem))] rounded-lg border border-border bg-background p-0 text-foreground shadow-surface backdrop:bg-black/50">
       <div className="p-6">
         <h2 id="assessment-confirm-title" className="text-lg font-semibold">Kirim jawaban assessment?</h2>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">Semua {items.length} jawaban akan dinilai dan sesi ini akan ditutup. Periksa kembali jawabanmu sebelum melanjutkan.</p>
         {error && <p role="alert" className="mt-3 text-sm text-destructive">{error}</p>}
         <div className="mt-6 flex flex-wrap justify-end gap-3">
+          {loginExpired && <Button asChild variant="outline"><Link href="/login">Masuk kembali</Link></Button>}
           <Button type="button" variant="outline" disabled={submitPending} onClick={() => { setError(null); confirmationRef.current?.close(); }}>Kembali meninjau</Button>
           <Button type="button" disabled={submitPending} onClick={() => { void submitAssessment(); }}><Send size={15} aria-hidden="true" />{submitPending ? "Memeriksa jawaban…" : "Kirim jawaban"}</Button>
         </div>

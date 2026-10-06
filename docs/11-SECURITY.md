@@ -49,3 +49,7 @@ Diagnostic baseline uses PRETEST and cannot be retaken once completed; it is a c
 **Pre-test wajib sekali → Materi membaca → Lab latihan inti → materi berikutnya → Post-test (lulus ≥75) → selesai.**
 
 Aturan aktif dan transisi pengguna lama mengikuti [03-LEARNING_SYSTEM.md](03-LEARNING_SYSTEM.md). Materi tetap halaman membaca/PDF; Lab, tes, dan AI berada di halaman terpisah.
+
+## Browser input recovery
+
+Local drafts are untrusted convenience data, not authorization, score, or completion records. Assessment keys include the authenticated account and session; practice/query keys include the account and task/dataset. Payloads are bounded and shape/content validated; hidden answers and credentials are never included. Successful submission clears its assessment draft. Shared-device browser storage is not confidential against a person with access to the browser profile. Clearing storage loses drafts; there is no cross-device or concurrent-tab synchronization guarantee. Server grading, active-test blocking, prerequisite validation, and owner-only RLS continue to decide all outcomes.

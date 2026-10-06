@@ -79,3 +79,9 @@ Run `npm run test:materials:integration` against the production build and remote
 **Pre-test wajib sekali → Materi membaca → Lab latihan inti → materi berikutnya → Post-test (lulus ≥75) → selesai.**
 
 Aturan aktif dan transisi pengguna lama mengikuti [03-LEARNING_SYSTEM.md](03-LEARNING_SYSTEM.md). Materi tetap halaman membaca/PDF; Lab, tes, dan AI berada di halaman terpisah.
+
+## Learning continuity regression
+
+`node --env-file-if-exists=.env scripts/check-learning-recovery.mjs` uses a temporary learner (deleted in finally) against the configured Supabase project and a local production server. It covers login, assessment answer/current-question refresh, offline input persistence, storage quota failure/retry, corrupted draft recovery, failed submit retention/successful clear, reading-save failure and direct Lab transition, practice input recovery, wrong-answer guidance, core completion/next action, query draft/run/reset, private-field omission, admin denial, and 360/768/1280 layouts. This is not a study with actual students.
+
+Unit coverage validates account/session isolation, compatible content, bounded input, strict draft shapes, memory fallback, subscription cleanup and draft clearing. Run `scripts/check-interactive-curriculum.mjs` for all 11 core completions, post-test, AI blocking, private answers and owner-only attempts. `scripts/audit-assessment-alignment.mjs` is a read-only metadata audit: it reports evidence types, never answer keys. Choice-based test scores are not evidence of independent SQL authoring.

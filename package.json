@@ -19,7 +19,9 @@
     "test:schema:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-schema-builder.mjs",
     "seed:videos": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/seed-database-videos.mjs",
     "seed:reading": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/seed-reading-materials.mjs",
-    "test:materials:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-materials.mjs"
+    "test:materials:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-materials.mjs",
+    "test:recovery:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-learning-recovery.mjs",
+    "audit:assessment": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/audit-assessment-alignment.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

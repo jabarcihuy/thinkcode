@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 export default async function PlaygroundPage() {
-  await requireAccount();
+  const account = await requireAccount();
   const supabase = await createClient();
   const { data: assessmentActive, error } = await supabase.rpc("current_user_has_active_assessment");
 
@@ -31,6 +31,6 @@ export default async function PlaygroundPage() {
         <h2 id="playground-locked-title" className="mt-3 text-lg font-semibold">Playground dijeda</h2>
         <p className="mt-2 max-w-[65ch] text-sm leading-6 text-muted-foreground">Selesaikan assessment yang sedang berlangsung sebelum kembali berlatih dengan query.</p>
         <Button asChild className="mt-4"><Link href="/assessments">Kembali ke assessment</Link></Button>
-      </section> : <DatasetLabSwitcher scenarios={PRACTICE_DATASETS.map((dataset) => ({ datasetId: dataset.id, title: dataset.description, prompt: "Ubah query, prediksi jumlah baris, lalu jalankan.", sql: dataset.starterSql }))} />}
+      </section> : <DatasetLabSwitcher userId={account.userId} scenarios={PRACTICE_DATASETS.map((dataset) => ({ datasetId: dataset.id, title: dataset.description, prompt: "Ubah query, prediksi jumlah baris, lalu jalankan.", sql: dataset.starterSql }))} />}
   </main>;
 }

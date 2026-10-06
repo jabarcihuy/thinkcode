@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { requireAccount } from "@/lib/auth/session";
 import { getAssessmentResult } from "@/features/assessment/data/assessment-repository";
 import { DEFAULT_LEARNING_PATH_SLUG, learningPathHref } from "@/features/learning/config";
+import { topicReviewHref } from "@/features/assessment/domain/topic-review";
 import { summarizeTopics } from "@/features/assessment/domain/test-policy";
 import type { Json } from "@/types/database";
 
@@ -31,7 +32,7 @@ export default async function AssessmentResultPage({ params }: { params: Promise
       <p className="mt-4 text-5xl font-semibold tabular-nums">{result.score}<span className="text-2xl text-muted-foreground">/100</span></p>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">{diagnostic ? "Tidak ada syarat lulus. Gunakan ringkasan ini untuk mengenali konsep yang perlu dipelajari." : `Batas kelulusan ${result.passingScore}. Jawaban diperiksa di server.`}</p>
     </div>
-    {topicSummary.length > 0 && <section className="mt-8" aria-labelledby="topic-results"><h2 id="topic-results" className="text-lg font-semibold">Ringkasan topik</h2><ul className="mt-4 divide-y divide-border border-y border-border">{groupedTopics.map((item) => <li key={item.topic} className="flex items-center justify-between gap-4 py-3 text-sm"><span>{item.topic}</span><span className={item.correct === item.total ? "font-medium text-accent" : "text-muted-foreground"}>{item.correct}/{item.total} benar</span></li>)}</ul></section>}
+    {topicSummary.length > 0 && <section className="mt-8" aria-labelledby="topic-results"><h2 id="topic-results" className="text-lg font-semibold">Ringkasan topik</h2><ul className="mt-4 divide-y divide-border border-y border-border">{groupedTopics.map((item) => <li key={item.topic} className="flex items-center justify-between gap-4 py-3 text-sm"><div className="min-w-0"><span>{item.topic}</span>{item.correct < item.total && <Link href={topicReviewHref(item.topic, diagnostic)} className="mt-1 flex min-h-11 items-center font-medium text-primary underline underline-offset-4">{diagnostic ? "Lihat materi terkait" : "Pelajari kembali topik ini"}</Link>}</div><span className={item.correct === item.total ? "font-medium text-accent" : "text-muted-foreground"}>{item.correct}/{item.total} benar</span></li>)}</ul></section>}
     <div className="mt-8 flex flex-wrap gap-3"><Button asChild><Link href={diagnostic ? learningPathHref(DEFAULT_LEARNING_PATH_SLUG) : "/post-test"}>{diagnostic ? "Mulai membaca materi" : passed ? "Lihat post-test" : "Coba post-test lagi"}{diagnostic || passed ? <ArrowRight size={16} aria-hidden="true" /> : <RotateCcw size={16} aria-hidden="true" />}</Link></Button><Button asChild variant="outline"><Link href="/lab">Buka Lab SQL</Link></Button></div>
   </main>;
 }

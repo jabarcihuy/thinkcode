@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { GradeResult } from "@/features/practice/types";
 
-export function useExerciseCheck(exerciseId: string, pathSlug: string, previewOnly = false) {
+export function useExerciseCheck(exerciseId: string, pathSlug: string, previewOnly = false, reviewHref?: string) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [result, setResult] = useState<GradeResult | null>(null);
@@ -30,5 +30,6 @@ export function useExerciseCheck(exerciseId: string, pathSlug: string, previewOn
     finally { setPending(false); }
   }
 
-  return { pending, result, error, check };
+  function invalidate() { setResult(null); setError(null); }
+  return { pending, result, error, check, invalidate, reviewHref };
 }
