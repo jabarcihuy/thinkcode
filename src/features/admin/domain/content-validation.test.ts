@@ -44,6 +44,9 @@ describe("admin CMS content validation", () => {
     const exercise = { ...exerciseBase, type: "PREDICT_OUTPUT", starter_code: "SELECT title FROM books;", config: { answer: { output: "Dasar Basis Data" } } };
     expect(exerciseInput.safeParse({ ...exercise, public_config: { datasetId: "library" } }).success).toBe(true);
     expect(exerciseInput.safeParse({ ...exercise, public_config: { datasetId: "production" } }).success).toBe(false);
+    expect(exerciseInput.safeParse({ ...exercise, public_config: { datasetId: "library", data: { datasetId: "library", tables: ["books"] } } }).success).toBe(true);
+    expect(exerciseInput.safeParse({ ...exercise, public_config: { datasetId: "library", data: { datasetId: "campus", tables: ["students"] } } }).success).toBe(false);
+    expect(exerciseInput.safeParse({ ...exercise, public_config: { datasetId: "library", data: { datasetId: "library", tables: ["books"], fixtures: "PRIVATE" } } }).success).toBe(false);
   });
 
   it("validates hidden test values and assessment item private answer config", () => {

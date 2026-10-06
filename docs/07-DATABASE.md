@@ -45,7 +45,7 @@ Use additive migrations and preserve accounts, progress, and historical attempts
 
 ## Diagnostic and post-test data
 
-Assessment enum includes PRETEST. A published ten-item PRETEST has zero weight/passing score; a published ten-item FINAL serves as post-test, weight 100 and threshold 75. Both reuse assessment_items/sessions/results and their existing private-content/owner-only RLS. Historical checkpoint/final rows are unpublished. phase3_record_attempt stores attempts and completes a read material when all published required deterministic checks passed. Browser runtime outcomes cannot provide completion evidence. acknowledge_material_read is authenticated-only, checks availability and active sessions, and stores the caller’s read_at/IN_PROGRESS without completion. Serialized starts prevent multiple active tests and a completed PRETEST cannot restart. Historical content IDs, attempts and results are preserved.
+Assessment enum includes PRETEST. A published ten-item PRETEST has zero weight/passing score; the active sixteen-item FINAL serves as post-test, weight 100 and threshold 75 (ten concepts 25%, six SQL cases 75%). Both reuse assessment_items/sessions/results and their existing private-content/owner-only RLS. Historical checkpoint/final rows are unpublished. phase3_record_attempt stores attempts and completes a read material when all published required deterministic checks passed. Browser runtime outcomes cannot provide completion evidence. acknowledge_material_read is authenticated-only, checks availability and active sessions, and stores the caller’s read_at/IN_PROGRESS without completion. Serialized starts prevent multiple active tests and a completed PRETEST cannot restart. Historical content IDs, attempts and results are preserved.
 
 ## Constrained server-side writes
 
@@ -66,3 +66,9 @@ Admin publication: required lessons must have a published deterministic core bef
 ## Trusted SQL post-test version
 
 `post-test-basis-data-sql-v2` is a new FINAL assessment. The migration copies ten concept items and adds six PROBLEM_SOLVING items with strict public mode=sql, datasetId, operation and optional mutation table. Private answer_config holds referenceQuery, ordering and bounded synthetic fixture overrides. These JSON fields reuse existing schema; no new public grants or RLS changes. Old post-test items, attempts, sessions and results are retained unpublished.
+
+## Contextual public question data
+
+Question configuration may include `data: { datasetId, tables, relations }`, restricted to registered synthetic datasets/table names, with no arbitrary rows or grading fields. Concept/practice stimuli render read-only initial seed tables; SQL cases may also show predefined 2D relationships. The SQL stimulus dataset must match its sandbox dataset. Exercise `public_config` remains a generated projection of `config.public`; content migrations update config rather than writing the generated column.
+
+Question text revisions preserve assessment/exercise IDs and historical results. The post-test/practice revision and diagnostic revision are separate migrations: each locks assessment session inserts and refuses to revise its affected IN_PROGRESS assessment. An active pre-test therefore does not delay practice/post-test fixes. Existing RLS and private assessment keys remain unchanged.

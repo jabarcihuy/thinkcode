@@ -46,6 +46,10 @@ try {
   await page.goto(`${site}/post-test`); await page.getByRole("button",{name:"Mulai post-test",exact:true}).click(); await page.waitForURL("**/assessments/sessions/*");
   const sessionId=page.url().split("/").at(-1), endpoint=`${site}/api/assessment-sessions/${sessionId}`;
   const session=await checked(await page.request.get(endpoint)); assert.equal(session.items.length,16); assertPublic(session);
+  for (const item of session.items) {
+    assert.ok(item.publicConfig.data, "Question needs public reference data");
+    assert.ok(item.prompt.includes("\n\n"), "Question needs complete context and task");
+  }
   assertPublic(await page.content());
   assert.equal((await page.request.post(`${site}/api/ai/tutor`,{data:{lessonId:lessons.data[0].id,action:"hint",message:"Tolong beri hint"}})).status(),403);
   assert.equal((await page.request.get(`${site}/api/admin/users`)).status(),403);
@@ -70,6 +74,8 @@ try {
   await otherContext.close();
 
   await page.getByRole("button",{name:"Soal 11",exact:true}).click();
+  await page.getByRole("heading",{name:"Kriteria hasil",exact:true}).waitFor();
+  await page.getByRole("table",{name:"Data awal products",exact:true}).waitFor();
   await page.getByLabel("Jawaban SQL",{exact:true}).fill(correct[10].answer.sourceCode);
   await page.getByRole("button",{name:"Coba query",exact:true}).click();
   await page.getByRole("table",{name:"Hasil percobaan query",exact:true}).waitFor();
@@ -81,6 +87,17 @@ try {
     const sizes=await page.evaluate(()=>[document.documentElement.clientWidth,document.documentElement.scrollWidth]); assert.ok(sizes[1] <= sizes[0]);
     await page.screenshot({path:`.impeccable/review/sql-post-test/query-${width}.png`,fullPage:true});
   }
+  await page.getByRole("button",{name:"Soal 12",exact:true}).click();
+  await page.getByRole("img",{name:/Skema Katalog Buku/}).waitFor();
+  for(const width of [360,768,1280]) {
+    await page.setViewportSize({width,height:900});
+    const sizes=await page.evaluate(()=>[document.documentElement.clientWidth,document.documentElement.scrollWidth]); assert.ok(sizes[1] <= sizes[0]);
+    await page.screenshot({path:`.impeccable/review/sql-post-test/relations-${width}.png`,fullPage:true});
+  }
+  await page.getByRole("button",{name:"Soal 1",exact:true}).click();
+  await page.getByRole("region",{name:"Tabel soal products",exact:true}).waitFor();
+  await page.setViewportSize({width:360,height:900});
+  await page.screenshot({path:".impeccable/review/sql-post-test/concept-360.png",fullPage:true});
   await page.getByRole("button",{name:"Soal 15",exact:true}).click();
   await page.getByLabel("Jawaban SQL",{exact:true}).fill(correct[14].answer.sourceCode);
   await page.getByRole("button",{name:"Coba query",exact:true}).click();

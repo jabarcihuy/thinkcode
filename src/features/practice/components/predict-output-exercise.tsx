@@ -8,17 +8,22 @@ import { PracticeFeedback } from "@/features/practice/components/practice-feedba
 import { useExerciseCheck } from "@/features/practice/components/use-exercise-check";
 import { exerciseDatasetId } from "@/features/database/data/datasets";
 import { ExerciseDataCanvas } from "@/features/database/components/exercise-data-canvas";
+import { QuestionPrompt } from "@/components/content/question-prompt";
+import { QuestionDataView } from "@/components/content/question-data";
+import { readQuestionData } from "@/features/database/validation/question-data";
 
 export function PredictOutputExercise({ exercise, pathSlug, userId, reviewHref, previewOnly = false }: { exercise: PublicExercise; pathSlug: string; userId?: string; reviewHref?: string; previewOnly?: boolean }) {
   const config = exercise.publicConfig;
   const columns = config && typeof config === "object" && !Array.isArray(config) && Array.isArray(config.columns) ? config.columns.filter((value): value is string => typeof value === "string") : [];
+  const data = config && typeof config === "object" && !Array.isArray(config) ? readQuestionData(config.data) : null;
   const draft = usePracticeDraft(exercise, previewOnly ? undefined : userId);
   const output = "output" in draft.value ? draft.value.output : "";
   const checkState = useExerciseCheck(exercise.id, pathSlug, previewOnly, reviewHref);
   return <section id={`practice-${exercise.id}`} aria-label={exercise.title} className="scroll-mt-24 border-t border-border py-8">
     <div className="flex flex-wrap items-start justify-between gap-3"><div><h3 className="text-xl font-semibold tracking-tight">{exercise.title}</h3><p className="mt-1.5 text-xs text-muted-foreground">Prediksi hasil query{exercise.isRequired ? " · Wajib" : " · Opsional"}</p></div>{exercise.passed && <span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-secondary-foreground">Lulus</span>}</div>
+    <QuestionPrompt content={exercise.prompt} />
+    {data && <QuestionDataView data={data} />}
     <ExerciseDataCanvas datasetId={exerciseDatasetId(exercise.publicConfig)} query={exercise.starterCode ?? ""} />
-    <p className="mt-5 leading-7 text-muted-foreground">{exercise.prompt}</p>
     <div className="mt-6 border-t border-border pt-5">
       <h4 className="text-sm font-semibold">Query</h4>
       <pre aria-label="Query SQL, hanya baca" className="mt-3 overflow-x-auto rounded-lg bg-code-surface p-5 font-mono text-sm leading-6 text-code-foreground">{exercise.starterCode}</pre>

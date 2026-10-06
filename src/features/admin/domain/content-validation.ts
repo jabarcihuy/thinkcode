@@ -3,6 +3,7 @@ import { sqlAssessmentPublicSchema, validateAssessmentQuery } from "@/features/a
 import { expectedSchema } from "@/features/practice/domain/grade-schema";
 import { z } from "zod";
 import { isDatasetId } from "@/features/database/data/datasets";
+import { questionDataSchema } from "@/features/database/validation/question-data";
 
 const slug = z.string().trim().min(1).max(120).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 const position = z.number().int().min(1).max(10_000);
@@ -33,6 +34,9 @@ export const exerciseInput = z.object({
   public_config: config.nullable().default(null), position, is_required: z.boolean().default(false),
   is_published: z.boolean().default(false),
 }).superRefine((value, context) => {
+  if (value.public_config?.data !== undefined && !questionDataSchema.safeParse(value.public_config.data).success) context.addIssue({ code: "custom", path: ["public_config", "data"], message: "Lengkapi data pendukung dari tabel sintetis terdaftar." });
+  const stimulus = questionDataSchema.safeParse(value.public_config?.data);
+  if (stimulus.success && stimulus.data.datasetId !== (value.public_config?.datasetId ?? "campus")) context.addIssue({ code: "custom", path: ["public_config", "data"], message: "Data pendukung dan latihan harus memakai dataset yang sama." });
   if (value.public_config?.datasetId !== undefined && !isDatasetId(value.public_config.datasetId)) {
     context.addIssue({ code: "custom", path: ["public_config", "datasetId"], message: "Pilih skema latihan terdaftar: campus, library, atau shop." });
   }
@@ -92,6 +96,7 @@ export const assessmentItemInput = z.object({
   answer_config: config.default({}), entry_function: z.string().max(100).nullable().default(null),
   weight: z.number().positive().max(100), position,
 }).superRefine((value, context) => {
+  if (value.public_config.data !== undefined && !questionDataSchema.safeParse(value.public_config.data).success) context.addIssue({ code: "custom", path: ["public_config", "data"], message: "Data soal harus merujuk dataset sintetis terdaftar." });
   if (value.type !== "PROBLEM_SOLVING" && value.public_config.mode !== "sql") return;
   const config = sqlAssessmentPublicSchema.safeParse(value.public_config);
   const key = sqlAssessmentPrivateSchema.safeParse(value.answer_config);

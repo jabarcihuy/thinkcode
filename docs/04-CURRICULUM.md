@@ -102,6 +102,14 @@ After key/relationship concepts, learners can use `/schema-builder` to model Pem
 
 Four optional Indonesian video references are curated for Membaca Bentuk Data, SELECT/FROM, WHERE, and INNER JOIN. Source metadata/descriptions were verified on 3 October 2026; full audiovisual review remains pending. Show a topic focus, MySQL/MariaDB-to-SQLite caveat, with each reference; reflection belongs to practice. Hold broader Write videos until an appropriate safe segment is reviewed. See [video evidence](research/2026-10-03-video-pendamping-basis-data.md).
 
+## Question quality and case-based post-test — 6 October 2026
+
+The complete reviewed question bank is in [bank soal lengkap](evaluation/2026-10-06-bank-soal-lengkap.md): 10 diagnostic pre-test questions, 45 practice checks and 16 post-test questions. Each question states the situation, relevant public seed tables and a specific answer task. Prediction questions specify columns, row ordering and answer format; they do not request an explanation that the checker cannot assess. Required early SELECT practice only tests SELECT/FROM; ORDER BY is introduced later.
+
+Post-test keeps ten concept questions (25% total weight) and six independently answerable SQL cases (75%): a cooperative product display, a library catalog, an academic summary, a new customer record, a payment status correction, and book withdrawal. SQL tasks state explicit result/mutation criteria without supplying the solution. Concept questions avoid supplying the exact queries needed by SQL tasks. Only SQL tasks receive explicitly provided relationship diagrams where useful; PK/FK identification questions do not label the correct answer in their visual.
+
+Assessment changes must wait until affected active sessions finish; never erase sessions, attempts or completion history. Student trials remain necessary before claiming reliability or difficulty calibration. See [question audit](evaluation/2026-10-06-audit-soal.md).
+
 ## Content boundaries
 
 **Included:** relational structure, keys and relationships, read queries, basic aggregation, and constrained single-row `INSERT`/`UPDATE`/`DELETE` on synthetic SQLite data.

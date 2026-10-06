@@ -1,5 +1,6 @@
 import type { Json } from "@/types/database";
 import { readSqlAssessmentConfig } from "../validation/sql-assessment";
+import { readQuestionData } from "@/features/database/validation/question-data";
 
 /** Do not serialize arbitrary admin JSON. Hidden grading fields are always excluded. */
 export function publicAssessmentConfig(value: Json): Json {
@@ -10,7 +11,9 @@ export function publicAssessmentConfig(value: Json): Json {
     if (!entry || typeof entry !== "object" || Array.isArray(entry) || typeof entry.id !== "string" || typeof entry.text !== "string") return [];
     return [{ id: entry.id, text: entry.text }];
   }) : [];
-  if (value.mode === "choice") return { mode: "choice", options: list(value.options) };
-  if (value.mode === "order") return { mode: "order", blocks: list(value.blocks) };
+  const data = readQuestionData(value.data);
+  const stimulus = data ? { data: { ...data } } : {};
+  if (value.mode === "choice") return { mode: "choice", options: list(value.options), ...stimulus };
+  if (value.mode === "order") return { mode: "order", blocks: list(value.blocks), ...stimulus };
   return typeof value.sampleOutput === "string" ? { sampleOutput: value.sampleOutput } : {};
 }

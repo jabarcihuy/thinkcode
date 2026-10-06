@@ -1,8 +1,9 @@
 import "server-only";
 import type { PrivateAssessmentItem } from "../types";
+import { ASSESSMENT_REVISIONS } from "./question-revisions";
 
 /** Private seed blueprint; never import from client code. */
-export const SQL_POST_TEST_ITEMS: PrivateAssessmentItem[] = [
+const SQL_SEED: PrivateAssessmentItem[] = [
   {
     "type": "PROBLEM_SOLVING",
     "title": "Memilih dua produk",
@@ -345,3 +346,9 @@ export const SQL_POST_TEST_ITEMS: PrivateAssessmentItem[] = [
     "id": "sql-seed-16"
   }
 ];
+
+export const SQL_POST_TEST_ITEMS: PrivateAssessmentItem[] = SQL_SEED.map((item) => {
+  const revision = ASSESSMENT_REVISIONS.find((revision) => revision.slug === "post-test-basis-data-sql-v2" && revision.position === item.position);
+  if (!revision) throw new Error("Missing SQL case wording.");
+  return { ...item, title: revision.title, prompt: revision.prompt, publicConfig: revision.publicConfig };
+});

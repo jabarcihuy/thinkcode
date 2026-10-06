@@ -7,6 +7,7 @@ import { getDataset } from "@/features/database/data/datasets";
 import { SqliteBrowserRunner, type SqliteRunResult } from "@/features/database/browser/sqlite-browser-runner";
 import type { SqliteRow } from "@/features/database/domain/sql-query";
 import { validateAssessmentQuery, type SqlAssessmentConfig } from "../validation/sql-assessment";
+import { QuestionRelationMap } from "@/components/content/question-data";
 
 function ResultTable({ rows, columns, caption }: { rows: readonly SqliteRow[]; columns: string[]; caption: string }) {
   return <div role="region" aria-label={caption} tabIndex={0} className="max-w-full overflow-x-auto focus-visible:outline-2 focus-visible:outline-ring">
@@ -56,6 +57,7 @@ export function AssessmentSqlQuestion({ config, value, onChange, disabled = fals
   return <div className="mt-6 min-w-0 space-y-6">
     <section aria-labelledby="assessment-data-title" className="min-w-0 border-y border-border py-4">
       <h3 id="assessment-data-title" className="text-base font-semibold">Data soal · {dataset.title}</h3>
+      {config.data && <div className="mt-4"><QuestionRelationMap data={config.data} /></div>}
       <div role="group" aria-label="Pilih tabel data soal" className="my-3 flex flex-wrap gap-2">
         {dataset.tables.map((table) => <Button key={table.name} type="button" size="sm" variant={table.name === tableName ? "default" : "outline"} className="min-h-11" aria-pressed={table.name === tableName} onClick={() => setTableName(table.name)}>{table.name}</Button>)}
       </div>

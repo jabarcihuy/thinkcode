@@ -10,6 +10,9 @@ import { useExerciseCheck } from "@/features/practice/components/use-exercise-ch
 import { exerciseDatasetId } from "@/features/database/data/datasets";
 import { ExerciseDataCanvas } from "@/features/database/components/exercise-data-canvas";
 import type { Json } from "@/types/database";
+import { QuestionPrompt } from "@/components/content/question-prompt";
+import { QuestionDataView } from "@/components/content/question-data";
+import { readQuestionData } from "@/features/database/validation/question-data";
 
 type Block = { id: string; text: string };
 type BlockConfig = { mode: "order"; blocks: Block[] } | { mode: "choice"; options: Block[] };
@@ -29,6 +32,7 @@ export function BlockExercise({ exercise, pathSlug, label, userId, reviewHref, p
   const order = "order" in draft.value ? draft.value.order : [];
   const choiceId = "choiceId" in draft.value ? draft.value.choiceId : "";
   const checkState = useExerciseCheck(exercise.id, pathSlug, previewOnly, reviewHref);
+  const data = exercise.publicConfig && typeof exercise.publicConfig === "object" && !Array.isArray(exercise.publicConfig) ? readQuestionData(exercise.publicConfig.data) : null;
   if (!config) return <p className="border-t border-border py-6 text-sm text-muted-foreground">Exercise belum siap ditampilkan.</p>;
 
   function move(index: number, direction: -1 | 1) {
@@ -40,8 +44,9 @@ export function BlockExercise({ exercise, pathSlug, label, userId, reviewHref, p
 
   return <section id={`practice-${exercise.id}`} aria-label={exercise.title} className="scroll-mt-24 border-t border-border py-8">
     <div className="flex flex-wrap items-start justify-between gap-3"><div><h3 className="text-xl font-semibold tracking-tight">{exercise.title}</h3><p className="mt-1.5 text-xs text-muted-foreground">{label}{exercise.isRequired ? " · Wajib" : " · Opsional"}</p></div>{exercise.passed && <span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-secondary-foreground">Lulus</span>}</div>
+    <QuestionPrompt content={exercise.prompt} />
+    {data && <QuestionDataView data={data} />}
     <ExerciseDataCanvas datasetId={exerciseDatasetId(exercise.publicConfig)} query={exercise.starterCode ?? ""} />
-    <p className="mt-4 leading-7 text-muted-foreground">{exercise.prompt}</p>
     {config.mode === "choice" ? <fieldset className="mt-5 space-y-2"><legend className="mb-2 text-sm font-semibold">Pilih satu jawaban</legend>{config.options.map((option) => <label key={option.id} className="flex min-h-11 cursor-pointer items-center gap-3 rounded-md border border-border px-4 py-3 text-sm"><input type="radio" name={`choice-${exercise.id}`} value={option.id} checked={choiceId === option.id} disabled={checkState.pending || draft.status === "loading"} onChange={() => { draft.save({ choiceId: option.id }); checkState.invalidate(); }} />{option.text}</label>)}</fieldset>
       : <ol className="mt-5 space-y-2">{order.map((id, index) => { const block = config.blocks.find((item) => item.id === id)!; return <li key={id}><div className="flex min-h-14 items-center gap-3 rounded-md border border-border px-3 py-2"><span className="w-6 shrink-0 text-sm font-semibold text-accent">{index + 1}.</span><span className="flex-1 text-sm">{block.text}</span><button type="button" aria-label={`Naikkan ${block.text}`} disabled={index === 0 || checkState.pending || draft.status === "loading"} onClick={() => move(index, -1)} className="min-h-11 min-w-11 rounded p-2 focus-visible:outline-2 focus-visible:outline-ring disabled:opacity-30"><ArrowUp size={16} /></button><button type="button" aria-label={`Turunkan ${block.text}`} disabled={index === order.length - 1 || checkState.pending || draft.status === "loading"} onClick={() => move(index, 1)} className="min-h-11 min-w-11 rounded p-2 focus-visible:outline-2 focus-visible:outline-ring disabled:opacity-30"><ArrowDown size={16} /></button></div>{exercise.type === "FLOWCHART" && index < order.length - 1 && <ArrowDown size={16} aria-hidden="true" className="mx-auto mt-2 text-accent" />}</li>; })}</ol>}
     <Button type="button" className="mt-5" disabled={previewOnly || draft.status === "loading" || checkState.pending || (config.mode === "choice" && !choiceId)} onClick={() => checkState.check({ answer: config.mode === "choice" ? { choiceId } : { order } })}>{previewOnly ? "Pemeriksaan nonaktif di pratinjau" : "Periksa jawaban"}</Button>

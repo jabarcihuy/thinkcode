@@ -88,4 +88,7 @@ Unit coverage validates account/session isolation, compatible content, bounded i
 
 ## Trusted SQL post-test regression
 
+Question revision regression checks registered public dataset/table references, recursive hidden-field rejection, mismatched stimulus/runtime refusal, actual record counts and inclusive boundaries, valid FK behavior, and every seeded prediction against real SQLite. Check complete stems, readable paragraphs/lists, no solution cross-leaks between concept and SQL items, data → query → output order, optional relation diagrams, labeled table scroll regions and 360/768/1280px layouts. Content migrations lock session creation and reject affected IN_PROGRESS tests; IDs, keys, weights, past attempts and progress stay intact, apart from the explicitly simplified early SELECT core key.
+
+
 Run `npm run test:sql-assessment:integration` on the production build. Check six reference queries and private variants, alternative SQL/aliases, hidden-fixture rejection of hardcoded output, full mutation post-state and foreign keys, oversized query/output, expensive join interruption, rejected system/file/environment/extension functions and DDL. Check owned/active sessions, forged scores, no hidden references/rows in JSON/HTML/bundles, AI blocking, recorded server scores, retry lifecycle, restored SQL drafts, real public-seed Run/preview/confirm, mobile 360/768/1280 overflow and admin denial. Use disposable accounts removed in finally. Vercel-hosted runtime smoke is separate from local production QA.

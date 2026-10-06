@@ -7,6 +7,9 @@ import { readSqlAssessmentConfig } from "../validation/sql-assessment";
 import { exerciseTypeLabel } from "@/features/practice/domain/exercise-labels";
 import type { AssessmentAnswer, PublicAssessmentItem } from "@/features/assessment/types";
 import type { Json } from "@/types/database";
+import { QuestionPrompt } from "@/components/content/question-prompt";
+import { QuestionDataView } from "@/components/content/question-data";
+import { readQuestionData } from "@/features/database/validation/question-data";
 
 function configObject(value: Json): Record<string, Json | undefined> {
   return value && typeof value === "object" && !Array.isArray(value) ? value : {};
@@ -64,11 +67,13 @@ function OrderQuestion({ item, answer, onAnswer }: { item: PublicAssessmentItem;
 export function AssessmentQuestionView({ item, answer, onAnswer, disabled = false }: { item: PublicAssessmentItem; answer: AssessmentAnswer | undefined; onAnswer: (answer: AssessmentAnswer) => void; disabled?: boolean }) {
   const config = configObject(item.publicConfig);
   const sqlConfig = readSqlAssessmentConfig(item.publicConfig);
+  const data = readQuestionData(config.data);
   const mode = config.mode;
   return <article aria-labelledby={`question-title-${item.id}`}>
     <h2 id={`question-title-${item.id}`} className="text-xl font-semibold">{item.title}</h2>
     <p className="mt-2 text-sm text-muted-foreground">{item.topic} · {sqlConfig ? "Menulis SQL" : mode === "choice" ? "Pilihan ganda" : exerciseTypeLabel(item.type)}</p>
-    <p className="mt-3 max-w-[72ch] text-sm leading-6 text-muted-foreground">{item.prompt}</p>
+    <QuestionPrompt content={item.prompt} />
+    {!sqlConfig && data && <QuestionDataView data={data} />}
     {sqlConfig ? <AssessmentSqlQuestion key={item.id} config={sqlConfig} value={answerSource(answer)} disabled={disabled} onChange={(sourceCode) => onAnswer({ sourceCode })} />
       : item.type === "PREDICT_OUTPUT" ? <PredictQuestion item={item} answer={answer} onAnswer={onAnswer} />
         : mode === "choice" ? <ChoiceQuestion item={item} answer={answer} onAnswer={onAnswer} />
