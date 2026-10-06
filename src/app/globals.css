@@ -63,6 +63,36 @@ button:disabled { cursor: not-allowed; }
   box-shadow: 0 1px 2px hsl(var(--shadow-color) / 0.06), 0 8px 24px -12px hsl(var(--shadow-color) / 0.12);
 }
 
+/* Native popover: features open above the five-item mobile bar. */
+.mobile-navigation-panel {
+  position: fixed;
+  inset: auto;
+  bottom: calc(4.25rem + env(safe-area-inset-bottom));
+  left: 50%;
+  width: min(calc(100% - 1.5rem), 34rem);
+  max-height: calc(100dvh - 6rem - env(safe-area-inset-bottom));
+  margin: 0;
+  border: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  transform: translateX(-50%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mobile-navigation-panel:popover-open {
+    animation: mobile-navigation-open 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+@keyframes mobile-navigation-open {
+  from { opacity: 0; transform: translate(-50%, 0.75rem); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@media (min-width: 1024px) {
+  .mobile-navigation-panel { display: none; }
+}
+
 /*
  * Film frames. One rule owns visibility so a frame can never be hidden by one
  * utility and un-hidden by another. Above 860px every frame shows and shares

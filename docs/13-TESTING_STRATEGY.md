@@ -54,6 +54,8 @@
 
 ## Required gate
 
+`npm run test:mobile:integration` verifies the five-item mobile navigation and upward Menu on the production build with disposable USER/ADMIN accounts. Check all feature destinations, reading-shell reuse, current/open states, Space/Tab/Escape and returned focus, outside/toggle/close dismissal, route and desktop-resize closing, reduced motion, 44px targets, short-screen panel scrolling, role-filtered Admin CMS, USER admin API denial and logout. Capture 360/768/1280px and a 320px short screen without page overflow. Test accounts and their rows are deleted afterwards; this does not modify a learner's active assessment.
+
 Run lint, typecheck, unit/integration tests available in the environment, and production build. Report unavailable live-provider or dashboard tests explicitly instead of claiming they passed.
 
 ## Interactive curriculum regression

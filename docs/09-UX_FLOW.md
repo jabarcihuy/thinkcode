@@ -14,7 +14,7 @@ Explain in one sentence that Quethink teaches learners to understand relationshi
 6. After all required material completion, take `/post-test`. Score is server-graded, pass ≥75, retry after the previous session ends.
 7. Course complete means reading and core completion plus post-test passed. Historical checkpoint gates are unpublished.
 
-Mobile navigation has five items: Beranda, Materi, Lab (center), Tes, Profil (rightmost). Lab links to Playground, schema builder and tutor. Tes opens pre-test with a post-test switch; each has its own page.
+Mobile navigation has five items: Beranda, Materi, Menu (center), Tes, Profil (rightmost). Menu expands upward above the bottom bar to expose Lab Materi, SQL Playground, Pembuat Skema, Chatbot, Pre-test and Post-test. ADMIN also sees Admin CMS; users can sign out explicitly. The panel closes on choosing a destination, outside tap, Escape or its close control. All destination routes retain their existing server authorization, prerequisite and assessment restrictions. Tes opens pre-test with a post-test switch; both are also directly reachable from Menu.
 
 ## Account tools
 
