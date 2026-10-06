@@ -1,3 +1,4 @@
+import { readSqlAssessmentConfig } from "../validation/sql-assessment";
 import { z } from "zod";
 import type { AssessmentAnswer, PublicAssessmentItem } from "../types";
 
@@ -20,7 +21,7 @@ function ids(value: unknown): string[] {
 }
 export function initialAssessmentDraft(items: PublicAssessmentItem[]): AssessmentDraft {
   return { activeIndex: 0, answers: Object.fromEntries(items.map((item): [string, AssessmentAnswer] => {
-    if (["CODE_COMPLETION", "DEBUGGING", "PROBLEM_SOLVING"].includes(item.type)) return [item.id, { sourceCode: item.starterCode ?? "" }];
+    if (readSqlAssessmentConfig(item.publicConfig) || ["CODE_COMPLETION", "DEBUGGING", "PROBLEM_SOLVING"].includes(item.type)) return [item.id, { sourceCode: item.starterCode ?? "" }];
     if (item.type === "PREDICT_OUTPUT") return [item.id, { output: "" }];
     return config(item).mode === "choice" ? [item.id, { choiceId: "" }] : [item.id, { order: ids(config(item).blocks) }];
   })) };
@@ -32,6 +33,7 @@ export function readAssessmentDraft(value: unknown, items: PublicAssessmentItem[
   for (const item of items) {
     const answer = parsed.data.answers[item.id], expected = initial.answers[item.id];
     if (!answer || !expected || Object.keys(answer)[0] !== Object.keys(expected)[0]) return null;
+    if (readSqlAssessmentConfig(item.publicConfig) && "sourceCode" in answer && answer.sourceCode.length > 4096) return null;
     if ("choiceId" in answer && answer.choiceId && !ids(config(item).options).includes(answer.choiceId)) return null;
     if ("order" in answer) {
       const allowed = ids(config(item).blocks);

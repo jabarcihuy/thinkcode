@@ -62,3 +62,7 @@ Aturan aktif dan transisi pengguna lama mengikuti [03-LEARNING_SYSTEM.md](03-LEA
 `20261005091218_mandatory_learning_core.sql`: additive nullable `lesson_progress.read_at`, backfill historical COMPLETED, one required published core per material, one new FLOWCHART schema task. `course_has_baseline` service-only lookup; availability checks baseline and sequence; authenticated read RPC derives auth.uid(); service-only attempt RPC requires read_at and excludes browser coding types from completion. Start RPC requires baseline and all required completion for post-test. Existing RLS, ownership and active-session unique index are preserved.
 
 Admin publication: required lessons must have a published deterministic core before publication. Draft exercise editors retain is_required and validate schema-model keys/edges.
+
+## Trusted SQL post-test version
+
+`post-test-basis-data-sql-v2` is a new FINAL assessment. The migration copies ten concept items and adds six PROBLEM_SOLVING items with strict public mode=sql, datasetId, operation and optional mutation table. Private answer_config holds referenceQuery, ordering and bounded synthetic fixture overrides. These JSON fields reuse existing schema; no new public grants or RLS changes. Old post-test items, attempts, sessions and results are retained unpublished.

@@ -1,8 +1,12 @@
+import { sqlAssessmentPrivateSchema } from "../server/sql-assessment-key";
 import { normalizeOutput } from "@/features/practice/domain/normalize-output";
 import type { AssessmentRunner } from "@/features/assessment/domain/assessment-runner";
 import type { AssessmentAnswer, AssessmentGrade, PrivateAssessmentItem } from "@/features/assessment/types";
 import type { AssessmentSubmissionInput } from "@/features/assessment/validation/submission";
 import type { Json } from "@/types/database";
+
+import type { SqlAssessmentRunner } from "./sql-assessment-runner";
+import { readSqlAssessmentConfig } from "../validation/sql-assessment";
 
 function objectValue(value: Json): Record<string, Json | undefined> {
   if (!value || typeof value !== "object" || Array.isArray(value)) return {};
@@ -32,6 +36,7 @@ export async function gradeAssessment(
   submission: AssessmentSubmissionInput,
   runner: AssessmentRunner,
   passingScore = 75,
+  sqlRunner?: SqlAssessmentRunner,
 ): Promise<AssessmentGrade> {
   if (items.length === 0 || items.length > 16) throw new Error("Assessment configuration is invalid.");
   const answers = new Map(submission.answers.map((entry) => [entry.itemId, entry.answer]));
@@ -51,7 +56,16 @@ export async function gradeAssessment(
     let hiddenTotal = 0;
     const visibleTests: AssessmentGrade["itemResults"][number]["visibleTests"] = [];
 
-    if (item.type === "PREDICT_OUTPUT" || item.type === "PSEUDOCODE" || item.type === "FLOWCHART") {
+    const sqlConfig = readSqlAssessmentConfig(item.publicConfig);
+    if (sqlConfig) {
+      if (!sqlRunner) throw new Error("SQL assessment runner is required.");
+      const key = sqlAssessmentPrivateSchema.parse(item.answerConfig);
+      const result = await sqlRunner.grade("sourceCode" in answer ? answer.sourceCode : "", sqlConfig, key);
+      passedTests = result.passedTests; totalItemTests = result.totalTests;
+      hiddenPassed = result.hiddenPassed; hiddenTotal = result.hiddenTotal;
+      visibleTests.push(...result.visibleTests);
+      itemScore = Math.round(passedTests / totalItemTests * 100);
+    } else if (item.type === "PREDICT_OUTPUT" || item.type === "PSEUDOCODE" || item.type === "FLOWCHART") {
       itemScore = gradeDeterministic(item, answer) ? 100 : 0;
     } else if ("sourceCode" in answer && item.tests.length > 0) {
       const tests = [...item.tests].sort((a, b) => a.position - b.position);

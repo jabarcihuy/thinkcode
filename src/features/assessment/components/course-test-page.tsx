@@ -21,7 +21,7 @@ export async function CourseTestPage({ diagnostic }: { diagnostic: boolean }) {
       <Link href="/post-test" aria-current={!diagnostic ? "page" : undefined} className={`inline-flex min-h-12 items-center border-b-2 text-sm font-semibold ${!diagnostic ? "border-accent text-accent" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Post-test</Link>
     </nav>
     <h1 className="text-3xl font-semibold tracking-tight">{diagnostic ? "Kenali pemahaman awalmu" : "Uji pemahaman basis data"}</h1>
-    <p className="mt-4 max-w-[65ch] leading-7 text-muted-foreground">{diagnostic ? "Sepuluh pertanyaan tentang relasi, membaca, dan mengubah data. Jawab sesuai yang kamu tahu; belum tahu juga boleh." : "Sepuluh pertanyaan setelah belajar. Kerjakan mandiri; nilai dihitung di server dengan batas lulus 75/100."}</p>
+    <p className="mt-4 max-w-[65ch] leading-7 text-muted-foreground">{diagnostic ? "Sepuluh pertanyaan tentang relasi, membaca, dan mengubah data. Jawab sesuai yang kamu tahu; belum tahu juga boleh." : "Soal konsep dan tugas menulis SQL setelah belajar. Query diuji ulang di server; batas lulus 75/100."}</p>
     {diagnostic && studied && !test?.result && <p role="note" className="mt-5 rounded-md bg-secondary p-4 text-sm leading-6">Kamu sudah mulai belajar. Hasil ini mencatat pemahaman saat ini, bukan kemampuan sebelum membaca materi.</p>}
     <section className="mt-8 border-y border-border py-6" aria-label="Status tes">
       {!test ? <p className="text-sm text-muted-foreground">Tes sedang disiapkan. Coba kembali nanti.</p> : <>

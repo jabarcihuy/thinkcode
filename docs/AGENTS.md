@@ -11,7 +11,7 @@ The learner flow is **mandatory diagnostic Pre-test → reading Materi → paire
 - Keep the interface focused and easy to follow.
 - Teach relational tables, rows, columns, primary/foreign keys, SELECT, FROM, WHERE, AND/OR, ORDER BY, LIMIT, INNER JOIN, COUNT, AVG, GROUP BY, and single-row INSERT/targeted UPDATE/guarded DELETE.
 - Use the shipped synthetic dataset registry: Campus Mini for the anchor examples and optional practice, Katalog Buku and Toko Mini for transfer activities. Keep each lab confined to its selected schema; switch/reset creates a fresh local session.
-- SQL practice runs only against local SQLite WASM data. It never connects to Supabase or private data.
+- SQL practice runs only against local SQLite WASM data. Post-test SQL authoring uses the same SQLite/WASM engine in a bounded, server-only Node Worker against isolated synthetic fixtures. Neither execution path connects to Supabase or production data.
 - Keep the learner write subset narrow: one statement at a time, one row changed, target preview before UPDATE/DELETE, foreign keys enabled, and deterministic reset.
 - Reject DDL/schema changes, PRAGMA, transaction control, ATTACH, multiple statements, unsupported tables, bulk mutations, and unbounded writes.
 - Use a focused 2D schema visualizer with named tables, column types, PK/FK labels, and column-to-column relationship lines. Provide table/record selection, pan, zoom, fit, and reset. Keep positions predefined and mobile controls accessible; the app has no 3D viewer.
@@ -19,7 +19,7 @@ The learner flow is **mandatory diagnostic Pre-test → reading Materi → paire
 - `/schema-builder` is a separate guided visual modeling exercise for tables, columns, PK/FK, and one-to-many relationships. Use bounded validated local drafts and automatic diagram positions. It pauses during assessment and never initializes the SQL Worker or generates executable DDL. The paired Relasi core task uses a validated structural answer graded server-side; standalone modeling remains formative. Mobile uses labeled forms and Susun/Diagram/Periksa tabs.
 - Keep USER/ADMIN roles, server-side authorization, RLS, progress, AI Tutor, and Admin CMS where they support the database course.
 - Preserve historical user data when replacing old learning content. Unpublish/archive old content; do not delete attempts, assessment results, or progress.
-- Do not add a server, paid runner, or new infrastructure for SQL execution.
+- Use the existing Next.js Node runtime for the assessment-only SQLite Worker; keep learner practice browser-local. No separate server, paid runner, or always-on infrastructure.
 
 ## Stack and implementation
 

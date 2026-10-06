@@ -121,8 +121,8 @@ try {
   const paused=await call(learner,'/api/ai/tutor','POST',{lessonId:lessons[0].id,action:'hint',message:'Beri petunjuk.'});assert.equal(paused.response.status,403);
   assert.equal((await call(learner,`/api/materials/${lessons[0].id}/read`,'POST')).response.status,403);
   await snapshot(page,`/assessments/sessions/${preId}`,'pre-test-session');
-  const baseline=await call(learner,`/api/assessment-sessions/${preId}/submit`,'POST',{answers:preSession.payload.items.map(item=>({itemId:item.id,answer:{choiceId:'unknown'}}))});
-  assert.equal(baseline.response.status,200);assert.equal(baseline.payload.score,0);assert.equal(baseline.payload.passed,false);await assertPrivateSafe(baseline.payload);
+  const baseline=await call(learner,`/api/assessment-sessions/${preId}/submit`,'POST',{answers:preSession.payload.items.map(item=>({itemId:item.id,answer:{choiceId:item.publicConfig.options[0].id}}))});
+  assert.equal(baseline.response.status,200);assert.ok(baseline.payload.score >= 0 && baseline.payload.score <= 100);assert.equal(baseline.payload.passed,false);await assertPrivateSafe(baseline.payload);
   assert.equal((await call(learner,`/api/assessments/${pre.slug}/start`,'POST')).response.status,403,'Baseline cannot be retaken');
   await snapshot(page,`/assessments/sessions/${preId}/result`,'pre-test-result');assert.equal(await page.getByText('Belum lulus',{exact:true}).count(),0);
   const history=await call(learner,`/api/ai/tutor?lessonId=${lessons[0].id}`);assert.equal(history.response.status,200,'AI resumes after diagnostic');
@@ -132,7 +132,7 @@ try {
   assert.equal((await call(learner,`/api/exercises/${firstCore.id}/check`,'POST',{pathSlug,answer:firstCore.config.answer})).response.status,403,'Reading required before check');
   const reading=`/learn/${pathSlug}/lessons/${lessons[0].slug}`;
   await snapshot(page,reading,'reading');assert.equal(await page.locator('main textarea,#lesson-practice,#database-sql').count(),0);
-  await page.getByRole('button',{name:'Selesai dibaca',exact:true}).click();await page.getByText('Materi sudah selesai dibaca.',{exact:true}).waitFor();
+  await page.getByRole('button',{name:'Selesai membaca, lanjut ke Lab',exact:true}).click();await page.waitForURL(url => url.pathname === reading+'/practice');
   const afterReading=await privileged.from('lesson_progress').select('status,read_at').eq('user_id',learner.id).eq('lesson_id',lessons[0].id).single();assert.ifError(afterReading.error);assert.equal(afterReading.data.status,'IN_PROGRESS');assert.ok(afterReading.data.read_at);
   assert.equal((await call(learner,`/api/materials/${lessons[1].id}/read`,'POST')).response.status,403,'Reading alone cannot unlock');
   const checked=await call(learner,`/api/exercises/${exercise.id}/check`,'POST',{pathSlug,answer:exercise.config.answer});assert.equal(checked.response.status,200);assert.equal(checked.payload.passed,true);assert.equal(checked.payload.lessonCompleted,false,'Optional check cannot complete');
@@ -165,14 +165,14 @@ try {
   assert.equal((await call(learner,`/api/ai/tutor?lessonId=${lessons[0].id}`)).response.status,403);
   assert.equal((await call(learner,`/api/exercises/${exercise.id}/check`,'POST',{pathSlug,answer:exercise.config.answer})).response.status,403);
   assert.equal((await call(learner,`/api/assessments/${pre.slug}/start`,'POST')).response.status,403,'Cannot create another active test');
-  const postSession=await call(learner,`/api/assessment-sessions/${postId}`);await assertPrivateSafe(postSession.payload);assert.equal(postSession.payload.items.length,10);
-  const forged=await call(learner,`/api/assessment-sessions/${postId}/submit`,'POST',{score:100,passed:true,answers:postSession.payload.items.map(item=>({itemId:item.id,answer:{choiceId:'not-a-valid-answer'}}))});
+  const postSession=await call(learner,`/api/assessment-sessions/${postId}`);await assertPrivateSafe(postSession.payload);assert.equal(postSession.payload.items.length,16);
+  const forged=await call(learner,`/api/assessment-sessions/${postId}/submit`,'POST',{score:100,passed:true,answers:postSession.payload.items.map(item=>({itemId:item.id,answer:item.publicConfig?.mode === 'sql' ? {sourceCode:'SELECT 1'} : {choiceId:item.publicConfig.options.find(option => option.id !== 'b').id}}))});
   assert.equal(forged.response.status,400,'Client score fields are rejected by strict validation');
-  const wrongAnswer = await call(learner,`/api/assessment-sessions/${postId}/submit`,'POST',{answers:postSession.payload.items.map(item=>({itemId:item.id,answer:{choiceId:'not-a-valid-answer'}}))});
-  assert.equal(wrongAnswer.response.status,200);assert.equal(wrongAnswer.payload.score,0);assert.equal(wrongAnswer.payload.passed,false,'Wrong answers cannot earn a passing score');
+  const wrongAnswer = await call(learner,`/api/assessment-sessions/${postId}/submit`,'POST',{answers:postSession.payload.items.map(item=>({itemId:item.id,answer:item.publicConfig?.mode === 'sql' ? {sourceCode:'SELECT 1'} : {choiceId:item.publicConfig.options.find(option => option.id !== 'b').id}}))});
+  assert.equal(wrongAnswer.response.status,200);assert.ok(wrongAnswer.payload.score < 75);assert.equal(wrongAnswer.payload.passed,false,'Wrong answers cannot earn a passing score');
   const retry=await call(learner,`/api/assessments/${post.slug}/start`,'POST');assert.equal(retry.response.status,200);
-  const privateItems=await privileged.from('assessment_items').select('id,answer_config').eq('assessment_id',post.id);assert.ifError(privateItems.error);
-  const passed=await call(learner,`/api/assessment-sessions/${retry.payload.sessionId}/submit`,'POST',{answers:privateItems.data.map(item=>({itemId:item.id,answer:item.answer_config}))});assert.equal(passed.response.status,200);assert.equal(passed.payload.score,100);assert.equal(passed.payload.passed,true);await assertPrivateSafe(passed.payload);
+  const privateItems=await privileged.from('assessment_items').select('id,answer_config,public_config').eq('assessment_id',post.id);assert.ifError(privateItems.error);
+  const passed=await call(learner,`/api/assessment-sessions/${retry.payload.sessionId}/submit`,'POST',{answers:privateItems.data.map(item=>({itemId:item.id,answer:item.public_config?.mode === "sql" ? {sourceCode:item.answer_config.referenceQuery} : item.answer_config}))});assert.equal(passed.response.status,200);assert.equal(passed.payload.score,100);assert.equal(passed.payload.passed,true);await assertPrivateSafe(passed.payload);
   await snapshot(page,`/assessments/sessions/${retry.payload.sessionId}/result`,'post-test-result');
   await page.goto(site+'/dashboard');await page.getByRole('heading',{name:'Jalur belajarmu tuntas',exact:true}).waitFor();
   // Real browser SQL smoke stays independent of assessment scoring.

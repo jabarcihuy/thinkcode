@@ -8,6 +8,9 @@ import { gradeAssessment } from "@/features/assessment/domain/grade-assessment";
 import { QuickJSSandboxAdapter } from "@/features/assessment/providers/quickjs-sandbox-adapter";
 import { readLimitedJson } from "@/features/workspace/server/read-json";
 
+import { readAssessmentDraft } from "@/features/assessment/domain/assessment-draft";
+import { SqliteAssessmentAdapter } from "@/features/assessment/providers/sqlite-assessment-adapter";
+
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
@@ -25,6 +28,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ ses
     if (!session) return Response.json({ error: "Assessment tidak ditemukan." }, { status: 404 });
     if (session.session.status !== "IN_PROGRESS") return Response.json({ error: "Assessment ini sudah dikirim." }, { status: 409 });
     const itemIds = session.items.map((item) => item.id);
+    if (submission.data.answers.length !== itemIds.length || submission.data.answers.some((entry) => !itemIds.includes(entry.itemId)) || !readAssessmentDraft({ activeIndex: 0, answers: Object.fromEntries(submission.data.answers.map((entry) => [entry.itemId, entry.answer])) }, session.items)) {
+      return Response.json({ error: "Jawab setiap soal tepat sekali." }, { status: 400 });
+    }
     const [{ data: privateItems, error: itemError }, { data: tests, error: testError }] = await Promise.all([
       admin.from("assessment_items").select("id, answer_config, entry_function, weight").eq("assessment_id", session.session.assessment_id),
       admin.from("assessment_test_cases").select("assessment_item_id, args, stdin, expected_output, is_hidden, weight, position")
@@ -51,7 +57,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ ses
         })),
       };
     });
-    const grade = await gradeAssessment(gradingItems, submission.data, new QuickJSSandboxAdapter(), session.assessment.passingScore);
+    const grade = await gradeAssessment(gradingItems, submission.data, new QuickJSSandboxAdapter(), session.assessment.passingScore, new SqliteAssessmentAdapter());
     const safeFeedback = {
       totalCorrect: grade.totalCorrect,
       totalItems: grade.totalItems,

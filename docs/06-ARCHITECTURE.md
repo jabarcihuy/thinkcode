@@ -6,7 +6,7 @@ Quethink teaches relational database concepts and SQL through one Next.js App Ro
 
 - Strict TypeScript, Tailwind, and shadcn/ui primitives.
 - Supabase stores accounts, published content, progress, practice attempts, tutor conversations, and assessments.
-- SQLite WASM runs only in a disposable browser Web Worker against a synthetic dataset.
+- SQLite WASM runs in disposable browser Workers for practice and a server-only Node Worker for trusted post-test SQL grading, both against synthetic data.
 - SQL results and write changes are stacked vertically as data objects → SQL → accessible result tables. The 2D schema and record inspector share the same public synthetic snapshot.
 - AI Tutor and Admin CMS use server-side authorization.
 - Signed-in learners can open `/chatbot` for lesson-context help and `/playground` for independent SQL practice; the latter reuses the same browser-only synthetic SQLite Worker as lesson labs.
@@ -35,7 +35,7 @@ Next.js server:
 - Auth/session, ownership, role checks, published content, progress, practice attempt records, assessment session lifecycle, deterministic assessment grading, and AI Tutor.
 - Admin mutations use server-only authorization.
 - Assessment answer keys remain server-side.
-- No learner SQL is run against production Supabase tables or on the Next.js server.
+- Learner SQL never runs against Supabase. The only server execution is the bounded assessment SQLite/WASM adapter in a disposable Node Worker.
 
 Supabase:
 - PostgreSQL content/progress schema, Auth, RLS, and narrow privileged workflows.
@@ -48,7 +48,7 @@ The standalone SQL Playground uses the selected registered synthetic seed and Wo
 
 ## Assessments
 
-Assessments use deterministic server-graded question formats: schema/key identification, query/result prediction, selecting a correct query, and ordering clauses. Browser-reported practice SQL results are never accepted as an official score. Arbitrary submitted SQL is not executed by the Vercel server.
+Pre-test remains ten diagnostic choices. The new post-test combines ten concept questions and six SQL-authoring tasks (filter/order/limit, JOIN, aggregation, INSERT, UPDATE and DELETE). Submitted SQL is validated and executed only by a server-only SQLite/WASM adapter in a disposable Node Worker. Each test uses fresh synthetic data and a private reference query; read results or complete mutation snapshots must match. Browser results never determine scores. Private fixture variants, reference queries and expected values remain server-only. See planning/2026-10-06-trusted-sql-post-test.md for boundaries and versioning.
 
 ## Guided visual modeling
 

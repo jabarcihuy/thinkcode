@@ -17,7 +17,7 @@
 - POST /api/ai/tutor: authenticated, bounded database tutoring. Rejects during an active assessment.
 - POST /api/assessments/[slug]/start: verifies prerequisites and creates one owned session.
 - GET /api/assessment-sessions/[sessionId]: returns public assessment prompts only.
-- POST /api/assessment-sessions/[sessionId]/submit: grades deterministic answers on the server; client scores are ignored.
+- POST /api/assessment-sessions/[sessionId]/submit: grades deterministic answers and bounded SQL authoring on the server; forged score fields are rejected. SQL uses `{sourceCode: string}` (≤4096 characters) for a strict mode=sql item. Invalid ownership/status/answer shapes are rejected before execution.
 
 ## SQL Run
 
@@ -43,3 +43,7 @@ Bound SQL text, statement count, practice payloads, AI context, answer count, af
 **Pre-test wajib sekali → Materi membaca → Lab latihan inti → materi berikutnya → Post-test (lulus ≥75) → selesai.**
 
 Aturan aktif dan transisi pengguna lama mengikuti [03-LEARNING_SYSTEM.md](03-LEARNING_SYSTEM.md). Materi tetap halaman membaca/PDF; Lab, tes, dan AI berada di halaman terpisah.
+
+## Assessment SQL boundary
+
+The submit handler loads private references/fixtures only after session ownership and active status checks. SQLite/WASM runs in a disposable server Worker; it never runs against Supabase. The response allowlist contains score, passing state, topic summaries and fixture pass counts only, never query references, hidden rows, expected results or raw SQLite errors. Public session JSON allowlists options/blocks or mode=sql, registered dataset, operation and table. Coba query stays browser-local on public seed and has no grading endpoint. Runtime/configuration failure returns safe 503 and keeps the session open for retry.

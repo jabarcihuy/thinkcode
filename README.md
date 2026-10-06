@@ -36,7 +36,7 @@ SQL Playground, Pembuat Skema, dan Tutor tersedia sebagai alat bantu dari Lab. N
 
 ### Post-test dan penyelesaian
 
-Buka `/post-test` setelah seluruh materi wajib dan latihan intinya tuntas. Sepuluh pertanyaan menguji konsep yang sama dengan pre-test menggunakan kasus berbeda. Skor dihitung server-side, lulus pada **75/100**, dan percobaan dapat diulang setelah sesi sebelumnya selesai. Post-test memiliki bobot nilai 100%; pre-test tidak dihitung.
+Buka `/post-test` setelah seluruh materi wajib dan latihan intinya tuntas. Sepuluh soal konsep dan enam tugas menulis SQL menguji Relasi, Read, dan Write. Query dinilai pada data sintetis awal dan variasi privat oleh SQLite/WASM dalam Worker server. Konsep berbobot 25%, tugas SQL 75%. Skor dihitung server-side, lulus pada **75/100**, dan percobaan dapat diulang setelah sesi sebelumnya selesai. Post-test memiliki bobot nilai 100%; pre-test tidak dihitung.
 
 Jalur selesai setelah semua materi wajib dan latihan intinya tuntas dan post-test lulus. Skor produk tidak otomatis menjadi nilai yang disahkan kampus. Kedua instrumen belum divalidasi secara psikometrik; selisih skor bukan bukti tunggal efektivitas belajar.
 
@@ -46,7 +46,7 @@ JavaScript/TypeScript adalah teknologi aplikasi, bukan materi mahasiswa. SQL mah
 
 ## Stack
 
-Next.js full-stack, TypeScript, Supabase Auth/PostgreSQL, dan SQLite WASM di browser Worker. Tidak ada layanan code/query runner berbayar yang diwajibkan.
+Next.js full-stack, TypeScript, Supabase Auth/PostgreSQL, dan SQLite WASM: browser Worker untuk latihan, Worker server terisolasi untuk penilaian post-test SQL. Tidak ada layanan code/query runner berbayar yang diwajibkan.
 
 ## Pemeriksaan
 
@@ -73,3 +73,9 @@ Buka **Admin CMS → Lesson → Buka pratinjau**. Admin dapat meninjau draft ata
 ## Tampilan dan transisi
 
 Tema mobile LMS menggunakan Indigo–apricot dan DM Sans lokal. Navigasi bawah maksimal lima tujuan. Dashboard melanjutkan tes aktif atau tahap membaca/Lab yang tepat. Migration mempertahankan ketuntasan historis; pengguna lama perlu baseline sebelum materi baru, sedangkan materi historis tetap dapat ditinjau.
+
+## Post-test SQL tepercaya
+
+Migration `20261006033506_trusted_sql_post_test.sql` membuat versi post-test baru tanpa menghapus hasil lama. Baseline dan progres materi tetap. Nilai konsep versi lama tidak dianggap sebagai kelulusan tugas SQL versi baru. Tidak ada key atau runner berbayar tambahan.
+
+Jalankan `npm run test:sql-assessment:integration` setelah production build untuk menguji Run, pratinjau write, draft, submit, skor server, retry, ownership, AI block, kebocoran hidden data/secret dan layout 360/768/1280. Akun uji dibersihkan setelah tes. Vercel belum di-deploy; lakukan smoke test pada runtime Node 24 setelah deployment.

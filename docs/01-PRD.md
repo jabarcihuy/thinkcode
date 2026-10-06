@@ -38,7 +38,7 @@ No JavaScript or general programming course; no PTI mapping; no C++, Python, DOM
 ## Product rules
 
 - Keep Campus Mini as the consistent anchor, and offer small Katalog Buku and Toko Mini schemas for concept-aligned transfer activities and Playground.
-- Run learner SQL only in local SQLite in a disposable browser Worker.
+- Run practice SQL in a disposable browser SQLite Worker; official post-test SQL runs only in the bounded server-only SQLite/WASM assessment Worker on synthetic data.
 - Permit only the SQL subset needed by the lesson: read queries and bounded single-row data changes.
 - Keep reading focused on prose, static examples/tables, summary and PDF. Keep the separate practice UI focused on the prompt, query editor, Run/Check, result/change summary, and 2D exploration.
 - SQL editing may use a labeled plain editor; no full IDE features are needed.

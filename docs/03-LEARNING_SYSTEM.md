@@ -24,7 +24,7 @@ Materi 1: membedakan record dan schema. Materi 2: menyusun model peminjaman buku
 
 ## Tes dan selesai
 
-Post-test terbuka setelah baseline dan semua materi wajib tuntas. Nilai dihitung server, lulus minimal 75; retry setelah sesi sebelumnya selesai. Course complete membutuhkan seluruh materi required complete dan post-test passed. Pre-test tidak masuk nilai akhir.
+Post-test terbuka setelah baseline dan semua materi wajib tuntas. Post-test versi SQL memuat 10 soal konsep (25% bobot) dan 6 tugas menulis SQL (75% bobot). Query dinilai di SQLite/WASM server pada data sintetis awal dan variasi privat. Nilai dihitung server, lulus minimal 75; retry setelah sesi sebelumnya selesai. Course complete membutuhkan seluruh materi required complete dan post-test passed. Pre-test tidak masuk nilai akhir.
 
 Saat tes IN_PROGRESS: AI, latihan, pengakuan membaca dan pembuat skema dijeda oleh backend. Materi yang sudah selesai boleh ditinjau. Hidden keys server-only; pengguna hanya memperoleh skor dan feedback aman.
 
@@ -35,3 +35,7 @@ Status COMPLETED yang tercatat sebelum migration dipertahankan, read_at dibackfi
 ## Pengawasan akses
 
 RLS membatasi progres/hasil ke pemilik. Mutasi ketuntasan melalui RPC server; pengguna tidak menulis score/status bebas. Validasi URL, pre-test, prerequisite, read_at dan tes aktif ada di server dan database. ADMIN preview terpisah dapat meninjau draft tanpa memengaruhi progres siswa.
+
+## Versi post-test SQL
+
+Post-test konsep lama ditarik dari publikasi; soal, sesi dan hasil lama tetap tersimpan. Nilai lama bukan bukti lulus tugas SQL versi baru. Dashboard menggunakan post-test published saat ini; baseline dan ketuntasan materi tidak direset. Rollout menunggu sesi post-test lama selesai.

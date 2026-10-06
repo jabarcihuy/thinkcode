@@ -2,7 +2,8 @@
 
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { JavaScriptEditor } from "@/features/workspace/components/javascript-editor";
+import { AssessmentSqlQuestion } from "./sql-question";
+import { readSqlAssessmentConfig } from "../validation/sql-assessment";
 import { exerciseTypeLabel } from "@/features/practice/domain/exercise-labels";
 import type { AssessmentAnswer, PublicAssessmentItem } from "@/features/assessment/types";
 import type { Json } from "@/types/database";
@@ -13,15 +14,6 @@ function configObject(value: Json): Record<string, Json | undefined> {
 
 function answerSource(answer: AssessmentAnswer | undefined): string {
   return answer && "sourceCode" in answer ? answer.sourceCode : "";
-}
-
-function updateSource(value: string): AssessmentAnswer { return { sourceCode: value }; }
-
-function CodeQuestion({ item, answer, onAnswer }: { item: PublicAssessmentItem; answer: AssessmentAnswer | undefined; onAnswer: (answer: AssessmentAnswer) => void }) {
-  return <div className="mt-5">
-    <p className="mb-3 text-sm text-muted-foreground">Tulis jawaban untuk pertanyaan basis data. AI Tutor dan petunjuk tidak aktif selama assessment.</p>
-    <JavaScriptEditor value={answerSource(answer)} onChange={(value) => onAnswer(updateSource(value))} modelPath={`assessment-${item.id}/main.js`} />
-  </div>;
 }
 
 function PredictQuestion({ item, answer, onAnswer }: { item: PublicAssessmentItem; answer: AssessmentAnswer | undefined; onAnswer: (answer: AssessmentAnswer) => void }) {
@@ -69,15 +61,15 @@ function OrderQuestion({ item, answer, onAnswer }: { item: PublicAssessmentItem;
   </ol></div>;
 }
 
-export function AssessmentQuestionView({ item, answer, onAnswer }: { item: PublicAssessmentItem; answer: AssessmentAnswer | undefined; onAnswer: (answer: AssessmentAnswer) => void }) {
+export function AssessmentQuestionView({ item, answer, onAnswer, disabled = false }: { item: PublicAssessmentItem; answer: AssessmentAnswer | undefined; onAnswer: (answer: AssessmentAnswer) => void; disabled?: boolean }) {
   const config = configObject(item.publicConfig);
+  const sqlConfig = readSqlAssessmentConfig(item.publicConfig);
   const mode = config.mode;
-  const isCoding = item.type === "CODE_COMPLETION" || item.type === "DEBUGGING" || item.type === "PROBLEM_SOLVING";
   return <article aria-labelledby={`question-title-${item.id}`}>
     <h2 id={`question-title-${item.id}`} className="text-xl font-semibold">{item.title}</h2>
-    <p className="mt-2 text-sm text-muted-foreground">{item.topic} · {mode === "choice" ? "Pilihan ganda" : exerciseTypeLabel(item.type)}</p>
+    <p className="mt-2 text-sm text-muted-foreground">{item.topic} · {sqlConfig ? "Menulis SQL" : mode === "choice" ? "Pilihan ganda" : exerciseTypeLabel(item.type)}</p>
     <p className="mt-3 max-w-[72ch] text-sm leading-6 text-muted-foreground">{item.prompt}</p>
-    {isCoding ? <CodeQuestion item={item} answer={answer} onAnswer={onAnswer} />
+    {sqlConfig ? <AssessmentSqlQuestion key={item.id} config={sqlConfig} value={answerSource(answer)} disabled={disabled} onChange={(sourceCode) => onAnswer({ sourceCode })} />
       : item.type === "PREDICT_OUTPUT" ? <PredictQuestion item={item} answer={answer} onAnswer={onAnswer} />
         : mode === "choice" ? <ChoiceQuestion item={item} answer={answer} onAnswer={onAnswer} />
           : <OrderQuestion item={item} answer={answer} onAnswer={onAnswer} />}

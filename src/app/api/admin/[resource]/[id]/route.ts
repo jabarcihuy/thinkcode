@@ -1,7 +1,11 @@
+import { sqlAssessmentPrivateSchema } from "@/features/assessment/server/sql-assessment-key";
 import { NextResponse } from "next/server";
 import { createPrivilegedClient } from "@/lib/supabase/privileged";
 import { AdminAuthorizationError, authorizeAdmin } from "@/features/admin/server/authorization";
 import { assessmentInput, assessmentItemInput, assessmentTestCaseInput, chapterInput, exerciseInput, lessonInput, pathInput, testCaseInput } from "@/features/admin/domain/content-validation";
+
+import { readSqlAssessmentConfig } from "@/features/assessment/validation/sql-assessment";
+import { SqliteAssessmentAdapter } from "@/features/assessment/providers/sqlite-assessment-adapter";
 
 const config = {
   paths: { table: "learning_paths", schema: pathInput },
@@ -36,9 +40,20 @@ export async function PATCH(request: Request, context: { params: Promise<{ resou
         }
       }
       if (publish && resource === "assessments") {
-        const { data: items, error } = await client.from("assessment_items").select("id, title, type, entry_function").eq("assessment_id", id);
+        const { data: items, error } = await client.from("assessment_items").select("*").eq("assessment_id", id);
         if (error) throw error;
         if (!items?.length) return NextResponse.json({ error: "Tambahkan minimal satu soal assessment sebelum publikasi." }, { status: 422 });
+        for (const candidate of items) {
+          const sqlConfig = readSqlAssessmentConfig(candidate.public_config);
+          if (candidate.type === "PROBLEM_SOLVING" && !sqlConfig) return NextResponse.json({ error: "Soal SQL memerlukan konfigurasi SQL valid." }, { status: 422 });
+          if (sqlConfig) {
+            const parsed = assessmentItemInput.safeParse(candidate);
+            if (!parsed.success) return NextResponse.json({ error: "Periksa konfigurasi soal SQL sebelum publikasi." }, { status: 422 });
+            const key = sqlAssessmentPrivateSchema.parse(candidate.answer_config);
+            const graded = await new SqliteAssessmentAdapter().grade(key.referenceQuery, sqlConfig, key);
+            if (graded.passedTests !== graded.totalTests) return NextResponse.json({ error: "Query referensi SQL belum lolos seluruh kasus." }, { status: 422 });
+          }
+        }
         for (const item of items ?? []) if (["CODE_COMPLETION", "DEBUGGING", "PROBLEM_SOLVING"].includes(item.type) && item.entry_function) {
           const { count: tests, error: testError } = await client.from("assessment_test_cases").select("id", { count: "exact", head: true }).eq("assessment_item_id", item.id);
           if (testError || !tests) return NextResponse.json({ error: `Tambahkan test case server tepercaya ke ${item.title} sebelum publikasi.` }, { status: 422 });

@@ -30,7 +30,7 @@
 - Shop relationship traversal follows customer → order → detail → product without spreading to unrelated orders.
 - Switch and reset dispose the previous Worker and discard pending mutations; optional transfer does not change required completion rules.
 - All 11 transfer answer keys grade correctly and reject wrong answers; query-prediction keys match real SQLite results.
-- SQLite integration fixtures use Node’s `node:sqlite` for test execution only; application SQL still executes exclusively in the browser WASM Worker.
+- SQLite integration fixtures use Node’s `node:sqlite` for test execution only; practice SQL executes in browser WASM Workers; official SQL post-test grading uses the isolated server-only WASM Worker.
 
 ## Browser smoke
 
@@ -85,3 +85,7 @@ Aturan aktif dan transisi pengguna lama mengikuti [03-LEARNING_SYSTEM.md](03-LEA
 `node --env-file-if-exists=.env scripts/check-learning-recovery.mjs` uses a temporary learner (deleted in finally) against the configured Supabase project and a local production server. It covers login, assessment answer/current-question refresh, offline input persistence, storage quota failure/retry, corrupted draft recovery, failed submit retention/successful clear, reading-save failure and direct Lab transition, practice input recovery, wrong-answer guidance, core completion/next action, query draft/run/reset, private-field omission, admin denial, and 360/768/1280 layouts. This is not a study with actual students.
 
 Unit coverage validates account/session isolation, compatible content, bounded input, strict draft shapes, memory fallback, subscription cleanup and draft clearing. Run `scripts/check-interactive-curriculum.mjs` for all 11 core completions, post-test, AI blocking, private answers and owner-only attempts. `scripts/audit-assessment-alignment.mjs` is a read-only metadata audit: it reports evidence types, never answer keys. Choice-based test scores are not evidence of independent SQL authoring.
+
+## Trusted SQL post-test regression
+
+Run `npm run test:sql-assessment:integration` on the production build. Check six reference queries and private variants, alternative SQL/aliases, hidden-fixture rejection of hardcoded output, full mutation post-state and foreign keys, oversized query/output, expensive join interruption, rejected system/file/environment/extension functions and DDL. Check owned/active sessions, forged scores, no hidden references/rows in JSON/HTML/bundles, AI blocking, recorded server scores, retry lifecycle, restored SQL drafts, real public-seed Run/preview/confirm, mobile 360/768/1280 overflow and admin denial. Use disposable accounts removed in finally. Vercel-hosted runtime smoke is separate from local production QA.

@@ -1,3 +1,5 @@
+import { sqlAssessmentPrivateSchema } from "@/features/assessment/server/sql-assessment-key";
+import { sqlAssessmentPublicSchema, validateAssessmentQuery } from "@/features/assessment/validation/sql-assessment";
 import { expectedSchema } from "@/features/practice/domain/grade-schema";
 import { z } from "zod";
 import { isDatasetId } from "@/features/database/data/datasets";
@@ -84,9 +86,19 @@ export const assessmentInput = z.object({
   }
 });
 export const assessmentItemInput = z.object({
-  assessment_id: z.uuid(), type: exerciseType, title: z.string().trim().min(1).max(160),
+  assessment_id: z.uuid(), type: z.enum(["PREDICT_OUTPUT", "PSEUDOCODE", "FLOWCHART", "PROBLEM_SOLVING"]), title: z.string().trim().min(1).max(160),
   topic: z.string().trim().min(1).max(120), prompt: z.string().trim().min(1).max(8_000),
   starter_code: z.string().max(16_000).nullable().default(null), public_config: config.default({}),
   answer_config: config.default({}), entry_function: z.string().max(100).nullable().default(null),
   weight: z.number().positive().max(100), position,
+}).superRefine((value, context) => {
+  if (value.type !== "PROBLEM_SOLVING" && value.public_config.mode !== "sql") return;
+  const config = sqlAssessmentPublicSchema.safeParse(value.public_config);
+  const key = sqlAssessmentPrivateSchema.safeParse(value.answer_config);
+  if (!config.success || !key.success || value.entry_function !== null || value.type !== "PROBLEM_SOLVING") {
+    context.addIssue({ code: "custom", message: "Soal SQL memerlukan mode sql, dataset terdaftar, operasi, query referensi dan variasi privat." });
+    return;
+  }
+  try { validateAssessmentQuery(key.data.referenceQuery, config.data); }
+  catch { context.addIssue({ code: "custom", path: ["answer_config"], message: "Query referensi harus sesuai operasi soal." }); }
 });

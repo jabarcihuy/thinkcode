@@ -1,4 +1,5 @@
 import "server-only";
+import { publicAssessmentConfig } from "../domain/public-item";
 import { createPrivilegedClient } from "@/lib/supabase/privileged";
 import { isTestAvailable } from "../domain/test-policy";
 import type { AssessmentType, PublicAssessmentItem } from "@/features/assessment/types";
@@ -95,7 +96,7 @@ export async function getAssessmentSession(sessionId: string, userId: string): P
     assessment: { title: assessment.title, instructions: assessment.instructions, passingScore: assessment.passing_score, type: assessment.type },
     items: (items ?? []).map((item) => ({
       id: item.id, type: item.type, title: item.title, topic: item.topic, prompt: item.prompt,
-      starterCode: item.starter_code, publicConfig: item.public_config, position: item.position,
+      starterCode: item.starter_code, publicConfig: publicAssessmentConfig(item.public_config), position: item.position,
     })) as PublicAssessmentItem[],
   };
 }

@@ -108,7 +108,7 @@ async function passAssessment(user, assessment, lessonId, exerciseId) {
   const answers = session.payload.items.map((item) => {
     const answer = privateItems.find((entry) => entry.id === item.id)?.answer_config;
     assert.ok(answer && typeof answer === "object", `Missing private test fixture for ${item.title}.`);
-    return { itemId: item.id, answer };
+    return { itemId: item.id, answer: item.publicConfig?.mode === "sql" ? { sourceCode: answer.referenceQuery } : answer };
   });
   const submitted = await call(user, `/api/assessment-sessions/${started.payload.sessionId}/submit`, "POST", { answers });
   assert.equal(submitted.response.status, 200, JSON.stringify(submitted.payload));

@@ -21,7 +21,7 @@ Three main content topics are Relasi, Write, and Read; learner progression follo
 - Optional Indonesian video references.
 - Optional guided 2D schema modeling with local drafts, formative feedback, and mobile-first controls.
 - Contextual AI Tutor during lessons/practice, blocked during assessment.
-- Separate diagnostic pre-test and deterministic post-test.
+- Separate diagnostic pre-test and versioned post-test with concept questions plus trusted SQL-authoring grading.
 - Admin CMS with draft, preview, and publish flow.
 - Vercel and Supabase free-plan deployment target.
 

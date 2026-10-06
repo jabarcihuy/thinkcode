@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, Play, Send } from "lucide-react";
+import { ArrowLeft, ArrowRight, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { QuestionNavigator, isAssessmentAnswerComplete } from "@/features/assessment/components/question-navigator";
 import { AssessmentQuestionView } from "@/features/assessment/components/question-view";
@@ -11,12 +11,6 @@ import { DraftStatus } from "@/components/forms/draft-status";
 import { useLocalDraft } from "@/lib/browser/use-local-draft";
 import { assessmentDraftSignature, initialAssessmentDraft, readAssessmentDraft } from "../domain/assessment-draft";
 import type { AssessmentAnswer, PublicAssessmentItem } from "@/features/assessment/types";
-import { BrowserJavaScriptRunner } from "@/lib/providers/browser-javascript-runner";
-import type { CodeRunResult } from "@/lib/providers/code-runner";
-import { OutputPanel } from "@/features/workspace/components/output-panel";
-
-const browserRunner = new BrowserJavaScriptRunner();
-
 export function AssessmentWorkspace({
   sessionId, userId, assessmentTitle, instructions, passingScore, items, diagnostic = false,
 }: { sessionId: string; userId: string; assessmentTitle: string; instructions: string; passingScore: number; diagnostic?: boolean; items: PublicAssessmentItem[] }) {
@@ -34,30 +28,17 @@ export function AssessmentWorkspace({
   }, [draft.status]);
   function selectQuestion(index: number) {
     draft.save({ ...draft.value, activeIndex: index });
-    setRunResult(null);
   }
-  const [runResult, setRunResult] = useState<CodeRunResult | null>(null);
-  const [runPending, setRunPending] = useState(false);
   const [submitPending, setSubmitPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const confirmationRef = useRef<HTMLDialogElement>(null);
   const current = items[activeIndex];
   const currentAnswer = current ? answers[current.id] : undefined;
   const completeCount = useMemo(() => items.filter((item) => isAssessmentAnswerComplete(answers[item.id])).length, [items, answers]);
-  const isCode = Boolean(current && (current.type === "CODE_COMPLETION" || current.type === "DEBUGGING" || current.type === "PROBLEM_SOLVING"));
 
   function updateAnswer(answer: AssessmentAnswer) {
     if (!current) return;
     draft.save({ ...draft.value, answers: { ...answers, [current.id]: answer } });
-    setRunResult(null);
-  }
-
-  async function runLocally() {
-    if (!current || !currentAnswer || !("sourceCode" in currentAnswer) || runPending) return;
-    setRunPending(true); setRunResult(null); setError(null);
-    try { setRunResult(await browserRunner.run({ language: "javascript", sourceCode: currentAnswer.sourceCode, visualize: false })); }
-    catch { setError("Run lokal belum dapat dimulai. Coba lagi."); }
-    finally { setRunPending(false); }
   }
 
   async function submitAssessment() {
@@ -109,12 +90,7 @@ export function AssessmentWorkspace({
     {draft.status === "loading" ? <p role="status">Menyiapkan jawaban tes…</p> : <div className="grid min-w-0 grid-cols-1 items-start gap-6 md:grid-cols-[12rem_minmax(0,1fr)]">
       <QuestionNavigator items={items} answers={answers} activeIndex={activeIndex} onSelect={selectQuestion} />
       <div className="min-w-0">
-        <AssessmentQuestionView item={current} answer={currentAnswer} onAnswer={updateAnswer} />
-        {isCode && <div className="mt-5 flex flex-wrap items-center gap-3">
-          <Button type="button" variant="outline" disabled={runPending || submitPending} onClick={runLocally}><Play size={15} aria-hidden="true" />{runPending ? "Menjalankan…" : "Run lokal"}</Button>
-          <span className="text-xs text-muted-foreground">Run membantu meninjau output; skor dihitung ulang di server saat submit.</span>
-        </div>}
-        {isCode && <div className="mt-5"><OutputPanel result={runResult} error={error} pending={runPending} /></div>}
+        <AssessmentQuestionView item={current} answer={currentAnswer} onAnswer={updateAnswer} disabled={submitPending} />
         <div className="mt-7 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-5">
           <Button type="button" variant="outline" disabled={activeIndex === 0 || submitPending} onClick={() => selectQuestion(activeIndex - 1)}><ArrowLeft size={15} aria-hidden="true" />Sebelumnya</Button>
           {activeIndex < items.length - 1

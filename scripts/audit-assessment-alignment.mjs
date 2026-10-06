@@ -23,5 +23,5 @@ console.log(JSON.stringify({
     slug: lesson.slug, coreEvidence: checks.data.filter((check) => check.lesson_id === lesson.id && check.is_required).map((check) => ({ type: check.type, mode: check.config?.public?.mode ?? "prediction" })),
   })),
   assessments: tests.data.map((test) => ({ title: test.title, type: test.type, items: items.data.filter((item) => item.assessment_id === test.id).map((item) => ({ topic: item.topic, type: item.type, mode: item.public_config?.mode ?? "prediction" })) })),
-  independentSqlAuthoringGraded: false,
+  independentSqlAuthoringGraded: items.data.some((item) => item.public_config?.mode === "sql"),
 }, null, 2));

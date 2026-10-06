@@ -10,4 +10,4 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 Read `docs/AGENTS.md` and the relevant files in `docs/` before changing Quethink. Those documents define product scope and architecture.
 
-`docs/AGENTS.md` is the canonical product and architecture guide. Read `docs/04-CURRICULUM.md` and relevant planning/research files before course changes. Before SQL runner or Supabase database changes, read `docs/06-ARCHITECTURE.md`, `docs/11-SECURITY.md`, and the applicable local framework/Supabase guidance. Learner SQL must remain confined to the synthetic SQLite Worker.
+`docs/AGENTS.md` is the canonical product and architecture guide. Read `docs/04-CURRICULUM.md` and relevant planning/research files before course changes. Before SQL runner or Supabase database changes, read `docs/06-ARCHITECTURE.md`, `docs/11-SECURITY.md`, and the applicable local framework/Supabase guidance. Learner SQL must remain confined to synthetic SQLite Workers: browser-local practice or the bounded server-only assessment adapter described in docs/06-ARCHITECTURE.md.
