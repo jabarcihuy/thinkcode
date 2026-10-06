@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.jabarcihuy.quethink",
+        "sha256_cert_fingerprints": ["77:4C:FD:23:4C:4F:35:05:B6:59:89:CD:C0:7B:30:86:51:DD:D4:4C:E5:27:9A:E1:4C:A5:2F:67:FE:81:56:88"]
+      }
+    }]

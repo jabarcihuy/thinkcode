@@ -1,0 +1,48 @@
+{
+  "packageId": "com.jabarcihuy.quethink",
+  "host": "www.barlabs.my.id",
+  "name": "Quethink",
+  "launcherName": "Quethink",
+  "display": "standalone",
+  "themeColor": "#4f46e5",
+  "themeColorDark": "#1e1b4b",
+  "navigationColor": "#ffffff",
+  "navigationColorDark": "#25223d",
+  "navigationDividerColor": "#dedce9",
+  "navigationDividerColorDark": "#25223d",
+  "backgroundColor": "#4f46e5",
+  "enableNotifications": false,
+  "startUrl": "/",
+  "iconUrl": "https://www.barlabs.my.id/icons/icon-512.png",
+  "maskableIconUrl": "https://www.barlabs.my.id/icons/icon-maskable-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "./keystore/quethink.keystore",
+    "alias": "quethink"
+  },
+  "appVersionName": "1.0.0",
+  "appVersionCode": 1,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://www.barlabs.my.id/manifest.json",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://www.barlabs.my.id/",
+  "minSdkVersion": 21,
+  "orientation": "portrait",
+  "fingerprints": [
+    {
+      "name": "quethink-upload-key",
+      "value": "77:4C:FD:23:4C:4F:35:05:B6:59:89:CD:C0:7B:30:86:51:DD:D4:4C:E5:27:9A:E1:4C:A5:2F:67:FE:81:56:88"
+    }
+  ],
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "appVersion": "1.0.0"
+}

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="55%" stop-color="#4f46e5"/>
+      <stop offset="100%" stop-color="#3730a3"/>
+    </linearGradient>
+    <linearGradient id="dbGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#dcd8ff"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#1e1b4b" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGradient)"/>
+
+  <!-- Subtle highlight arc -->
+  <circle cx="150" cy="110" r="210" fill="#ffffff" opacity="0.06"/>
+
+  <!-- Database icon -->
+  <g filter="url(#softShadow)">
+    <g fill="none" stroke="url(#dbGradient)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round">
+      <!-- Top ellipse -->
+      <ellipse cx="256" cy="168" rx="132" ry="52"/>
+      <!-- Body sides -->
+      <path d="M124 168 V 344"/>
+      <path d="M388 168 V 344"/>
+      <!-- Bottom curve -->
+      <path d="M124 344 A 132 52 0 0 0 388 344"/>
+      <!-- Middle curve -->
+      <path d="M124 256 A 132 52 0 0 0 388 256"/>
+    </g>
+  </g>
+</svg>
