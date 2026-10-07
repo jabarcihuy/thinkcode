@@ -8,6 +8,10 @@ import { SkipLink } from "@/components/layout/skip-link";
 
 export const metadata: Metadata = {
   manifest: "/manifest.json",
+  icons: {
+    icon: { url: "/assets/quethink/quethink-mark.svg", type: "image/svg+xml" },
+    apple: "/icons/apple-touch-icon.png",
+  },
   title: { default: "Quethink", template: "%s | Quethink" },
   description: "Pelajari tabel, relasi, dan query SQL dengan data latihan yang dapat diamati langsung.",
 };

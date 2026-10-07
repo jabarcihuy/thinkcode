@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">Simbol Quethink</title>
+  <desc id="desc">Huruf Q geometris berbentuk tabel, dengan penghubung relasi berwarna apricot.</desc>
+  <rect x="7" y="7" width="46" height="46" rx="14" fill="#4F46E5"/>
+  <rect x="17" y="17" width="26" height="26" rx="5" fill="#FFFFFF"/>
+  <path d="M18 26H42M18 34H42M28 18V42" fill="none" stroke="#4F46E5" stroke-width="3"/>
+  <path d="M40 40L56 56" fill="none" stroke="#C56A25" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="55" cy="55" r="4" fill="#C56A25"/>
+</svg>

@@ -134,3 +134,7 @@ Lalu deploy ulang `assetlinks.json` ke web. Fingerprint ada di Play Console → 
 Source manifest dan Gradle kini memakai launch URL `/app`, yang memeriksa sesi server lalu menuju Dashboard, mode tamu, atau Login. APK lama tetap memakai URL sebelumnya sampai di-rebuild dan ditandatangani kembali. Binary APK/AAB tidak dibangun ulang pada perubahan web ini.
 
 Web production mendaftarkan service worker untuk layar publik saat koneksi terputus saja. Materi, API, hasil tes, token dan progress tidak di-cache. Uji keyboard Android, tombol Back, cutout, TalkBack dan unduhan PDF pada perangkat fisik sebelum merilis ulang APK.
+
+## Logo baru
+
+Logo silinder lama telah diganti dengan simbol Q berbentuk tabel. Sumber utama: `../public/assets/quethink/quethink-mark.svg` dan versi ikon `../public/assets/quethink/app-icon.svg`. Dari root project, `node scripts/render-quethink-icons.mjs` memperbarui ekspor PNG web, launcher, maskable, splash, dan store icon. Perubahan ikon web berlaku setelah deployment; ikon launcher/splash yang sudah tertanam dalam APK/AAB memerlukan rebuild dan pemasangan versi baru.
