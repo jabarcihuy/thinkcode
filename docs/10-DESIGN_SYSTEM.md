@@ -39,3 +39,8 @@ Mobile has four labeled tabs: Skema, Data, Query, AI. Schema forms precede the 2
 Lab Materi uses a short introduction, compact Tabel/Query/Hasil/Latihan links, and a collapsed exploration disclosure before the core task. The opened lab remains vertical: table → query → output. Do not remove full question context to shorten the page. SQLab stays a separate playground.
 
 Icon controls, navigation links and auth links use a minimum 44px touch area. Table scrollers expose a named keyboard-focusable region. The bottom navigation adjusts to font scaling and safe-area insets; mobile text entry temporarily hides it. Chat follows new messages only while the learner is near the bottom; scrolling up preserves the reading position and reveals a latest-message action.
+
+
+## Mobile sign-in
+
+Login is an app entry rather than a blank form: brand, a concise database-learning introduction, a lightweight 2D Campus Mini relation preview, and the sign-in fields. Keep Masuk primary, Daftar inline, and Coba sebagai tamu secondary. Mobile uses one scrollable column without a carousel or fixed form; desktop may place the introduction beside the form. The preview is explanatory geometry only and does not load SQL, AI, or an interactive canvas.

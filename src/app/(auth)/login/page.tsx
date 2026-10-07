@@ -1,9 +1,18 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { AuthForm } from "@/components/auth/auth-form";
+import { LoginIntroduction } from "@/components/auth/login-introduction";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = { title: "Masuk" };
 
 export default function LoginPage() {
-  return <><h1 className="text-3xl font-semibold tracking-tight">Masuk ke Quethink</h1><p className="mb-8 mt-3 text-muted-foreground">Lanjutkan perjalanan belajar Anda.</p><AuthForm mode="login" /><Link href="/guest/start" className="mt-5 flex min-h-11 items-center justify-center text-sm font-semibold text-primary underline">Coba sebagai tamu</Link></>;
+  return <div className="grid min-w-0 gap-7 lg:grid-cols-[minmax(0,1fr)_28rem] lg:items-center lg:gap-20">
+    <LoginIntroduction />
+    <section aria-labelledby="login-form-title" className="min-w-0 lg:rounded-lg lg:bg-white lg:p-8">
+      <h2 id="login-form-title" className="mb-5 text-xl font-semibold tracking-tight">Masuk untuk melanjutkan</h2>
+      <AuthForm mode="login" />
+      <Button asChild variant="outline" className="mt-3 min-h-12 w-full"><Link href="/guest/start">Coba sebagai tamu</Link></Button>
+    </section>
+  </div>;
 }
