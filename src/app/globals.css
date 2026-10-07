@@ -93,22 +93,6 @@ button:disabled { cursor: not-allowed; }
   .mobile-navigation-panel { display: none; }
 }
 
-/*
- * Film frames. One rule owns visibility so a frame can never be hidden by one
- * utility and un-hidden by another. Above 860px every frame shows and shares
- * the strip; below it only the live frame is pulled into the gate, because a
- * four-up strip at phone width squeezes each frame past reading measure.
- *
- * The live frame also takes the full strip width on narrow screens: the shared
- * `flex-1 basis-0` sizing is what left the dead gutter to its right.
- */
-.film-frame { display: block; }
-
-@media (max-width: 860px) {
-  .film-frame { display: none; }
-  .film-frame[data-live="true"] { display: block; flex: 1 1 100%; }
-}
-
 .page-loading {
   display: grid;
   min-height: min(68vh, 38rem);
