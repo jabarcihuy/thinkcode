@@ -12,7 +12,7 @@
   "navigationDividerColorDark": "#25223d",
   "backgroundColor": "#4f46e5",
   "enableNotifications": false,
-  "startUrl": "/",
+  "startUrl": "/app",
   "iconUrl": "https://www.barlabs.my.id/icons/icon-512.png",
   "maskableIconUrl": "https://www.barlabs.my.id/icons/icon-maskable-512.png",
   "splashScreenFadeOutDuration": 300,

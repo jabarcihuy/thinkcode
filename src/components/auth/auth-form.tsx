@@ -29,7 +29,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
       <Button className="w-full" type="submit" disabled={pending}>{pending ? "Memproses..." : isLogin ? "Masuk" : "Buat akun"}</Button>
       <p className="text-center text-sm text-muted-foreground">
         {isLogin ? "Belum punya akun? " : "Sudah punya akun? "}
-        <Link className="font-semibold text-foreground underline underline-offset-4 hover:text-accent" href={isLogin ? "/register" : "/login"}>{isLogin ? "Daftar" : "Masuk"}</Link>
+        <Link className="inline-flex min-h-11 min-w-11 items-center font-semibold text-foreground underline underline-offset-4 hover:text-accent" href={isLogin ? "/register" : "/login"}>{isLogin ? "Daftar" : "Masuk"}</Link>
       </p>
     </form>
   );

@@ -175,3 +175,18 @@ button:disabled { cursor: not-allowed; }
   background-image: radial-gradient(circle, var(--border) 0.8px, transparent 0.8px);
   background-size: 20px 20px;
 }
+
+/* Native-sized mobile chrome, including font scaling and display cutouts. */
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+.mobile-bottom-bar {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+.mobile-bottom-bar[data-editing] { display: none; }
+@media (max-width: 1023px) {
+  .mobile-page-content { padding-bottom: calc(var(--bottom-navigation-height, 5rem) + 1rem); }
+}

@@ -190,3 +190,42 @@ Tidak memerlukan migration atau konfigurasi database tambahan.
 - [Chrome Android keyboard viewport](https://developer.chrome.com/blog/viewport-resize-behavior): perbedaan visual/layout viewport dan efek pada fixed elements.
 - [Edge-to-edge migration](https://developer.chrome.com/docs/css-ui/edge-to-edge): pengujian safe-area dan UI saat system controls berubah.
 - Local Next 16.3.6 `generate-viewport.md`: konfigurasi Viewport server, themeColor dan interactiveWidget sesuai versi project.
+
+## Implemented follow-up — 7 Oktober 2026
+
+The findings above describe the baseline, before these fixes:
+
+- Root metadata now links the manifest and theme color. `/app` is the installed-app entry; source Android launch configuration was updated, not the existing APK binary.
+- Guest navigation selects one active destination. Account and guest share bar sizing/typing behavior; the guest upward menu now uses the measured offset, bounded scroll, close button and expanded state.
+- Small outline, auth, guest-start, schema icon and chatbot controls were enlarged. Admin selects/textareas use mobile-readable input text. Markdown tables expose a named focusable scrolling region.
+- Lab Materi uses compact section links and a collapsed table/query exploration panel. The core exercises remain immediately below; full question text/data remain. Table → query → result is still vertical. Opening the panel loads its code; subsequent collapse preserves editor state. Entering a different lesson resets that panel session.
+- A previously unnoticed guest catalog bug was fixed: the authenticated exercise view filters on `auth.uid()`, so named guests saw no core tasks. Guest reads now verify published course catalog membership, then select only published required exercises and their generated `public_config`, never private `config` or tests. No database policy was relaxed.
+- AI chat auto-follows near the bottom, preserves a reader's scroll position, and offers a latest-message button. Streaming sets the live region busy to avoid announcing every intermediate update.
+- Viewport text entry behavior and safe-area padding were added. A production worker caches only a public offline document fallback. Authenticated pages/RSC/APIs are never cached. This is not offline learning.
+
+### Page density evidence (360px, default collapsed view)
+
+| Lab | Before | After |
+| --- | ---: | ---: |
+| 3 | 5,222px | 2,050px |
+| 6 | 6,173px | 3,001px |
+| 7 | 6,044px | 2,872px |
+| 8 | 6,016px | 2,844px |
+
+Measurements describe the initial view, not the height after opening all exploration panels. Roughly half the initial scrolling is removed without deleting the task.
+
+### Navigation performance
+
+- Learning loading boundary enables the framework's partial prefetch/loading behavior.
+- Independent baseline/chapter data reads run concurrently; per-request account/overview deduplication and server authorization remain.
+- Guest SQLab's workspace and course exploration load only when used; the browser SQL engine does not start on a collapsed Lab.
+- One local production guest-to-materials navigation measured approximately 0.84s to the ready heading. This is a smoke measurement, not a benchmark, before/after speedup claim or Vercel SLA.
+- Turbopack was tested and fails resolving a dynamic Worker URL in the installed SQLite WASM package. Webpack remains the working supported project setting. First development compilation is still slower than production navigation.
+
+### Verification and remaining limits
+
+Lint, typecheck, 300 unit tests and production build pass. Dedicated integration checks cover app entry, one active destination, lazy SQL startup, real SQL result, editor preservation, text-entry chrome, chat following/manual scroll, 200% font on a short viewport, offline/retry, and a cache containing only `/offline.html`. Mobile navigation tests also cover USER admin denial, ADMIN menu, keyboard/Escape/outside dismissal and logout. Reading/PDF/locked-access regression passes; mocked PDF failures run with service workers disabled in that test only (the dedicated offline test leaves them enabled).
+
+The broad audit covers 119 captures; assessment AI blocking remains 403. Client secret scan finds no configured server secret in production static assets. Temporary test accounts are deleted by the scripts. No content/RLS/schema migration, new feature menu, curriculum rewrite or new design suppression is required.
+
+Remaining native verification: actual Android keyboard resizing, Back gestures, cutouts, TalkBack, PDF downloads and Digital Asset Links/signing. First launch without a cached fallback still requires connectivity. Existing APK needs rebuild/signing to adopt `/app`. Vercel cold starts, Supabase latency and low-end Android performance are not measured by this browser audit.

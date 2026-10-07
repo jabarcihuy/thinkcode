@@ -77,7 +77,7 @@ export function DatabaseQueryLab({
   prompt = "Prediksi hasilnya, ubah query, lalu jalankan pada data latihan.",
   starterSql: suppliedStarterSql,
   datasetId = "campus",
-  lessonId, userId,
+  lessonId, userId, compact = false,
 }: {
   title?: string;
   prompt?: string;
@@ -85,6 +85,7 @@ export function DatabaseQueryLab({
   datasetId?: DatasetId;
   lessonId?: string;
   userId?: string;
+  compact?: boolean;
 }) {
   const dataset = getDataset(datasetId);
   const starterSql = suppliedStarterSql ?? dataset.starterSql;
@@ -176,9 +177,9 @@ export function DatabaseQueryLab({
   const traceCanRun = run?.type === "query";
   const resultCount = run?.type === "query" ? run.rows.length : run?.affectedRows;
 
-  return <section id="database-lab" aria-label="Praktik query basis data" className="mt-10 scroll-mt-24 border-y border-border py-8">
-    <h2 className="text-2xl font-semibold tracking-tight">Praktik di lab</h2>
-    <div className="mt-7 space-y-10">
+  return <section id="database-lab" aria-label="Praktik query basis data" className={compact ? "scroll-mt-6 py-4" : "mt-10 scroll-mt-24 border-y border-border py-8"}>
+    {!compact && <h2 className="text-2xl font-semibold tracking-tight">Praktik di lab</h2>}
+    <div className={compact ? "space-y-6" : "mt-7 space-y-10"}>
       <section id="lab-tables" aria-labelledby="database-visual-title" className="min-w-0 scroll-mt-24">
         <div className="flex flex-wrap items-baseline justify-between gap-3"><h3 id="database-visual-title" className="text-lg font-semibold">Tabel dan relasi</h3>{resultCount !== undefined && <span className="text-xs text-muted-foreground">{resultCount} {run?.type === "query" ? "baris hasil" : "record terdampak"}</span>}</div>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">{run?.type === "mutation-preview" ? "Tinjau record sebelum menerapkan perubahan." : run?.type === "mutation-result" ? "Data tabel sudah diperbarui." : "Pilih tabel dan ikuti key sebelum mencoba query."}</p>
@@ -206,9 +207,9 @@ export function DatabaseQueryLab({
         <label htmlFor="database-sql" className="sr-only">Query SQL pada data latihan</label>
         <textarea id="database-sql" value={queryText} onChange={(event) => { setQueryText(event.target.value); setRun(null); setQueryError(null); setVisualStep(0); }}
           onKeyDown={(event) => { if ((event.ctrlKey || event.metaKey) && event.key === "Enter") { event.preventDefault(); void runQuery(); } }}
-          maxLength={4_096} spellCheck={false} autoCapitalize="off" autoCorrect="off" disabled={pending || draft.status === "loading" || Boolean(preview)} rows={7}
+          maxLength={4_096} spellCheck={false} autoCapitalize="off" autoCorrect="off" disabled={pending || draft.status === "loading" || Boolean(preview)} rows={compact ? 5 : 7}
           className="mt-3 min-h-40 w-full resize-y rounded-md border border-input bg-code-surface p-4 font-mono text-base leading-6 text-code-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-70 sm:text-sm" />
-        {userId && <div className="mt-3"><DraftStatus status={draft.status} restored={draft.restored} onRetry={() => draft.save(draft.value)} onReset={draft.clear} /><p className="mt-1 text-xs leading-5 text-muted-foreground">{guest ? "Query dan prediksi hanya tersedia selama halaman ini terbuka." : "Draf menyimpan query dan prediksi. Saat halaman dibuka ulang, data kembali ke kondisi awal; jalankan query untuk melihat hasil."}</p></div>}
+        {userId && <div className="mt-3"><DraftStatus status={draft.status} restored={draft.restored} onRetry={() => draft.save(draft.value)} onReset={draft.clear} /><p className={`${compact ? "hidden" : ""} mt-1 text-xs leading-5 text-muted-foreground`}>{guest ? "Query dan prediksi hanya tersedia selama halaman ini terbuka." : "Draf menyimpan query dan prediksi. Saat halaman dibuka ulang, data kembali ke kondisi awal; jalankan query untuk melihat hasil."}</p></div>}
         <p className="mt-2 text-xs leading-5 text-muted-foreground">{isMutation ? "Pratinjau sebelum menerapkan perubahan." : "SELECT membaca data tanpa mengubahnya."} Ctrl/⌘ + Enter untuk Run.</p>
 
         <label htmlFor="database-prediction" className="mt-6 block text-sm font-semibold">Sebelum Run, berapa {isMutation ? "record yang akan berubah" : "baris hasilnya"}?</label>
@@ -238,7 +239,7 @@ export function DatabaseQueryLab({
       </section>
     </div>
 
-    {lessonId && <TutorPanel lessonId={lessonId} sourceCode={queryText} visibleOutput={run ? formatRun(run) : ""} />}
+    {lessonId && <div id="lab-tutor" className="scroll-mt-6"><TutorPanel lessonId={lessonId} sourceCode={queryText} visibleOutput={run ? formatRun(run) : ""} /></div>}
     <p className="mt-8 border-t border-border pt-5 text-xs leading-5 text-muted-foreground">Lab memakai data fiktif lokal pada SQLite. Query tidak terhubung ke Supabase atau data akun. Reset data memulai ulang sesi latihan.</p>
   </section>;
 }

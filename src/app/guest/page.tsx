@@ -8,7 +8,7 @@ import {
   exitGuest,
   cancelGuestTest,
 } from "@/features/guest/server/actions";
-import { SqlabWorkspace } from "@/features/sqlab/components/sqlab-workspace";
+import { LazySqlabWorkspace } from "@/features/sqlab/components/lazy-sqlab-workspace";
 import { TutorPanel } from "@/features/ai/components/tutor-panel";
 export default async function GuestPage({
   searchParams,
@@ -35,7 +35,7 @@ export default async function GuestPage({
             Susun skema, isi tabel, dan coba query. Perubahan hilang ketika
             meninggalkan halaman.
           </p>
-          <SqlabWorkspace userId={guest.id} />
+          <LazySqlabWorkspace userId={guest.id} />
         </>
       ) : view === "chatbot" ? (
         <>

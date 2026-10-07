@@ -30,10 +30,10 @@ export function ModelDiagram({ draft }: { draft: SchemaDraft }) {
   return <section aria-labelledby={titleId}>
     <h2 id={titleId} className="text-lg font-semibold">Diagram skema</h2>
     <div className="mt-4 flex flex-wrap items-center gap-2">
-      <Button type="button" variant="outline" className="px-3" aria-label="Perkecil diagram" disabled={zoom <= 0.75} onClick={() => setZoom((value) => Math.max(0.75, value - 0.25))}><Minus size={16} aria-hidden="true" /></Button>
+      <Button type="button" variant="outline" className="min-w-11 px-3" aria-label="Perkecil diagram" disabled={zoom <= 0.75} onClick={() => setZoom((value) => Math.max(0.75, value - 0.25))}><Minus size={16} aria-hidden="true" /></Button>
       <span className="min-w-11 text-center text-sm tabular-nums" aria-live="polite">{Math.round(zoom * 100)}%</span>
-      <Button type="button" variant="outline" className="px-3" aria-label="Perbesar diagram" disabled={zoom >= 1.5} onClick={() => setZoom((value) => Math.min(1.5, value + 0.25))}><Plus size={16} aria-hidden="true" /></Button>
-      <Button type="button" variant="ghost" className="px-3" onClick={() => { setZoom(1); viewport.current?.scrollTo({ top: 0, left: 0 }); }}><RotateCcw size={15} aria-hidden="true" />Atur ulang</Button>
+      <Button type="button" variant="outline" className="min-w-11 px-3" aria-label="Perbesar diagram" disabled={zoom >= 1.5} onClick={() => setZoom((value) => Math.min(1.5, value + 0.25))}><Plus size={16} aria-hidden="true" /></Button>
+      <Button type="button" variant="ghost" className="min-w-11 px-3" onClick={() => { setZoom(1); viewport.current?.scrollTo({ top: 0, left: 0 }); }}><RotateCcw size={15} aria-hidden="true" />Atur ulang</Button>
     </div>
     {draft.tables.length > 0 && <div className="mt-4"><Label htmlFor={focusId}>Fokus tabel</Label><Select id={focusId} className="mt-2" value="" onChange={(event) => focus(event.target.value)}><option value="" disabled>Pilih tabel untuk melihat kolomnya</option>{draft.tables.map((table) => <option value={table.id} key={table.id}>{table.name}</option>)}</Select></div>}
     <div ref={viewport} tabIndex={0} role="region" aria-label="Diagram skema, geser untuk menjelajahi tabel" className="mt-4 h-[420px] max-w-full overflow-auto rounded-lg border border-border bg-secondary/40 focus-visible:outline-2 focus-visible:outline-ring lg:h-[560px]">

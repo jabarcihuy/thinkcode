@@ -32,3 +32,10 @@ Landing and dashboard must reflow at 320px and 200% text size. Use bounded grid 
 
 ## SQLab workspace
 Mobile has four labeled tabs: Skema, Data, Query, AI. Schema forms precede the 2D diagram; SQL precedes result tables. Desktop may place schema forms beside the diagram. Reuse the existing modeling forms, key labels, zoom and focus controls. Data editing uses labeled per-column inputs and accessible scroll regions. AI drafts show schema and sample records before explicit replacement. Keep reset and replacement confirmations inline; label local-only storage clearly.
+
+
+## Mobile Lab density and shell
+
+Lab Materi uses a short introduction, compact Tabel/Query/Hasil/Latihan links, and a collapsed exploration disclosure before the core task. The opened lab remains vertical: table → query → output. Do not remove full question context to shorten the page. SQLab stays a separate playground.
+
+Icon controls, navigation links and auth links use a minimum 44px touch area. Table scrollers expose a named keyboard-focusable region. The bottom navigation adjusts to font scaling and safe-area insets; mobile text entry temporarily hides it. Chat follows new messages only while the learner is near the bottom; scrolling up preserves the reading position and reveals a latest-message action.

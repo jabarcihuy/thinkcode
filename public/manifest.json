@@ -3,7 +3,7 @@
   "short_name": "Quethink",
   "description": "Pelajari tabel, relasi, dan query SQL dengan data latihan yang dapat diamati langsung.",
   "id": "/",
-  "start_url": "/",
+  "start_url": "/app",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",

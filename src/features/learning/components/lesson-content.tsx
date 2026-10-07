@@ -6,7 +6,7 @@ import { youtubeVideoId } from "@/features/learning/video-url";
 export function LessonContent({ content }: { content: string }) {
   return <div className="max-w-[72ch] text-base leading-8 text-foreground">
     <ReactMarkdown remarkPlugins={[remarkGfm]} components={{
-      table: ({ children }) => <div className="mb-6 max-w-full overflow-x-auto rounded-md border border-border"><table className="w-full text-left text-sm leading-6">{children}</table></div>,
+      table: ({ children }) => <div role="region" aria-label="Tabel materi. Geser untuk melihat kolom lainnya." tabIndex={0} className="focus-visible:outline-2 focus-visible:outline-ring mb-6 max-w-full overflow-x-auto rounded-md border border-border"><table className="w-full text-left text-sm leading-6">{children}</table></div>,
       th: ({ children }) => <th className="border-b border-border bg-muted px-3 py-2 font-semibold">{children}</th>,
       td: ({ children }) => <td className="border-b border-border px-3 py-2">{children}</td>,
       h2: ({ children }) => <h2 className="mb-4 mt-10 text-2xl font-semibold tracking-tight first:mt-0">{children}</h2>,

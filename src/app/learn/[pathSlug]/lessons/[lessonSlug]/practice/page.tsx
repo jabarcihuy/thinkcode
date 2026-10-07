@@ -9,8 +9,7 @@ import { CorePreparation } from "@/features/learning/components/core-preparation
 import { LessonOutline } from "@/features/learning/components/lesson-outline";
 import { LessonStateLabel } from "@/features/learning/components/lesson-state";
 import { getAccessibleMaterial } from "@/features/learning/server/material-access";
-import { DatasetLabSwitcher } from "@/features/database/components/dataset-lab-switcher";
-import { CampusDataPreview } from "@/features/database/components/campus-data-preview";
+import { LabExploration } from "@/features/learning/components/lab-exploration";
 import { lessonScenarios } from "@/features/database/domain/lesson-scenarios";
 import { getLessonLabPrompt } from "@/features/database/domain/lesson-lab-guidance";
 import { getPublicExercises } from "@/features/practice/data/exercise-repository";
@@ -30,19 +29,17 @@ export default async function PracticePage({ params }: { params: Promise<{ pathS
   const exercises = assessmentActive ? [] : (await getPublicExercises(lesson.id, account.userId)).filter((exercise) => exercise.isRequired);
   const isRelation = ["membaca-bentuk-data", "key-dan-hubungan-antar-tabel"].includes(lessonSlug);
   const outline = <LessonOutline hasLab={Boolean(material.exampleSql)} hasDataExplorer={isRelation} exercises={exercises.map(({ id, title }) => ({ id, title }))} />;
-  return <div className="min-h-dvh pb-[calc(5rem+env(safe-area-inset-bottom))] lg:pb-0"><LearningHeader account={account} />
+  return <div className="mobile-page-content min-h-dvh lg:pb-0"><LearningHeader account={account} />
     <main id="main-content" className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-12">
       <Link href={lessonHref(pathSlug, lessonSlug)} className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-accent hover:underline"><ArrowLeft size={16} aria-hidden="true" />Baca materi {index + 1}</Link>
-      <h1 className="mt-6 text-3xl font-semibold tracking-tight">Lab Materi · {lesson.title}</h1>
+      <h1 className="mt-3 text-2xl font-semibold tracking-tight">Lab Materi · {lesson.title}</h1>
       <div className="mt-3"><LessonStateLabel state={lesson.state} /></div>
       {assessmentActive ? <section className="mt-8 border-t border-border pt-6"><h2 className="text-xl font-semibold">Assessment sedang berlangsung</h2><p className="mt-3 text-muted-foreground">Selesaikan tes yang sedang berlangsung untuk melanjutkan latihan.</p><Button asChild className="mt-4"><Link href="/assessments">Kembali ke assessment</Link></Button></section> : <>
-        <div className="mt-6 lg:hidden"><details className="rounded-md border border-border px-4 py-2"><summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold">Daftar isi Lab</summary>{outline}</details></div>
-        <div className="mt-8 grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_16rem]">
+        <div className="mt-5 grid items-start gap-7 lg:grid-cols-[minmax(0,1fr)_16rem]">
           <div className="min-w-0">
             {!lesson.readAt && <div className="mb-6 rounded-lg border border-border bg-white p-5"><h2 className="font-semibold">Baca materi terlebih dahulu</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Eksplorasi Lab boleh dicoba. Tandai Selesai dibaca sebelum memeriksa latihan inti.</p><Button asChild variant="outline" className="mt-4"><Link href={lessonHref(pathSlug, lessonSlug)}>Kembali membaca</Link></Button></div>}
-            {isRelation && <CampusDataPreview />}
-            {material.exampleSql && <DatasetLabSwitcher userId={account.userId} key={lesson.id} scenarios={lessonScenarios(lessonSlug, { title: `Praktik: ${lesson.title}`, prompt: getLessonLabPrompt(material.exampleSql, lessonSlug), sql: material.exampleSql })} lessonId={lesson.id} />}
-            <section id="lesson-practice" aria-label="Latihan materi" className="mt-10 scroll-mt-24 border-t border-border pt-7"><h2 className="text-2xl font-semibold">Latihan inti</h2><p className="mt-3 text-sm leading-6 text-muted-foreground">Lulus latihan inti untuk menuntaskan materi. Kamu boleh mencoba lagi tanpa penalti.</p><CorePreparation slug={lessonSlug} />{exercises.length ? exercises.map((exercise) => <ExerciseRenderer reviewHref={lessonHref(pathSlug, lessonSlug)} userId={account.userId} key={exercise.id} exercise={exercise} pathSlug={pathSlug} />) : <p className="mt-6 text-muted-foreground">Latihan sedang disiapkan.</p>}</section>
+            <LabExploration key={lesson.id} userId={account.userId} lessonId={lesson.id} scenarios={material.exampleSql ? lessonScenarios(lessonSlug, { title: lesson.title, prompt: getLessonLabPrompt(material.exampleSql, lessonSlug), sql: material.exampleSql }) : undefined} />
+            <section id="lesson-practice" aria-label="Latihan materi" className="mt-5 scroll-mt-6 border-t border-border pt-5"><h2 className="text-2xl font-semibold">Latihan inti</h2><p className="mt-3 text-sm leading-6 text-muted-foreground">Lulus latihan inti untuk menuntaskan materi. Bebas mencoba lagi.</p><CorePreparation slug={lessonSlug} />{exercises.length ? exercises.map((exercise) => <ExerciseRenderer reviewHref={lessonHref(pathSlug, lessonSlug)} userId={account.userId} key={exercise.id} exercise={exercise} pathSlug={pathSlug} />) : <p className="mt-6 text-muted-foreground">Latihan sedang disiapkan.</p>}</section>
             {lesson.state === "COMPLETED" && <section className="mt-8 rounded-lg bg-secondary p-5"><h2 className="font-semibold">Materi tuntas</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Bacaan dan latihan inti sudah selesai. Lanjutkan saat kamu siap.</p><Button asChild className="mt-4 w-full sm:w-auto"><Link href={overview.lessons[index + 1] ? lessonHref(pathSlug, overview.lessons[index + 1]!.slug) : "/post-test"}>{overview.lessons[index + 1] ? "Baca materi berikutnya" : "Buka post-test"}</Link></Button></section>}
             {isRelation && <TutorPanel lessonId={lesson.id} />}
           </div>

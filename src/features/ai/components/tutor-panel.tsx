@@ -1,7 +1,7 @@
 "use client";
 
 import { useGuestMode } from "@/features/guest/components/guest-mode";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Lightbulb, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { TutorAction } from "@/features/ai/domain/tutor-context";
@@ -29,8 +29,18 @@ export function TutorPanel({
 }) {
   const guest = useGuestMode();
   const endpoint = guest ? "/api/guest/tutor" : "/api/ai/tutor";
+  const list = useRef<HTMLOListElement>(null);
+  const following = useRef(true);
+  const [newMessage, setNewMessage] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [messages, setMessages] = useState<TutorMessage[]>([]);
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      if (following.current && list.current) list.current.scrollTop = list.current.scrollHeight;
+      else setNewMessage(true);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [messages]);
   const [draft, setDraft] = useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -116,17 +126,23 @@ export function TutorPanel({
         <div className="flex flex-wrap gap-2 pb-2">{secondaryActions.map(({ action, label }) => <Button key={action} type="button" size="sm" variant="ghost" disabled={disabled} onClick={() => void ask(action)}>{label}</Button>)}</div>
       </details>}
     </>}
-    <ol aria-live="polite" className="mt-4 max-h-80 space-y-3 overflow-y-auto">
+    <ol ref={list} aria-label="Percakapan tutor" aria-busy={pending} onScroll={() => {
+      const element = list.current;
+      if (!element) return;
+      following.current = element.scrollHeight - element.scrollTop - element.clientHeight < 48;
+      if (following.current) setNewMessage(false);
+    }} aria-live="polite" className="mt-4 max-h-80 space-y-3 overflow-y-auto">
       {!loadingHistory && !unavailable && messages.length === 0 && <li className="max-w-[75ch] rounded-md bg-muted px-4 py-3 text-sm leading-6 text-muted-foreground">Pilih bantuan atau tanyakan konsep yang sedang kamu pelajari.</li>}
       {messages.map((message, index) => <li key={`${index}-${message.role}`} className={`max-w-[75ch] whitespace-pre-wrap rounded-md px-4 py-3 text-sm leading-6 ${message.role === "USER" ? "ml-auto bg-secondary text-secondary-foreground" : "bg-muted text-foreground"}`}>
         <p className="mb-1 text-xs font-semibold">{message.role === "USER" ? "Kamu" : "Quethink Tutor"}</p>
         {message.content || (pending && index === messages.length - 1 ? "Menyiapkan petunjuk…" : "")}
       </li>)}
     </ol>
+    {newMessage && <Button type="button" variant="outline" size="sm" className="mt-2" onClick={() => { following.current = true; if (list.current) list.current.scrollTop = list.current.scrollHeight; setNewMessage(false); }}>Lihat pesan terbaru</Button>}
     {error && <p role="alert" className="mt-3 text-sm text-destructive">{error}</p>}
     {!unavailable && <form onSubmit={submit} className="mt-4 flex items-end gap-2">
       <label className="sr-only" htmlFor={`tutor-message-${exerciseId ?? lessonId}`}>Tulis pertanyaan untuk AI Tutor</label>
-      <textarea id={`tutor-message-${exerciseId ?? lessonId}`} value={draft} maxLength={1200} rows={2} onChange={(event) => setDraft(event.target.value)} placeholder={hasExecutionContext ? "Tanyakan tentang tabel, query, atau hasilnya…" : "Tanyakan konsep pada lesson ini…"} disabled={disabled} className="min-h-12 flex-1 resize-y rounded-md border border-input bg-background px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-ring disabled:opacity-60 sm:text-sm" />
+      <textarea id={`tutor-message-${exerciseId ?? lessonId}`} value={draft} maxLength={1200} rows={2} onChange={(event) => setDraft(event.target.value)} placeholder={hasExecutionContext ? "Tanyakan tentang tabel, query, atau hasilnya…" : "Tanyakan konsep pada lesson ini…"} disabled={disabled} className="min-h-12 min-w-0 flex-1 resize-y rounded-md border border-input bg-background px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-ring disabled:opacity-60 sm:text-sm" />
       <Button type="submit" disabled={disabled || !draft.trim()} aria-label="Kirim pertanyaan"><Send size={16} aria-hidden="true" />Kirim</Button>
     </form>}
     <p className="mt-2 text-xs text-muted-foreground">{hasExecutionContext ? "Tutor menerima konteks lesson, query SQL, dan hasil yang terlihat. Gunakan Run pada lab untuk mencoba query." : "Tutor memakai konteks lesson aktif. Untuk membahas hasil query, buka Lab Materi terkait."}</p>

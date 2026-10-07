@@ -23,7 +23,7 @@ plugins {
 def twaManifest = [
     applicationId: 'com.jabarcihuy.quethink',
     hostName: 'www.barlabs.my.id', // The domain being opened in the TWA.
-    launchUrl: '/', // The start path for the TWA. Must be relative to the domain.
+    launchUrl: '/app', // The start path for the TWA. Must be relative to the domain.
     name: 'Quethink', // The application name.
     launcherName: 'Quethink', // The name shown on the Android Launcher.
     themeColor: '#4F46E5', // The color used for the status bar.

@@ -76,11 +76,14 @@ export async function guestExercises(
   const catalog = await guestCatalog();
   if (!catalog.lessons.some((l) => l.id === lessonId)) return [];
   const { data, error } = await createPrivilegedClient()
-    .from("published_exercise_catalog")
+    // The authenticated catalog checks auth.uid(); a named guest has no Supabase user.
+    // Catalog membership above verifies the published path/chapter/lesson.
+    .from("exercises")
     .select(
       "id, lesson_id, type, title, prompt, starter_code, public_config, position, is_required",
     )
     .eq("lesson_id", lessonId)
+    .eq("is_published", true)
     .eq("is_required", true)
     .order("position");
   if (error) throw error;

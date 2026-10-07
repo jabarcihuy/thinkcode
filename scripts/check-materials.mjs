@@ -52,7 +52,8 @@ try {
     }
   }
   browser = await chromium.launch({ executablePath: "/usr/bin/chromium", headless: true, args: ["--no-sandbox"] });
-  const context = await browser.newContext({ viewport: { width: 360, height: 800 } });
+  // PDF failure uses network interception; service-worker behavior has a separate test.
+  const context = await browser.newContext({ serviceWorkers: "block", viewport: { width: 360, height: 800 } });
   await context.addCookies([...jar].map(([name, value]) => ({ name, value, url: site })));
   const page = await context.newPage(), errors = [];
   page.on("pageerror", (error) => errors.push(error.message));

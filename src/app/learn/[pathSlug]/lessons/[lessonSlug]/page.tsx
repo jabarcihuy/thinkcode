@@ -17,7 +17,7 @@ export default async function LessonPage({ params }: { params: Promise<{ pathSlu
   const { account, overview, lesson, material, index } = access;
   const previous = overview.lessons[index - 1];
   const next = overview.lessons[index + 1];
-  return <div className="min-h-dvh pb-[calc(5rem+env(safe-area-inset-bottom))] lg:pb-0">
+  return <div className="mobile-page-content min-h-dvh lg:pb-0">
     <LearningHeader account={account} />
     <main id="main-content" className="mx-auto max-w-3xl px-5 py-8 sm:px-8 sm:py-12">
       <Link className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-accent hover:underline" href={learningPathHref(pathSlug)}><ArrowLeft size={16} aria-hidden="true" />Semua materi</Link>

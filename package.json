@@ -27,7 +27,8 @@
     "test:ui:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-public-dashboard-ui.mjs",
     "test:sqlab:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-schema-builder.mjs",
     "test:guest:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-guest-mode.mjs",
-    "audit:mobile": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/audit-mobile-pages.mjs"
+    "audit:mobile": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/audit-mobile-pages.mjs",
+    "test:mobile-shell:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-mobile-shell.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

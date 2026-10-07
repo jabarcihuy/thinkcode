@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async headers() {
+    return [{ source: "/sw.js", headers: [{ key: "Cache-Control", value: "no-cache, no-store, must-revalidate" }] }];
+  },
   turbopack: { root: process.cwd() },
   serverExternalPackages: ["quickjs-emscripten", "@sqlite.org/sqlite-wasm"],
   outputFileTracingIncludes: {

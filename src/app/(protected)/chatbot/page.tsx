@@ -17,7 +17,7 @@ export default async function ChatbotPage() {
     ?? null;
 
   return <main id="main-content" className="mx-auto max-w-4xl px-5 py-10 sm:px-8 sm:py-14">
-    <Link className="text-sm font-medium text-accent hover:underline" href="/dashboard">Dashboard</Link>
+    <Link className="inline-flex min-h-11 items-center text-sm font-medium text-accent hover:underline" href="/dashboard">Dashboard</Link>
     <div className="mt-6 flex items-start gap-3">
       <MessageCircle size={21} className="mt-1 text-accent" aria-hidden="true" />
       <div>

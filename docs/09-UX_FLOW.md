@@ -36,7 +36,7 @@ Reading is a single readable column on every viewport. Practice is separate: Rel
 
 Mobile: Relasi keeps sample tables in a vertical, horizontally scrollable table layout; Read/Write use focused tabs for Materi, Query, Hasil, and Visualisasi. Do not shrink a multi-panel desktop layout onto a phone.
 
-Within Relasi, keep **concept → sample tables/records → key relationships → practice**. In Read/Write, keep **tables/data → SQL query → result or changed data**. Practice prompts and answer controls are stacked vertically. Only practice has a lab/exercise outline: sidebar on desktop and collapsible on mobile. Reading has no submateri outline.
+Within Relasi, keep **concept → sample tables/records → key relationships → practice**. In Read/Write, keep **tables/data → SQL query → result or changed data**. Practice prompts and answer controls are stacked vertically. Only practice has a lab/exercise outline: sidebar on desktop and compact section links on mobile. Lab Materi opens with the core task; table/query exploration is a collapsed disclosure. Opening a section link expands exploration; closing it preserves the query during that page session. Reading has no submateri outline.
 
 Read lessons show the actual SQLite result rows. Write lessons show a target preview when applicable, the affected-row count, and the resulting table state. `UPDATE` and `DELETE` require an explicit confirmation after the learner reviews target rows. Reset restores the known seed and clearly discards local practice changes.
 
@@ -81,3 +81,11 @@ Users may enter `/guest/start` with only a display name. This creates a signed H
 Guest answers, schema/data drafts and results are memory-only, disappear on leaving/reloading their workspace, and never create lesson_progress, exercise_attempts, AI conversations, assessment_sessions or assessment_results. Guest tests are graded by the existing trusted server adapters; private answer/fixture fields are never serialized. Only transient test mode and hint level are kept in the signed session cookie. AI/Lab helpers block during an active demo test. A signed-in user with an active official test is also blocked from guest endpoints. Guest mode never grants admin access.
 
 The session lasts at most eight hours (session cookie; explicit exit clears it). Signing uses a purpose-specific HMAC with the existing server-only Supabase secret. Published content reads use narrowly projected server queries, never expose the privileged client. Same-origin mutations, bounded inputs, output limits, per-session/IP/process request caps guard the demo. Quotas are process-local; multi-instance production deployments require an upstream shared rate limit/WAF for reliable global AI cost protection. No database migration or anonymous Supabase sign-in configuration is required.
+
+
+## Mobile shell and installed-app entry
+
+- Five bottom destinations remain. Menu expands upward with the actual bar height and a scrollable bounded panel; guest pages show exactly one active destination.
+- On coarse-pointer mobile devices, the bottom bar hides while typing into text fields and returns after blur. The viewport requests `interactive-widget=resizes-content`; physical Android keyboard behavior still needs device testing.
+- The PWA/TWA launch URL is `/app`: an authenticated account resumes Dashboard, a guest resumes its demo/test, and an unauthenticated visitor sees Login. Destination authorization remains server-side.
+- A production service worker caches only the public offline fallback. App pages, RSC, API responses, SQL results and user progress are network-only. Offline full-page navigation offers retry; it does not claim offline learning or submission support.

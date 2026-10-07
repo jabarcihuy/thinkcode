@@ -14,7 +14,7 @@ export default function GuestStartPage() {
       <GuestNameForm />
       <p className="mt-5 text-center text-sm text-muted-foreground">
         Ingin menyimpan progres?{" "}
-        <Link href="/register" className="font-semibold text-primary underline">
+        <Link href="/register" className="inline-flex min-h-11 items-center font-semibold text-primary underline">
           Buat akun
         </Link>
       </p>

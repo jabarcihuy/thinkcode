@@ -127,3 +127,10 @@ Lalu deploy ulang `assetlinks.json` ke web. Fingerprint ada di Play Console → 
 - **Keystore = identitas permanen app.** Simpan `keystore/quethink.keystore` + password di tempat aman (password manager / backup offline). Jika hilang, tidak bisa update app di Play Store lagi.
 - Login Supabase & semua fitur web (SQLite WASM, PDF, AI tutor) jalan normal di TWA karena semuanya berjalan di Chrome yang sama.
 - `barlabs.my.id` (non-www) redirect 308 ke `www.barlabs.my.id` — APK diarahkan langsung ke `www` untuk menghindari masalah redirect di TWA.
+
+
+## Mobile shell update — 7 Oktober 2026
+
+Source manifest dan Gradle kini memakai launch URL `/app`, yang memeriksa sesi server lalu menuju Dashboard, mode tamu, atau Login. APK lama tetap memakai URL sebelumnya sampai di-rebuild dan ditandatangani kembali. Binary APK/AAB tidak dibangun ulang pada perubahan web ini.
+
+Web production mendaftarkan service worker untuk layar publik saat koneksi terputus saja. Materi, API, hasil tes, token dan progress tidak di-cache. Uji keyboard Android, tombol Back, cutout, TalkBack dan unduhan PDF pada perangkat fisik sebelum merilis ulang APK.

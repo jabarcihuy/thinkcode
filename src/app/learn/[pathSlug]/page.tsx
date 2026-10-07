@@ -17,7 +17,7 @@ export default async function LearningPathPage({ params }: { params: Promise<{ p
   if (!overview) notFound();
   const current = overview.metrics.currentLesson;
 
-  return <div className="min-h-dvh pb-[calc(5rem+env(safe-area-inset-bottom))] lg:pb-0">
+  return <div className="mobile-page-content min-h-dvh lg:pb-0">
     <LearningHeader account={account} />
     <main id="main-content" className="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16">
       <div className="max-w-3xl">

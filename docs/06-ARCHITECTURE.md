@@ -97,3 +97,12 @@ Users may enter `/guest/start` with only a display name. This creates a signed H
 Guest answers, schema/data drafts and results are memory-only, disappear on leaving/reloading their workspace, and never create lesson_progress, exercise_attempts, AI conversations, assessment_sessions or assessment_results. Guest tests are graded by the existing trusted server adapters; private answer/fixture fields are never serialized. Only transient test mode and hint level are kept in the signed session cookie. AI/Lab helpers block during an active demo test. A signed-in user with an active official test is also blocked from guest endpoints. Guest mode never grants admin access.
 
 The session lasts at most eight hours (session cookie; explicit exit clears it). Signing uses a purpose-specific HMAC with the existing server-only Supabase secret. Published content reads use narrowly projected server queries, never expose the privileged client. Same-origin mutations, bounded inputs, output limits, per-session/IP/process request caps guard the demo. Quotas are process-local; multi-instance production deployments require an upstream shared rate limit/WAF for reliable global AI cost protection. No database migration or anonymous Supabase sign-in configuration is required.
+
+
+## Navigation performance and mobile fallback
+
+Learning data remains authenticated/RLS-protected and request-scoped through React `cache`; no shared cache of user progress is introduced. The baseline RPC runs in parallel with the chapter query. `/learn/loading.tsx` supplies a partial prefetch/loading boundary. Lab table/query components load dynamically on the first expansion, then remain mounted so closing the panel does not erase the current query. Guest SQLab loads its large workspace only when the SQLab view is selected.
+
+Development retains Webpack because the installed SQLite WASM package's dynamic Worker URL fails Turbopack resolution. Use `npm run build` followed by `npm run start` to test production navigation locally; first-visit development compilation is not representative of Vercel. Network latency to Supabase and cold server invocations still affect data readiness.
+
+Installed-app entry is `/app`; root metadata links the static web manifest. The only service-worker cache is the public offline fallback described in docs/11-SECURITY.md. No offline course/assessment queue exists.

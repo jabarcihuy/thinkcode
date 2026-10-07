@@ -19,11 +19,15 @@ async function loadOverview(pathSlug: string, userId: string | null): Promise<Le
   if (pathError) throw pathError;
   if (!path) return null;
 
-  const { data: chapters, error: chapterError } = await supabase
+  const [{ data: chapters, error: chapterError }, baseline] = await Promise.all([
+    supabase
     .from("chapters")
     .select("id, title, description, position, is_required")
     .eq("learning_path_id", path.id)
-    .order("position");
+    .order("position"),
+    userId ? createPrivilegedClient().rpc("course_has_baseline", { p_path_id: path.id, p_user_id: userId }) : Promise.resolve({ data: false, error: null }),
+  ]);
+  if (baseline.error) throw baseline.error;
   if (chapterError) throw chapterError;
 
   const chapterRows = (chapters ?? []) as Chapter[];
@@ -57,8 +61,6 @@ async function loadOverview(pathSlug: string, userId: string | null): Promise<Le
     progress = result.data ?? [];
   }
 
-  const baseline = userId ? await createPrivilegedClient().rpc("course_has_baseline", { p_path_id: path.id, p_user_id: userId }) : { data: false, error: null };
-  if (baseline.error) throw baseline.error;
   const baselineComplete = Boolean(baseline.data);
   const lessonsWithState = deriveLessonStates(outlines, progress, [], baselineComplete);
   return {

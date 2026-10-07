@@ -85,3 +85,16 @@ Buat database lokal sendiri di tab Skema, isi tabel di Data, jalankan SQL di Que
 
 ### Mode tamu
 Pilih **Coba sebagai tamu**, isi nama, lalu coba semua fitur belajar dari `/guest`: materi/PDF, Lab, SQLab, AI dan tes percobaan. Tidak perlu email/password; tidak ada akun Supabase yang dibuat. Semua materi terbuka, sementara jawaban, database percobaan dan hasil hanya hidup di halaman yang sedang dibuka. Tidak ada progres atau nilai resmi yang tersimpan. Keluar dari mode tamu menghapus sesi nama.
+
+### Memeriksa navigasi dengan performa production
+
+`npm run dev` menyusun halaman saat pertama dibuka, sehingga perpindahan pertama dapat lebih lambat. Untuk menguji seperti deployment Vercel, hentikan dev server lalu jalankan:
+
+```bash
+npm run build
+npm run start
+```
+
+Lab Materi memuat eksplorasi SQL ketika panel pertama dibuka. Menutup panel mempertahankan query selama halaman tersebut terbuka. Loading boundary materi memberi respons selama data server dimuat; kecepatan tetap dipengaruhi koneksi ke Supabase dan cold start.
+
+Aplikasi terpasang menggunakan `/app` sebagai pintu masuk sesuai sesi. Perubahan launch URL TWA memerlukan rebuild APK. Fallback offline hanya menawarkan mencoba lagi, tidak menyimpan halaman, token, atau hasil tes.

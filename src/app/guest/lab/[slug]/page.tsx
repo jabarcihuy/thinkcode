@@ -2,8 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { requireGuest } from "@/features/guest/server/session";
 import { guestMaterial, guestExercises } from "@/features/guest/server/catalog";
-import { DatasetLabSwitcher } from "@/features/database/components/dataset-lab-switcher";
-import { CampusDataPreview } from "@/features/database/components/campus-data-preview";
+import { LabExploration } from "@/features/learning/components/lab-exploration";
 import { ExerciseRenderer } from "@/features/practice/components/exercise-renderer";
 import { TutorPanel } from "@/features/ai/components/tutor-panel";
 import { CorePreparation } from "@/features/learning/components/core-preparation";
@@ -31,25 +30,11 @@ export default async function GuestLabPage({
       <p className="mt-4 text-sm text-muted-foreground">
         Mode tamu · jawaban tidak disimpan
       </p>
-      <h1 className="mt-3 text-3xl font-semibold">
+      <h1 className="mt-3 text-2xl font-semibold">
         Lab Materi · {lesson.title}
       </h1>
-      {lesson.exampleSql ? (
-        <DatasetLabSwitcher
-          userId={guest.id}
-          lessonId={lesson.id}
-          scenarios={lessonScenarios(slug, {
-            title: lesson.title,
-            prompt: getLessonLabPrompt(lesson.exampleSql, slug),
-            sql: lesson.exampleSql,
-          })}
-        />
-      ) : (
-        <div className="mt-6">
-          <CampusDataPreview />
-        </div>
-      )}
-      <section className="mt-8">
+      <LabExploration key={lesson.id} userId={guest.id} lessonId={lesson.id} scenarios={lesson.exampleSql ? lessonScenarios(slug, { title: lesson.title, prompt: getLessonLabPrompt(lesson.exampleSql, slug), sql: lesson.exampleSql }) : undefined} />
+      <section id="lesson-practice" className="mt-5 scroll-mt-6 border-t border-border pt-5">
         <h2 className="text-2xl font-semibold">Latihan inti</h2>
         <CorePreparation slug={slug} />
         {exercises.map((exercise) => (
