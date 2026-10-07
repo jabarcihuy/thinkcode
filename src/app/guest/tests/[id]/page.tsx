@@ -1,3 +1,5 @@
+
+import { getText } from "@/i18n/server";
 import { notFound, redirect } from "next/navigation";
 import { requireGuest } from "@/features/guest/server/session";
 import { guestTest } from "@/features/guest/server/catalog";
@@ -9,6 +11,8 @@ export default async function GuestTestPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const tx = await getText();
+
   const guest = await requireGuest();
   const { id } = await params;
   if (guest.activeTest !== id) redirect("/guest?view=tests");
@@ -17,8 +21,7 @@ export default async function GuestTestPage({
   return (
     <main id="main-content" className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
       <p className="mb-5 text-sm font-semibold text-primary">
-        Tes percobaan · hasil tersimpan di perangkat ini
-      </p>
+        {tx("Tes percobaan · hasil tersimpan di perangkat ini")}</p>
       <AssessmentWorkspace
         demo
         sessionId={id}
@@ -30,7 +33,7 @@ export default async function GuestTestPage({
         items={data.items}
       />
       <form action={cancelGuestTest} className="mt-6">
-        <Button variant="outline">Keluar dari tes percobaan</Button>
+        <Button variant="outline">{tx("Keluar dari tes percobaan")}</Button>
       </form>
     </main>
   );

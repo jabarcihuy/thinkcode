@@ -1,3 +1,4 @@
+import { localeFromRequest } from "@/i18n/config";
 import {
   authorizeGuest,
   guestFailure,
@@ -20,7 +21,7 @@ export async function GET(
       title: lesson.title,
       summary: lesson.summary,
       content: lesson.content,
-    });
+    }, localeFromRequest(_request));
     return new Response(Buffer.from(bytes), {
       headers: {
         "content-type": "application/pdf",

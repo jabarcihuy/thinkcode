@@ -1,3 +1,4 @@
+import { localeFromRequest } from "@/i18n/config";
 import { z } from "zod";
 import {
   authorizeGuest,
@@ -30,6 +31,7 @@ export async function POST(request: Request) {
     const draft = await generateSqlabDraft(
       new OpenAICompatibleAIProvider(),
       parsed.data.prompt,
+      localeFromRequest(request),
     );
     return Response.json(
       { draft },

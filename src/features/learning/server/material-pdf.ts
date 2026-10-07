@@ -1,4 +1,10 @@
 import "server-only";
+import type { Locale } from "@/i18n/config";
+import { createTextTranslator } from "@/i18n/translate";
+import uiEn from "@/i18n/messages/ui.en.json";
+import uiId from "@/i18n/messages/ui.id.json";
+import courseEn from "@/i18n/messages/course.en.json";
+import courseId from "@/i18n/messages/course.id.json";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { PDFDocument } from "pdf-lib";
@@ -8,16 +14,18 @@ import { MaterialPdfLayout } from "./pdf-layout";
 
 const fontFiles = Promise.all(["geist-sans/Geist-Regular.ttf", "geist-sans/Geist-Bold.ttf", "geist-mono/GeistMono-Regular.ttf"].map((name) => readFile(join(process.cwd(), "node_modules/geist/dist/fonts", name))));
 
-export async function createMaterialPdf(input: { number: number; title: string; summary: string; content: string }): Promise<Uint8Array> {
+export async function createMaterialPdf(input: { number: number; title: string; summary: string; content: string }, locale: Locale = "id"): Promise<Uint8Array> {
+  const tx = createTextTranslator(locale, locale === "en" ? { ...uiEn, ...courseEn } : { ...uiId, ...courseId });
+  input = { ...input, title: tx(input.title), summary: tx(input.summary), content: tx(input.content) };
   const blocks = parseMaterialDocument(input.content);
   const doc = await PDFDocument.create();
   doc.registerFontkit(fontkit);
   const [bodyBytes, boldBytes, monoBytes] = await fontFiles;
   const [body, bold, mono] = await Promise.all([bodyBytes, boldBytes, monoBytes].map((bytes) => doc.embedFont(bytes, { subset: true })));
-  doc.setTitle(`Materi ${input.number} — ${input.title}`);
+  doc.setTitle(`${locale === "en" ? "Material" : "Materi"} ${input.number} — ${input.title}`);
   doc.setAuthor("Quethink");
-  doc.setLanguage("id-ID");
-  const layout = new MaterialPdfLayout(doc, { body, bold, mono }, `Quethink · Materi ${input.number}`);
+  doc.setLanguage(locale === "en" ? "en-US" : "id-ID");
+  const layout = new MaterialPdfLayout(doc, { body, bold, mono }, `Quethink · ${locale === "en" ? "Material" : "Materi"} ${input.number}`);
   layout.heading(input.title, 22);
   if (input.summary) layout.paragraph(input.summary);
   for (const [index, block] of blocks.entries()) {

@@ -1,15 +1,20 @@
 "use client";
+
+import { useText } from "@/i18n/use-text";
+
 import { useActionState } from "react";
 import { startGuest } from "../server/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 export function GuestNameForm() {
+  const tx = useText();
+
   const [state, action, pending] = useActionState(startGuest, {});
   return (
     <form action={action} className="mt-7 space-y-4">
       <div>
-        <Label htmlFor="guest-name">Nama</Label>
+        <Label htmlFor="guest-name">{tx("Nama")}</Label>
         <Input
           className="mt-2"
           id="guest-name"
@@ -28,11 +33,11 @@ export function GuestNameForm() {
           role="alert"
           className="text-sm text-destructive"
         >
-          {state.error}
+          {tx(state.error)}
         </p>
       )}
       <Button type="submit" disabled={pending} className="w-full">
-        {pending ? "Menyiapkan…" : "Masuk sebagai tamu"}
+        {tx(pending ? "Menyiapkan…" : "Masuk sebagai tamu")}
       </Button>
     </form>
   );

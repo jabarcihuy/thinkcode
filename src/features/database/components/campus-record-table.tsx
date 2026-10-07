@@ -1,5 +1,8 @@
 "use client";
 
+import { useText } from "@/i18n/use-text";
+
+
 import { Check, Circle, Link2 } from "lucide-react";
 import { getDatasetTable } from "../data/datasets";
 import type { PracticeDataset, RecordSelection } from "../data/dataset-types";
@@ -9,12 +12,14 @@ import type { SqliteRow } from "@/features/database/domain/sql-query";
 type Props = { table: string; dataset: PracticeDataset; rows: SqliteRow[]; selection: RecordSelection | null; related: Set<string>; onSelect: (selection: RecordSelection | null) => void };
 
 export function CampusRecordTable({ table, dataset, rows, selection, related, onSelect }: Props) {
+  const tx = useText();
+
   return <>
-    <p className="px-4 py-2 text-xs leading-5 text-muted-foreground sm:hidden">Geser tabel ke samping untuk melihat kolom lainnya.</p>
-    <div role="region" aria-label={`Tabel ${table}. Geser ke samping untuk melihat semua kolom.`} tabIndex={0} className="overflow-x-auto focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring">
+    <p className="px-4 py-2 text-xs leading-5 text-muted-foreground sm:hidden">{tx("Geser tabel ke samping untuk melihat kolom lainnya.")}</p>
+    <div role="region" aria-label={tx(`Tabel ${table}. Geser ke samping untuk melihat semua kolom.`)} tabIndex={0} className="overflow-x-auto focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring">
     <table className="w-full min-w-[26rem] border-collapse text-left text-sm">
-      <caption className="sr-only">Record {table}. Pilih primary key pada record untuk menelusuri relasinya.</caption>
-      <thead><tr className="border-b border-border bg-muted text-muted-foreground">{getDatasetTable(dataset, table).columns.map((column) => <th scope="col" key={column.name} className="px-4 py-3 font-medium"><span className="font-mono text-xs">{column.name}</span>{column.key && <span className="ml-1.5 text-[10px]">{column.key}</span>}</th>)}</tr></thead>
+      <caption className="sr-only">{tx("Record")}{" "}{tx(table)}{tx(". Pilih primary key pada record untuk menelusuri relasinya.")}</caption>
+      <thead><tr className="border-b border-border bg-muted text-muted-foreground">{getDatasetTable(dataset, table).columns.map((column) => <th scope="col" key={column.name} className="px-4 py-3 font-medium"><span className="font-mono text-xs">{column.name}</span>{column.key && <span className="ml-1.5 text-[10px]">{tx(column.key)}</span>}</th>)}</tr></thead>
       <tbody>{rows.map((row) => {
         const record = { table, id: recordId(dataset, table, row) };
         const key = selectionKey(record);
@@ -27,7 +32,7 @@ export function CampusRecordTable({ table, dataset, rows, selection, related, on
         </tr>;
       })}</tbody>
     </table>
-    {rows.length === 0 && <p className="px-4 py-8 text-sm text-muted-foreground">Tidak ada record pada tampilan ini.</p>}
+    {rows.length === 0 && <p className="px-4 py-8 text-sm text-muted-foreground">{tx("Tidak ada record pada tampilan ini.")}</p>}
     </div>
   </>;
 }

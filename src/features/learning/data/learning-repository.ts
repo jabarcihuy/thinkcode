@@ -1,4 +1,5 @@
 import "server-only";
+import { getText } from "@/i18n/server";
 import { createPrivilegedClient } from "@/lib/supabase/privileged";
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
@@ -78,5 +79,6 @@ export async function getLessonMaterial(lessonId: string): Promise<{ content: st
   const supabase = await createClient();
   const { data, error } = await supabase.from("lessons").select("content, example_sql").eq("id", lessonId).maybeSingle();
   if (error) throw error;
-  return data ? { content: data.content, exampleSql: data.example_sql } : null;
+  const tx = await getText();
+  return data ? { content: tx(data.content), exampleSql: data.example_sql } : null;
 }

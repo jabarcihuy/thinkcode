@@ -1,5 +1,9 @@
+
+import { useText } from "@/i18n/use-text";
 import { PageLoading } from "@/components/layout/page-loading";
 
 export default function AssessmentsLoading() {
-  return <PageLoading label="Menyiapkan assessment" />;
+  const tx = useText();
+
+  return <PageLoading label={tx("Menyiapkan assessment")} />;
 }

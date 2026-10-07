@@ -1,5 +1,8 @@
 "use client";
 
+import { useText } from "@/i18n/use-text";
+
+
 import { guestDraftKey } from "@/features/guest/domain/local-progress";
 import { useGuestMode } from "@/features/guest/components/guest-mode";
 import { useMemo, useState, useSyncExternalStore, type FormEvent, type KeyboardEvent, type ReactNode } from "react";
@@ -21,15 +24,19 @@ const tabs = [{ id: "edit", title: "Susun" }, { id: "diagram", title: "Diagram" 
 type TabId = typeof tabs[number]["id"];
 
 export function SchemaBuilder() {
+  const tx = useText();
+
   const [scenarioId, setScenarioId] = useState("library");
   const scenario = MODELING_SCENARIOS.find((item) => item.id === scenarioId)!;
   return <div className="mt-5 sm:mt-8">
-    <div className="max-w-xl"><Label htmlFor="model-scenario">Kasus latihan</Label><Select id="model-scenario" className="mt-2" value={scenario.id} onChange={(event) => setScenarioId(event.target.value)}>{MODELING_SCENARIOS.map((item) => <option value={item.id} key={item.id}>{item.title}</option>)}</Select><p className="mt-2 text-sm leading-6 text-muted-foreground">{scenario.prompt}</p></div>
+    <div className="max-w-xl"><Label htmlFor="model-scenario">{tx("Kasus latihan")}</Label><Select id="model-scenario" className="mt-2" value={scenario.id} onChange={(event) => setScenarioId(event.target.value)}>{MODELING_SCENARIOS.map((item) => <option value={item.id} key={item.id}>{tx(item.title)}</option>)}</Select><p className="mt-2 text-sm leading-6 text-muted-foreground">{tx(scenario.prompt)}</p></div>
     <ScenarioWorkspace key={scenario.id} scenario={scenario} />
   </div>;
 }
 
 export function ScenarioWorkspace({ scenario, storageKey = scenario.id, renderCheck }: { scenario: ModelingScenario; storageKey?: string; renderCheck?: (draft: SchemaDraft) => ReactNode }) {
+  const tx = useText();
+
   const guest = useGuestMode();
   const store = useMemo(() => createDraftStore(guest ? guestDraftKey(storageKey) : storageKey), [storageKey, guest]);
   const raw = useSyncExternalStore(store.subscribe, store.getSnapshot, () => null);
@@ -65,19 +72,19 @@ export function ScenarioWorkspace({ scenario, storageKey = scenario.id, renderCh
 
   return <>
     <div className="mt-4 flex items-center justify-between gap-2 border-y border-border py-2">
-      <p role="status" className="min-w-0 flex-1 text-xs leading-5 text-muted-foreground">{!storageAvailable ? "Draft belum tersimpan; hanya tersedia selama halaman ini terbuka." : raw && parsed ? "Draft tersimpan di browser." : "Draft baru."}<span className="block">{renderCheck ? "Periksa model untuk menuntaskan latihan inti." : "Tidak mengubah progres atau nilai."}</span></p>
-      <Button type="button" variant="ghost" className="shrink-0 px-2" disabled={!draft.tables.length && !raw} onClick={() => setConfirmReset(true)}><RotateCcw size={15} aria-hidden="true" />Mulai ulang</Button>
+      <p role="status" className="min-w-0 flex-1 text-xs leading-5 text-muted-foreground">{tx(!storageAvailable ? "Draft belum tersimpan; hanya tersedia selama halaman ini terbuka." : raw && parsed ? "Draft tersimpan di browser." : "Draft baru.")}<span className="block">{tx(renderCheck ? "Periksa model untuk menuntaskan latihan inti." : "Tidak mengubah progres atau nilai.")}</span></p>
+      <Button type="button" variant="ghost" className="shrink-0 px-2" disabled={!draft.tables.length && !raw} onClick={() => setConfirmReset(true)}><RotateCcw size={15} aria-hidden="true" />{tx("Mulai ulang")}</Button>
     </div>
-    {confirmReset && <div className="mt-4" role="group" aria-label="Konfirmasi mulai ulang"><p className="text-sm leading-6">Kosongkan draft untuk kasus {scenario.title.toLowerCase()}?</p><div className="mt-2 flex gap-2"><Button type="button" variant="outline" onClick={() => { change(emptyDraft()); setError(""); setActiveId(null); setConfirmReset(false); }}>Ya, kosongkan</Button><Button type="button" variant="ghost" onClick={() => setConfirmReset(false)}>Batal</Button></div></div>}
-    {raw && !parsed && <p role="alert" className="mt-4 text-sm leading-6 text-destructive">Draft lama tidak dapat dibaca. Pilih Mulai ulang untuk membuat draft baru.</p>}
-    <div role="tablist" aria-label="Area pembuat skema" onKeyDown={navigateTabs} className="mt-4 grid grid-cols-3 border-b border-border lg:hidden">
-      {tabs.map((item) => <button key={item.id} id={`schema-tab-${item.id}`} type="button" role="tab" aria-selected={tab === item.id} aria-controls={`schema-panel-${item.id}`} tabIndex={tab === item.id ? 0 : -1} onClick={() => setTab(item.id)} className={`min-h-12 border-b-2 px-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-ring ${tab === item.id ? "border-accent text-foreground" : "border-transparent text-muted-foreground"}`}>{item.title}</button>)}
+    {confirmReset && <div className="mt-4" role="group" aria-label={tx("Konfirmasi mulai ulang")}><p className="text-sm leading-6">{tx("Kosongkan draft untuk kasus")}{" "}{tx(scenario.title.toLowerCase())}?</p><div className="mt-2 flex gap-2"><Button type="button" variant="outline" onClick={() => { change(emptyDraft()); setError(""); setActiveId(null); setConfirmReset(false); }}>{tx("Ya, kosongkan")}</Button><Button type="button" variant="ghost" onClick={() => setConfirmReset(false)}>{tx("Batal")}</Button></div></div>}
+    {raw && !parsed && <p role="alert" className="mt-4 text-sm leading-6 text-destructive">{tx("Draft lama tidak dapat dibaca. Pilih Mulai ulang untuk membuat draft baru.")}</p>}
+    <div role="tablist" aria-label={tx("Area pembuat skema")} onKeyDown={navigateTabs} className="mt-4 grid grid-cols-3 border-b border-border lg:hidden">
+      {tabs.map((item) => <button key={item.id} id={`schema-tab-${item.id}`} type="button" role="tab" aria-selected={tab === item.id} aria-controls={`schema-panel-${item.id}`} tabIndex={tab === item.id ? 0 : -1} onClick={() => setTab(item.id)} className={`min-h-12 border-b-2 px-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-ring ${tab === item.id ? "border-accent text-foreground" : "border-transparent text-muted-foreground"}`}>{tx(item.title)}</button>)}
     </div>
     <div className="mt-5 grid min-w-0 items-start gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-12">
       <section id="schema-panel-edit" role="tabpanel" aria-labelledby="schema-tab-edit" className={`min-w-0 ${tab === "edit" ? "block" : "hidden"} lg:block`}>
-        <h2 id="schema-edit-title" className="text-lg font-semibold">Susun tabel</h2>
-        <form onSubmit={addTable} onChange={() => setError("")} className="mt-4"><Label htmlFor="new-table">Tabel baru</Label><div className="mt-2 flex gap-2"><Input id="new-table" name="new-table" required maxLength={30} autoCapitalize="none" spellCheck={false} placeholder="misalnya members" disabled={draft.tables.length >= MAX_TABLES} aria-invalid={!!error} aria-describedby={error ? "new-table-error" : undefined} /><Button type="submit" className="min-w-11 shrink-0 px-3" disabled={draft.tables.length >= MAX_TABLES} aria-label="Tambah tabel"><Plus size={18} aria-hidden="true" /></Button></div><ModelFormError id="new-table-error" message={error} /><p className="mt-2 text-xs leading-5 text-muted-foreground">Gunakan huruf kecil dan garis bawah. Maksimal 6 tabel dan 8 kolom per tabel.</p></form>
-        {table && <><div className="mt-5"><Label htmlFor="edit-table">Tabel yang diedit</Label><Select id="edit-table" className="mt-2" value={table.id} onChange={(event) => setActiveId(event.target.value)}>{draft.tables.map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}</Select></div><TableEditor key={table.id} table={table} draft={draft} change={change} /></>}
+        <h2 id="schema-edit-title" className="text-lg font-semibold">{tx("Susun tabel")}</h2>
+        <form onSubmit={addTable} onChange={() => setError("")} className="mt-4"><Label htmlFor="new-table">{tx("Tabel baru")}</Label><div className="mt-2 flex gap-2"><Input id="new-table" name="new-table" required maxLength={30} autoCapitalize="none" spellCheck={false} placeholder={tx("misalnya members")} disabled={draft.tables.length >= MAX_TABLES} aria-invalid={!!error} aria-describedby={error ? "new-table-error" : undefined} /><Button type="submit" className="min-w-11 shrink-0 px-3" disabled={draft.tables.length >= MAX_TABLES} aria-label={tx("Tambah tabel")}><Plus size={18} aria-hidden="true" /></Button></div><ModelFormError id="new-table-error" message={tx(error)} /><p className="mt-2 text-xs leading-5 text-muted-foreground">{tx("Gunakan huruf kecil dan garis bawah. Maksimal 6 tabel dan 8 kolom per tabel.")}</p></form>
+        {table && <><div className="mt-5"><Label htmlFor="edit-table">{tx("Tabel yang diedit")}</Label><Select id="edit-table" className="mt-2" value={table.id} onChange={(event) => setActiveId(event.target.value)}>{draft.tables.map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}</Select></div><TableEditor key={table.id} table={table} draft={draft} change={change} /></>}
         <RelationEditor draft={draft} change={change} />
       </section>
       <div className="min-w-0">

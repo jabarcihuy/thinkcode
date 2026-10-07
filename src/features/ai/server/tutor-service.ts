@@ -1,4 +1,6 @@
 import "server-only";
+import { getLocale } from "next-intl/server";
+import { resolveLocale } from "@/i18n/config";
 import { createClient } from "@/lib/supabase/server";
 import { createPrivilegedClient } from "@/lib/supabase/privileged";
 import { consumeCodeQuota } from "@/features/workspace/server/rate-limit";
@@ -140,7 +142,7 @@ export async function prepareTutorStream(userId: string, request: TutorRequest, 
     tools.getCurrentLesson(), tools.getCurrentExercise(), tools.getStudentProgress(),
   ]);
   data.snapshot = { ...data.snapshot, lesson: toolContext[0] as TutorSnapshot["lesson"], exercise: toolContext[1] as TutorSnapshot["exercise"], progressSummary: toolContext[2] as string };
-  const messages = createTutorMessages(data.snapshot, data.history, userContent, request.action, hintLevel);
+  const messages = createTutorMessages(data.snapshot, data.history, userContent, request.action, hintLevel, resolveLocale(await getLocale()));
 
   const { error: userSaveError } = await data.admin.from("ai_messages").insert({
     session_id: data.sessionId, role: "USER", content: userContent.slice(0, 1200), metadata: { action: request.action, hintLevel },

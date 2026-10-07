@@ -1,11 +1,16 @@
 "use client";
 
+import { useText } from "@/i18n/use-text";
+
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function StartAssessmentButton({ slug, activeSessionId, label }: { slug: string; activeSessionId: string | null; label: string }) {
+  const tx = useText();
+
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -24,7 +29,7 @@ export function StartAssessmentButton({ slug, activeSessionId, label }: { slug: 
   }
 
   return <div className="mt-4">
-    <Button type="button" disabled={pending} onClick={start}>{pending ? "Menyiapkan assessment…" : activeSessionId ? "Lanjutkan" : label}<ArrowRight size={16} aria-hidden="true" /></Button>
-    {error && <p role="alert" className="mt-2 text-sm text-destructive">{error}</p>}
+    <Button type="button" disabled={pending} onClick={start}>{tx(pending ? "Menyiapkan assessment…" : activeSessionId ? "Lanjutkan" : label)}<ArrowRight size={16} aria-hidden="true" /></Button>
+    {error && <p role="alert" className="mt-2 text-sm text-destructive">{tx(error)}</p>}
   </div>;
 }

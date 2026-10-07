@@ -1,5 +1,5 @@
 /* Network-only app navigation. Cache only the public offline screen. */
-const CACHE = "quethink-offline-v1";
+const CACHE = "quethink-offline-v2";
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.add("/offline.html")).then(() => self.skipWaiting()));
 });

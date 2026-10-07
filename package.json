@@ -28,7 +28,8 @@
     "test:sqlab:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-schema-builder.mjs",
     "test:guest:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-guest-mode.mjs",
     "audit:mobile": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/audit-mobile-pages.mjs",
-    "test:mobile-shell:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-mobile-shell.mjs"
+    "test:mobile-shell:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-mobile-shell.mjs",
+    "test:language:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-language-mode.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
@@ -48,6 +49,7 @@
     "magic-string": "^1.4.2",
     "monaco-editor": "^0.53.0",
     "next": "16.3.6",
+    "next-intl": "4.14.9",
     "pdf-lib": "1.17.1",
     "quickjs-emscripten": "^0.32.0",
     "react": "^19.2.0",

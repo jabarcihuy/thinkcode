@@ -1,5 +1,8 @@
 "use client";
 
+import { useText } from "@/i18n/use-text";
+
+
 import { useGuestMode } from "@/features/guest/components/guest-mode";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Lightbulb, Send } from "lucide-react";
@@ -27,6 +30,8 @@ export function TutorPanel({
   visibleOutput?: string;
   visibleTestResults?: Array<{ position: number; passed: boolean }>;
 }) {
+  const tx = useText();
+
   const guest = useGuestMode();
   const endpoint = guest ? "/api/guest/tutor" : "/api/ai/tutor";
   const list = useRef<HTMLOListElement>(null);
@@ -116,35 +121,35 @@ export function TutorPanel({
 
   const unavailable = Boolean(blockedMessage);
   const disabled = pending || loadingHistory || unavailable;
-  return <section aria-label="AI Tutor" className="mt-10 border-t border-border pt-6">
-    <div className="flex items-start gap-3"><Lightbulb size={19} className="mt-1 text-accent" aria-hidden="true" /><div><h2 className="text-lg font-semibold">AI Tutor</h2><p className="mt-1 text-sm text-muted-foreground">Petunjuk kontekstual untuk membantumu menemukan langkah berikutnya.</p></div></div>
-    {loadingHistory && <p role="status" className="mt-4 text-sm text-muted-foreground">Memeriksa konteks dan riwayat chat…</p>}
-    {blockedMessage ? <p role="status" className="mt-4 rounded-md border border-border px-4 py-3 text-sm leading-6 text-muted-foreground">{blockedMessage}</p> : <>
-      <div className="mt-4 flex flex-wrap gap-2">{primaryActions.map(({ action, label }) => <Button key={action} type="button" size="sm" variant="outline" disabled={disabled} onClick={() => void ask(action)}>{label}</Button>)}</div>
+  return <section aria-label={tx("AI Tutor")} className="mt-10 border-t border-border pt-6">
+    <div className="flex items-start gap-3"><Lightbulb size={19} className="mt-1 text-accent" aria-hidden="true" /><div><h2 className="text-lg font-semibold">{tx("AI Tutor")}</h2><p className="mt-1 text-sm text-muted-foreground">{tx("Petunjuk kontekstual untuk membantumu menemukan langkah berikutnya.")}</p></div></div>
+    {loadingHistory && <p role="status" className="mt-4 text-sm text-muted-foreground">{tx("Memeriksa konteks dan riwayat chat…")}</p>}
+    {blockedMessage ? <p role="status" className="mt-4 rounded-md border border-border px-4 py-3 text-sm leading-6 text-muted-foreground">{tx(blockedMessage)}</p> : <>
+      <div className="mt-4 flex flex-wrap gap-2">{primaryActions.map(({ action, label }) => <Button key={action} type="button" size="sm" variant="outline" disabled={disabled} onClick={() => void ask(action)}>{tx(label)}</Button>)}</div>
       {secondaryActions.length > 0 && <details className="mt-3 text-sm">
-        <summary className="min-h-11 w-fit cursor-pointer py-3 font-medium text-accent focus-visible:outline-2 focus-visible:outline-ring">Pilihan bantuan lainnya</summary>
-        <div className="flex flex-wrap gap-2 pb-2">{secondaryActions.map(({ action, label }) => <Button key={action} type="button" size="sm" variant="ghost" disabled={disabled} onClick={() => void ask(action)}>{label}</Button>)}</div>
+        <summary className="min-h-11 w-fit cursor-pointer py-3 font-medium text-accent focus-visible:outline-2 focus-visible:outline-ring">{tx("Pilihan bantuan lainnya")}</summary>
+        <div className="flex flex-wrap gap-2 pb-2">{secondaryActions.map(({ action, label }) => <Button key={action} type="button" size="sm" variant="ghost" disabled={disabled} onClick={() => void ask(action)}>{tx(label)}</Button>)}</div>
       </details>}
     </>}
-    <ol ref={list} aria-label="Percakapan tutor" aria-busy={pending} onScroll={() => {
+    <ol ref={list} aria-label={tx("Percakapan tutor")} aria-busy={pending} onScroll={() => {
       const element = list.current;
       if (!element) return;
       following.current = element.scrollHeight - element.scrollTop - element.clientHeight < 48;
       if (following.current) setNewMessage(false);
     }} aria-live="polite" className="mt-4 max-h-80 space-y-3 overflow-y-auto">
-      {!loadingHistory && !unavailable && messages.length === 0 && <li className="max-w-[75ch] rounded-md bg-muted px-4 py-3 text-sm leading-6 text-muted-foreground">Pilih bantuan atau tanyakan konsep yang sedang kamu pelajari.</li>}
+      {!loadingHistory && !unavailable && messages.length === 0 && <li className="max-w-[75ch] rounded-md bg-muted px-4 py-3 text-sm leading-6 text-muted-foreground">{tx("Pilih bantuan atau tanyakan konsep yang sedang kamu pelajari.")}</li>}
       {messages.map((message, index) => <li key={`${index}-${message.role}`} className={`max-w-[75ch] whitespace-pre-wrap rounded-md px-4 py-3 text-sm leading-6 ${message.role === "USER" ? "ml-auto bg-secondary text-secondary-foreground" : "bg-muted text-foreground"}`}>
-        <p className="mb-1 text-xs font-semibold">{message.role === "USER" ? "Kamu" : "Quethink Tutor"}</p>
-        {message.content || (pending && index === messages.length - 1 ? "Menyiapkan petunjuk…" : "")}
+        <p className="mb-1 text-xs font-semibold">{tx(message.role === "USER" ? "Kamu" : "Quethink Tutor")}</p>
+        {tx(message.content || (pending && index === messages.length - 1 ? "Menyiapkan petunjuk…" : ""))}
       </li>)}
     </ol>
-    {newMessage && <Button type="button" variant="outline" size="sm" className="mt-2" onClick={() => { following.current = true; if (list.current) list.current.scrollTop = list.current.scrollHeight; setNewMessage(false); }}>Lihat pesan terbaru</Button>}
-    {error && <p role="alert" className="mt-3 text-sm text-destructive">{error}</p>}
+    {newMessage && <Button type="button" variant="outline" size="sm" className="mt-2" onClick={() => { following.current = true; if (list.current) list.current.scrollTop = list.current.scrollHeight; setNewMessage(false); }}>{tx("Lihat pesan terbaru")}</Button>}
+    {error && <p role="alert" className="mt-3 text-sm text-destructive">{tx(error)}</p>}
     {!unavailable && <form onSubmit={submit} className="mt-4 flex items-end gap-2">
-      <label className="sr-only" htmlFor={`tutor-message-${exerciseId ?? lessonId}`}>Tulis pertanyaan untuk AI Tutor</label>
-      <textarea id={`tutor-message-${exerciseId ?? lessonId}`} value={draft} maxLength={1200} rows={2} onChange={(event) => setDraft(event.target.value)} placeholder={hasExecutionContext ? "Tanyakan tentang tabel, query, atau hasilnya…" : "Tanyakan konsep pada lesson ini…"} disabled={disabled} className="min-h-12 min-w-0 flex-1 resize-y rounded-md border border-input bg-background px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-ring disabled:opacity-60 sm:text-sm" />
-      <Button type="submit" disabled={disabled || !draft.trim()} aria-label="Kirim pertanyaan"><Send size={16} aria-hidden="true" />Kirim</Button>
+      <label className="sr-only" htmlFor={`tutor-message-${exerciseId ?? lessonId}`}>{tx("Tulis pertanyaan untuk AI Tutor")}</label>
+      <textarea id={`tutor-message-${exerciseId ?? lessonId}`} value={draft} maxLength={1200} rows={2} onChange={(event) => setDraft(event.target.value)} placeholder={tx(hasExecutionContext ? "Tanyakan tentang tabel, query, atau hasilnya…" : "Tanyakan konsep pada lesson ini…")} disabled={disabled} className="min-h-12 min-w-0 flex-1 resize-y rounded-md border border-input bg-background px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-ring disabled:opacity-60 sm:text-sm" />
+      <Button type="submit" disabled={disabled || !draft.trim()} aria-label={tx("Kirim pertanyaan")}><Send size={16} aria-hidden="true" />{tx("Kirim")}</Button>
     </form>}
-    <p className="mt-2 text-xs text-muted-foreground">{hasExecutionContext ? "Tutor menerima konteks lesson, query SQL, dan hasil yang terlihat. Gunakan Run pada lab untuk mencoba query." : "Tutor memakai konteks lesson aktif. Untuk membahas hasil query, buka Lab Materi terkait."}</p>
+    <p className="mt-2 text-xs text-muted-foreground">{tx(hasExecutionContext ? "Tutor menerima konteks lesson, query SQL, dan hasil yang terlihat. Gunakan Run pada lab untuk mencoba query." : "Tutor memakai konteks lesson aktif. Untuk membahas hasil query, buka Lab Materi terkait.")}</p>
   </section>;
 }

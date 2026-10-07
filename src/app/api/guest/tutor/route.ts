@@ -1,3 +1,5 @@
+import { getLocale } from "next-intl/server";
+import { resolveLocale } from "@/i18n/config";
 import {
   authorizeGuest,
   saveGuest,
@@ -86,6 +88,7 @@ export async function POST(request: Request) {
       input.message,
       input.action,
       hintLevel,
+      resolveLocale(await getLocale()),
     );
     let answer = "";
     for await (const chunk of new OpenAICompatibleAIProvider().stream({

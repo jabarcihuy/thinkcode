@@ -1,7 +1,7 @@
 {
   "name": "Quethink",
   "short_name": "Quethink",
-  "description": "Pelajari tabel, relasi, dan query SQL dengan data latihan yang dapat diamati langsung.",
+  "description": "Learn tables, relationships and SQL queries with practice data you can explore.",
   "id": "/",
   "start_url": "/app",
   "scope": "/",
@@ -9,7 +9,7 @@
   "orientation": "portrait",
   "theme_color": "#4f46e5",
   "background_color": "#4f46e5",
-  "lang": "id",
+  "lang": "en",
   "dir": "ltr",
   "icons": [
     {

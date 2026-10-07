@@ -1,4 +1,8 @@
 "use client";
+
+
+import { useText } from "@/i18n/use-text";
+
 import { useGuestMode } from "@/features/guest/components/guest-mode";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
@@ -6,6 +10,8 @@ import { Label } from "@/components/ui/label";
 import { ModelDiagram } from "@/features/schema-builder/components/model-diagram";
 import { parseDocument, type SqlabDocument } from "../domain/document";
 export function AiDesigner({ apply }: { apply: (doc: SqlabDocument) => void }) {
+  const tx = useText();
+
   const guest = useGuestMode();
   const [draft, setDraft] = useState<SqlabDocument | null>(null);
   const [busy, setBusy] = useState(false);
@@ -41,9 +47,9 @@ export function AiDesigner({ apply }: { apply: (doc: SqlabDocument) => void }) {
   }
   return (
     <section className="space-y-5">
-      <h2 className="text-lg font-semibold">Rancang database bersama AI</h2>
+      <h2 className="text-lg font-semibold">{tx("Rancang database bersama AI")}</h2>
       <form onSubmit={generate} className="space-y-3">
-        <Label htmlFor="sqlab-prompt">Database apa yang ingin dibuat?</Label>
+        <Label htmlFor="sqlab-prompt">{tx("Database apa yang ingin dibuat?")}</Label>
         <textarea
           id="sqlab-prompt"
           name="prompt"
@@ -52,34 +58,30 @@ export function AiDesigner({ apply }: { apply: (doc: SqlabDocument) => void }) {
           required
           rows={4}
           className="w-full rounded-lg border border-border bg-background p-3 text-base focus-visible:outline-2 focus-visible:outline-ring"
-          placeholder="Buat database perpustakaan dengan buku, anggota, dan peminjaman. Isi contoh datanya."
+          placeholder={tx("Buat database perpustakaan dengan buku, anggota, dan peminjaman. Isi contoh datanya.")}
         />
         <p className="text-xs leading-5 text-muted-foreground">
-          Gunakan data sintetis. AI tidak membaca isi database kamu; hanya
-          deskripsi ini yang dikirim.
-        </p>
+          {tx("Gunakan data sintetis. AI tidak membaca isi database kamu; hanya deskripsi ini yang dikirim.")}</p>
         <Button disabled={busy} type="submit">
-          {busy ? "Menyusun rancangan…" : "Buat rancangan"}
+          {tx(busy ? "Menyusun rancangan…" : "Buat rancangan")}
         </Button>
       </form>
       {error && (
         <p role="alert" className="text-sm text-destructive">
-          {error}
+          {tx(error)}
         </p>
       )}
       {draft && (
         <div className="space-y-4 border-t border-border pt-5">
-          <h3 className="text-lg font-semibold">Draf: {draft.name}</h3>
+          <h3 className="text-lg font-semibold">{tx("Draf:")}{" "}{draft.name}</h3>
           <p className="text-sm">
-            {draft.schema.tables.length} tabel · {draft.schema.relations.length}{" "}
-            relasi ·{" "}
-            {Object.values(draft.rows).reduce((n, r) => n + r.length, 0)} record
-          </p>
+            {draft.schema.tables.length} {" "}{tx("tabel ·")}{" "}{draft.schema.relations.length}{" "}
+            {tx("relasi ·")}{" "}
+            {Object.values(draft.rows).reduce((n, r) => n + r.length, 0)} {tx("record")}</p>
           <ModelDiagram draft={draft.schema} />
           <details>
             <summary className="min-h-11 cursor-pointer py-3 font-medium">
-              Tinjau contoh data
-            </summary>
+              {tx("Tinjau contoh data")}</summary>
             {draft.schema.tables.map((t) => (
               <div key={t.id} className="mt-3">
                 <h4 className="font-mono">{t.name}</h4>
@@ -90,20 +92,16 @@ export function AiDesigner({ apply }: { apply: (doc: SqlabDocument) => void }) {
             ))}
           </details>
           <p className="text-sm text-muted-foreground">
-            Menerapkan draf mengganti skema dan data SQLab saat ini. Tinjau
-            sebelum melanjutkan.
-          </p>
+            {tx("Menerapkan draf mengganti skema dan data SQLab saat ini. Tinjau sebelum melanjutkan.")}</p>
           <Button
             onClick={() => {
               apply(draft);
               setDraft(null);
             }}
           >
-            Terapkan rancangan
-          </Button>
+            {tx("Terapkan rancangan")}</Button>
           <Button variant="ghost" onClick={() => setDraft(null)}>
-            Buang draf
-          </Button>
+            {tx("Buang draf")}</Button>
         </div>
       )}
     </section>

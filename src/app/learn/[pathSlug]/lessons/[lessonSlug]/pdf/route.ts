@@ -1,3 +1,4 @@
+import { localeFromRequest } from "@/i18n/config";
 import { getAccessibleMaterial } from "@/features/learning/server/material-access";
 import { createMaterialPdf } from "@/features/learning/server/material-pdf";
 
@@ -10,7 +11,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ pat
     const access = await getAccessibleMaterial(pathSlug, lessonSlug);
     if (!access) return Response.json({ message: "Materi belum tersedia untuk diunduh." }, { status: 404 });
     const { lesson, material, index } = access;
-    const bytes = await createMaterialPdf({ number: index + 1, title: lesson.title, summary: lesson.summary, content: material.content });
+    const bytes = await createMaterialPdf({ number: index + 1, title: lesson.title, summary: lesson.summary, content: material.content }, localeFromRequest(_request));
     return new Response(Buffer.from(bytes), { headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `attachment; filename="quethink-materi-${index + 1}-${lesson.slug}.pdf"`,

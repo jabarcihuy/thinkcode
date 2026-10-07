@@ -1,9 +1,10 @@
+import { localizeMetadata } from "@/i18n/metadata";
 import type { Metadata } from "next";
 import { requireRole } from "@/lib/auth/session";
 import { createPrivilegedClient } from "@/lib/supabase/privileged";
 import { AdminConsole } from "@/features/admin/components/admin-console";
 
-export const metadata: Metadata = { title: "Admin CMS" };
+const pageMetadata: Metadata = { title: "Admin CMS" };
 
 export default async function AdminPage() {
   await requireRole("ADMIN");
@@ -25,3 +26,5 @@ export default async function AdminPage() {
   };
   return <AdminConsole initialCounts={counts} />;
 }
+
+export async function generateMetadata() { return localizeMetadata(pageMetadata); }

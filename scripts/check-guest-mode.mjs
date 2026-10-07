@@ -17,6 +17,7 @@ try {
     post: async (url, options = {}) => context.request.post(url, { ...options, headers: { cookie: (await context.cookies()).map(cookie => `${cookie.name}=${cookie.value}`).join('; '), ...options.headers } }),
     get: async url => context.request.get(url, { headers: { cookie: (await context.cookies()).map(cookie => `${cookie.name}=${cookie.value}`).join('; ') } }),
   };
+  await context.addCookies([{ name: 'quethink_locale', value: 'id', url: site }]);
   const page = await context.newPage(), errors = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(site + '/guest/start');

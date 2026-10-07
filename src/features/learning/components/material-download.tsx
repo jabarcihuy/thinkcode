@@ -1,10 +1,14 @@
 "use client";
+import { useText } from "@/i18n/use-text";
+
 
 import { useState } from "react";
 import { Download, LoaderCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function MaterialDownload({ href, number }: { href: string; number: number }) {
+  const tx = useText();
+
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   async function download() {
@@ -23,5 +27,5 @@ export function MaterialDownload({ href, number }: { href: string; number: numbe
       setPending(false);
     }
   }
-  return <div><Button variant="outline" onClick={download} disabled={pending} className="min-h-11 w-full sm:w-auto">{pending ? <LoaderCircle className="animate-spin" size={16} aria-hidden="true" /> : <Download size={16} aria-hidden="true" />}{pending ? "Menyiapkan PDF…" : "Unduh PDF"}</Button><p role="status" className="mt-2 max-w-xs text-sm text-destructive">{error}</p></div>;
+  return <div><Button variant="outline" onClick={download} disabled={pending} className="min-h-11 w-full sm:w-auto">{pending ? <LoaderCircle className="animate-spin" size={16} aria-hidden="true" /> : <Download size={16} aria-hidden="true" />}{tx(pending ? "Menyiapkan PDF…" : "Unduh PDF")}</Button><p role="status" className="mt-2 max-w-xs text-sm text-destructive">{tx(error)}</p></div>;
 }

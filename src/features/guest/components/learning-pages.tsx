@@ -1,4 +1,7 @@
 "use client";
+
+import { useText } from "@/i18n/use-text";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useGuestLearning } from "./guest-mode";
@@ -14,13 +17,15 @@ import { CourseTestView } from "@/features/assessment/components/course-test-vie
 import { startGuestTest } from "../server/actions";
 import { GuestProfile } from "./profile";
 export function GuestLearningPages({ view, userId, activeTest }: { view: string; userId: string; activeTest: string | null }) {
+  const tx = useText();
+
  const local = useGuestLearning();
  const overview = local?.overview ?? null;
  const post = local?.catalog.tests.find((test) => test.type === "FINAL");
  const pre = local?.catalog.tests.find((test) => test.type === "PRETEST");
  const postPassed = Boolean(post && local?.value.tests[post.id]?.passed);
  const postAvailable = Boolean(overview?.baselineComplete && overview.metrics.completedRequiredLessons === overview.metrics.totalRequiredLessons);
- if (local?.status === "loading") return <main id="main-content" className="mx-auto max-w-6xl px-5 py-8"><p role="status">Menyiapkan progres belajar…</p></main>;
+ if (local?.status === "loading") return <main id="main-content" className="mx-auto max-w-6xl px-5 py-8"><p role="status">{tx("Menyiapkan progres belajar…")}</p></main>;
  if (view === "profile") return <GuestProfile />;
  if (view === "sqlab") return <SqlabPageView dashboardHref="/guest"><LazySqlabWorkspace userId={userId} /></SqlabPageView>;
  if (view === "chatbot") return <ChatbotPageView overview={overview} guest />;
@@ -38,8 +43,8 @@ export function GuestLearningPages({ view, userId, activeTest }: { view: string;
   const available = diagnostic || postAvailable;
   const active = Boolean(test && activeTest === test.id);
   const label = active ? "Lanjutkan tes" : result ? diagnostic ? "Ulangi tes awal" : "Ulangi tes akhir" : diagnostic ? "Mulai tes awal" : "Mulai tes akhir";
-  const action = test && (available || active) ? active ? <Button asChild className="mt-5"><Link href={`/guest/tests/${test.id}`}>{label}</Link></Button> : <form action={startGuestTest} className="mt-5"><input type="hidden" name="testId" value={test.id} /><Button type="submit">{label}</Button></form> : null;
-  return <CourseTestView diagnostic={diagnostic} overview={overview} title={test?.title} result={result ? { latestScore: result.score, highestScore: result.highestScore ?? result.score, passed: result.passed } : undefined} resultHref={result ? `/guest?view=${diagnostic ? "pre-result" : "post-result"}` : undefined} baselineScore={pre ? local?.value.tests[pre.id]?.score : undefined} available={available} active={active} studied={Boolean(overview?.lessons.some((lesson) => lesson.readAt))} startAction={action} guest />;
+  const action = test && (available || active) ? active ? <Button asChild className="mt-5"><Link href={`/guest/tests/${test.id}`}>{tx(label)}</Link></Button> : <form action={startGuestTest} className="mt-5"><input type="hidden" name="testId" value={test.id} /><Button type="submit">{tx(label)}</Button></form> : null;
+  return <CourseTestView diagnostic={diagnostic} overview={overview} title={tx(test?.title)} result={result ? { latestScore: result.score, highestScore: result.highestScore ?? result.score, passed: result.passed } : undefined} resultHref={result ? `/guest?view=${diagnostic ? "pre-result" : "post-result"}` : undefined} baselineScore={pre ? local?.value.tests[pre.id]?.score : undefined} available={available} active={active} studied={Boolean(overview?.lessons.some((lesson) => lesson.readAt))} startAction={action} guest />;
  }
  const action = overview ? nextLearningAction(overview, null, postPassed) : null;
  const activeAction = activeTest ? { href: `/guest/tests/${activeTest}`, title: "Lanjutkan tes", label: "Lanjutkan tes", description: "Selesaikan sesi yang masih aktif. Jawaban tersimpan di perangkat ini." } : action;

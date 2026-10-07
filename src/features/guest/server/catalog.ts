@@ -1,4 +1,5 @@
 import "server-only";
+import { getText } from "@/i18n/server";
 import { cache } from "react";
 import { createPrivilegedClient } from "@/lib/supabase/privileged";
 import { publicAssessmentConfig } from "@/features/assessment/domain/public-item";
@@ -70,7 +71,7 @@ export async function guestMaterial(slug: string) {
   if (result.error) throw result.error;
   return {
     ...lesson,
-    content: result.data.content,
+    content: (await getText())(result.data.content),
     exampleSql: result.data.example_sql,
     number: catalog.lessons.findIndex((entry) => entry.id === lesson.id) + 1,
   };

@@ -1,12 +1,16 @@
+
+import { useText } from "@/i18n/use-text";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { LessonVideo } from "./lesson-video";
 import { youtubeVideoId } from "@/features/learning/video-url";
 
 export function LessonContent({ content }: { content: string }) {
+  const tx = useText();
+
   return <div className="max-w-[72ch] text-base leading-8 text-foreground">
     <ReactMarkdown remarkPlugins={[remarkGfm]} components={{
-      table: ({ children }) => <div role="region" aria-label="Tabel materi. Geser untuk melihat kolom lainnya." tabIndex={0} className="focus-visible:outline-2 focus-visible:outline-ring mb-6 max-w-full overflow-x-auto rounded-md border border-border"><table className="w-full text-left text-sm leading-6">{children}</table></div>,
+      table: ({ children }) => <div role="region" aria-label={tx("Tabel materi. Geser untuk melihat kolom lainnya.")} tabIndex={0} className="focus-visible:outline-2 focus-visible:outline-ring mb-6 max-w-full overflow-x-auto rounded-md border border-border"><table className="w-full text-left text-sm leading-6">{children}</table></div>,
       th: ({ children }) => <th className="border-b border-border bg-muted px-3 py-2 font-semibold">{children}</th>,
       td: ({ children }) => <td className="border-b border-border px-3 py-2">{children}</td>,
       h2: ({ children }) => <h2 className="mb-4 mt-10 text-2xl font-semibold tracking-tight first:mt-0">{children}</h2>,
@@ -21,8 +25,8 @@ export function LessonContent({ content }: { content: string }) {
         ? <code className={className}>{children}</code>
         : <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-[0.9em]">{children}</code>,
       a: ({ children, href }) => youtubeVideoId(href)
-        ? <LessonVideo href={href!} title={String(children)} />
+        ? <LessonVideo href={href!} title={tx(String(children))} />
         : <a className="font-medium text-accent underline underline-offset-4" href={href}>{children}</a>,
-    }}>{content}</ReactMarkdown>
+    }}>{tx(content)}</ReactMarkdown>
   </div>;
 }

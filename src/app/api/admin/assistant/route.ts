@@ -1,3 +1,4 @@
+import { localeFromRequest } from "@/i18n/config";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { authorizeAdmin, AdminAuthorizationError } from "@/features/admin/server/authorization";
@@ -20,7 +21,7 @@ export async function POST(request: Request) {
     const result = await new OpenAICompatibleAIProvider().generate({
       maxOutputTokens: 700,
       messages: [
-        { role: "system", content: "You help an administrator draft concise Indonesian learning content about relational databases and beginner SQL. Use only the SQLite syntax supported by the supplied context. Return suggestions as plain text, never claim that content is published or save anything. Keep private answers in the draft and remind the administrator to verify all queries and results before saving or publishing." },
+        { role: "system", content: `Respond exclusively in ${localeFromRequest(request) === "en" ? "English" : "Bahasa Indonesia"}. You help an administrator draft concise learning content about relational databases and beginner SQL. Use only the SQLite syntax supported by the supplied context. Return suggestions as plain text, never claim that content is published or save anything. Keep private answers in the draft and remind the administrator to verify all queries and results before saving or publishing.` },
         { role: "user", content: `Draft a ${labels[parsed.data.task]}${parsed.data.exerciseType ? ` for ${parsed.data.exerciseType}` : ""}. Context: ${parsed.data.context}` },
       ],
     });

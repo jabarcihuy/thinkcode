@@ -1,4 +1,7 @@
 "use client";
+
+import { useText } from "@/i18n/use-text";
+
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import type { QueryScenario } from "@/features/database/domain/lesson-scenarios";
@@ -8,6 +11,8 @@ const CampusDataPreview = dynamic(() => import("@/features/database/components/c
 
 const explorationIds = new Set(["database-lab", "database-explorer", "lab-tables", "lab-query", "lab-results", "lab-tutor"]);
 export function LabExploration({ scenarios, lessonId, userId }: { scenarios?: readonly QueryScenario[]; lessonId: string; userId: string }) {
+  const tx = useText();
+
   const details = useRef<HTMLDetailsElement>(null);
   const [visited, setVisited] = useState(false);
   useEffect(() => {
@@ -36,12 +41,12 @@ export function LabExploration({ scenarios, lessonId, userId }: { scenarios?: re
     return () => { document.removeEventListener("click", click); observers.forEach((dispose) => dispose()); };
   }, [scenarios]);
   return <div className="my-5">
-    <nav aria-label="Akses cepat Lab" className="flex flex-wrap gap-2">
-      {(scenarios ? [["lab-tables", "Tabel"], ["lab-query", "Query"], ["lab-results", "Hasil"]] : [["database-explorer", "Tabel dan relasi"]]).map(([id, label]) => <a key={id} href={`#${id}`} className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-medium hover:bg-secondary focus-visible:outline-2 focus-visible:outline-ring">{label}</a>)}
-      <a href="#lesson-practice" className="inline-flex min-h-11 items-center rounded-md bg-secondary px-3 text-sm font-semibold text-primary focus-visible:outline-2 focus-visible:outline-ring">Latihan inti</a>
+    <nav aria-label={tx("Akses cepat Lab")} className="flex flex-wrap gap-2">
+      {(scenarios ? [["lab-tables", "Tabel"], ["lab-query", "Query"], ["lab-results", "Hasil"]] : [["database-explorer", "Tabel dan relasi"]]).map(([id, label]) => <a key={id} href={`#${id}`} className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-medium hover:bg-secondary focus-visible:outline-2 focus-visible:outline-ring">{tx(label)}</a>)}
+      <a href="#lesson-practice" className="inline-flex min-h-11 items-center rounded-md bg-secondary px-3 text-sm font-semibold text-primary focus-visible:outline-2 focus-visible:outline-ring">{tx("Latihan inti")}</a>
     </nav>
     <details ref={details} onToggle={(event) => { if (event.currentTarget.open) setVisited(true); }} className="mt-3 rounded-lg border border-border px-4">
-      <summary className="min-h-12 cursor-pointer content-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-ring">{scenarios ? "Eksplorasi tabel dan query" : "Jelajahi tabel dan relasi"}</summary>
+      <summary className="min-h-12 cursor-pointer content-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-ring">{tx(scenarios ? "Eksplorasi tabel dan query" : "Jelajahi tabel dan relasi")}</summary>
       {visited && (scenarios ? <DatasetLabSwitcher compact scenarios={scenarios} userId={userId} lessonId={lessonId} /> : <CampusDataPreview compact />)}
     </details>
   </div>;

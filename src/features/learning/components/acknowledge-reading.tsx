@@ -1,4 +1,6 @@
 "use client";
+import { useText } from "@/i18n/use-text";
+
 
 import { useGuestLearning, useGuestMode } from "@/features/guest/components/guest-mode";
 import { useState } from "react";
@@ -8,6 +10,8 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function AcknowledgeReading({ lessonId, completed, labHref }: { lessonId: string; completed: boolean; labHref: string }) {
+  const tx = useText();
+
   const router = useRouter();
   const guest = useGuestMode();
   const local = useGuestLearning();
@@ -27,7 +31,7 @@ export function AcknowledgeReading({ lessonId, completed, labHref }: { lessonId:
     } finally { setPending(false); }
   }
   return <div>
-    {completed ? <Button asChild className="w-full sm:w-auto"><Link href={labHref}>Lanjut ke latihan inti<ArrowRight size={16} aria-hidden="true" /></Link></Button> : <Button type="button" className="w-full whitespace-normal sm:w-auto" disabled={pending} onClick={acknowledge}>{pending ? "Menyimpan bacaan…" : "Selesai membaca, lanjut ke Lab"}<ArrowRight size={16} aria-hidden="true" /></Button>}
-    {error && <p role="alert" className="mt-3 text-sm text-destructive">{error}</p>}
+    {completed ? <Button asChild className="w-full sm:w-auto"><Link href={labHref}>{tx("Lanjut ke latihan inti")}<ArrowRight size={16} aria-hidden="true" /></Link></Button> : <Button type="button" className="w-full whitespace-normal sm:w-auto" disabled={pending} onClick={acknowledge}>{tx(pending ? "Menyimpan bacaan…" : "Selesai membaca, lanjut ke Lab")}<ArrowRight size={16} aria-hidden="true" /></Button>}
+    {error && <p role="alert" className="mt-3 text-sm text-destructive">{tx(error)}</p>}
   </div>;
 }

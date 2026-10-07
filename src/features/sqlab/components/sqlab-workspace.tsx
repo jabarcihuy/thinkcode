@@ -1,4 +1,7 @@
 "use client";
+
+import { useText } from "@/i18n/use-text";
+
 import { useState, type KeyboardEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +27,8 @@ import { QueryPanel } from "./query-panel";
 import { AiDesigner } from "./ai-designer";
 const tabs = ["Skema", "Data", "Query", "AI"] as const;
 export function SqlabWorkspace({ userId }: { userId: string }) {
+  const tx = useText();
+
   const store = useLocalDraft({
     key: `quethink:sqlab:v1:${userId}`,
     signature: "sqlab-v1",
@@ -70,7 +75,7 @@ export function SqlabWorkspace({ userId }: { userId: string }) {
     <div className="mt-8 min-w-0">
       <div className="flex flex-wrap items-center justify-between gap-3 border-y border-border py-3">
         <p role="status" className="text-xs leading-5 text-muted-foreground">
-          {store.status === "failed"
+          {tx(store.status === "failed"
             ? "Belum tersimpan. Jangan tutup halaman."
             : store.status === "invalid"
               ? "Draf lama tidak dapat dibaca. Mulai ulang untuk membuat database baru."
@@ -78,17 +83,15 @@ export function SqlabWorkspace({ userId }: { userId: string }) {
                 ? "Memuat draf…"
                 : store.status === "empty"
                   ? "Database baru · tidak memengaruhi nilai"
-                  : "Tersimpan di browser ini · tidak memengaruhi nilai"}
+                  : "Tersimpan di browser ini · tidak memengaruhi nilai")}
         </p>
         <Button variant="ghost" disabled={busy} onClick={() => setReset(true)}>
-          Mulai ulang
-        </Button>
+          {tx("Mulai ulang")}</Button>
       </div>
       {reset && (
         <div className="mt-4 space-y-3">
           <p className="text-sm">
-            Hapus seluruh skema dan data SQLab saat ini?
-          </p>
+            {tx("Hapus seluruh skema dan data SQLab saat ini?")}</p>
           <div className="flex gap-2">
             <Button
               onClick={() => {
@@ -97,17 +100,15 @@ export function SqlabWorkspace({ userId }: { userId: string }) {
                 setReset(false);
               }}
             >
-              Ya, kosongkan
-            </Button>
+              {tx("Ya, kosongkan")}</Button>
             <Button variant="ghost" onClick={() => setReset(false)}>
-              Batal
-            </Button>
+              {tx("Batal")}</Button>
           </div>
         </div>
       )}
       <div
         role="tablist"
-        aria-label="Area SQLab"
+        aria-label={tx("Area SQLab")}
         onKeyDown={navigate}
         className="mt-5 grid grid-cols-4 border-b border-border"
       >
@@ -123,7 +124,7 @@ export function SqlabWorkspace({ userId }: { userId: string }) {
             onClick={() => setTab(i)}
             className={`min-h-12 border-b-2 px-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-ring ${tab === i ? "border-accent" : "border-transparent text-muted-foreground"}`}
           >
-            {label}
+            {tx(label)}
           </button>
         ))}
       </div>
@@ -135,7 +136,7 @@ export function SqlabWorkspace({ userId }: { userId: string }) {
           hidden={tab !== 0}
         >
           <div className="mb-6">
-            <Label htmlFor="database-name">Nama database</Label>
+            <Label htmlFor="database-name">{tx("Nama database")}</Label>
             <Input
               id="database-name"
               className="mt-2"
@@ -149,13 +150,12 @@ export function SqlabWorkspace({ userId }: { userId: string }) {
           </div>
           {error && (
             <p role="alert" className="mb-4 text-sm text-destructive">
-              {error}
+              {tx(error)}
             </p>
           )}
           <details className="mb-5 border-b border-border pb-4">
             <summary className="min-h-11 cursor-pointer py-3 text-sm font-medium">
-              Mulai dari contoh database
-            </summary>
+              {tx("Mulai dari contoh database")}</summary>
             <div className="mt-2 flex flex-wrap gap-2">
               {PRACTICE_DATASETS.map((dataset) => (
                 <Button
@@ -163,14 +163,14 @@ export function SqlabWorkspace({ userId }: { userId: string }) {
                   variant="outline"
                   onClick={() => setTemplate(documentFromDataset(dataset))}
                 >
-                  {dataset.title}
+                  {tx(dataset.title)}
                 </Button>
               ))}
             </div>
             {template && (
               <div className="mt-4 space-y-3">
                 <p className="text-sm">
-                  Ganti database saat ini dengan {template.name}?
+                  {tx("Ganti database saat ini dengan")}{template.name}?
                 </p>
                 <div className="flex gap-2">
                   <Button
@@ -180,11 +180,9 @@ export function SqlabWorkspace({ userId }: { userId: string }) {
                       setTemplate(null);
                     }}
                   >
-                    Ya, gunakan contoh
-                  </Button>
+                    {tx("Ya, gunakan contoh")}</Button>
                   <Button variant="ghost" onClick={() => setTemplate(null)}>
-                    Batal
-                  </Button>
+                    {tx("Batal")}</Button>
                 </div>
               </div>
             )}

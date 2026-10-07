@@ -98,3 +98,9 @@ npm run start
 Lab Materi memuat eksplorasi SQL ketika panel pertama dibuka. Menutup panel mempertahankan query selama halaman tersebut terbuka. Loading boundary materi memberi respons selama data server dimuat; kecepatan tetap dipengaruhi koneksi ke Supabase dan cold start.
 
 Aplikasi terpasang menggunakan `/app` sebagai pintu masuk sesuai sesi. Perubahan launch URL TWA memerlukan rebuild APK. Fallback offline hanya menawarkan mencoba lagi, tidak menyimpan halaman, token, atau hasil tes.
+
+## Bahasa aplikasi
+
+Quethink mendukung **English** dan **Bahasa Indonesia**. Default: **English**. Ganti bahasa dari selector di header; pilihan berlaku untuk halaman publik, login, tamu, akun, materi, Lab, SQLab, chatbot, tes dan PDF, lalu disimpan pada perangkat melalui cookie. Bahasa UI tidak mengubah query, nama tabel/kolom, nilai data, identitas soal, jawaban atau progress. Tutor AI mengikuti bahasa yang dipilih. Video YouTube pendamping yang sudah tersedia tetap berbahasa Indonesia dan diberi keterangan di mode English.
+
+Terjemahan tersimpan di `src/i18n/messages/`; tidak ada layanan terjemahan runtime atau migration database tambahan. Perubahan konten CMS memerlukan pembaruan katalog terjemahan agar konten baru tersedia dalam kedua bahasa.

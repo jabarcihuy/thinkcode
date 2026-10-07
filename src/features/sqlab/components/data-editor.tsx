@@ -1,4 +1,7 @@
 "use client";
+
+import { useText } from "@/i18n/use-text";
+
 import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +15,8 @@ export function DataEditor({
   document: SqlabDocument;
   change: (doc: SqlabDocument) => string | null;
 }) {
+  const tx = useText();
+
   const [tableId, setTableId] = useState("");
   const [editing, setEditing] = useState<number | null>(null);
   const [error, setError] = useState("");
@@ -20,8 +25,7 @@ export function DataEditor({
   if (!table?.columns.length)
     return (
       <p className="py-6 text-sm text-muted-foreground">
-        Tambahkan tabel dan kolom di Skema terlebih dahulu.
-      </p>
+        {tx("Tambahkan tabel dan kolom di Skema terlebih dahulu.")}</p>
     );
   const rows = doc.rows[table.id] ?? [];
   function save(event: FormEvent<HTMLFormElement>) {
@@ -52,7 +56,7 @@ export function DataEditor({
   return (
     <section className="space-y-5">
       <div>
-        <Label htmlFor="data-table">Tabel</Label>
+        <Label htmlFor="data-table">{tx("Tabel")}</Label>
         <Select
           id="data-table"
           value={table.id}
@@ -73,11 +77,11 @@ export function DataEditor({
       <div
         tabIndex={0}
         role="region"
-        aria-label={`Data ${table.name}`}
+        aria-label={tx(`Data ${table.name}`)}
         className="max-w-full overflow-auto rounded-lg border border-border"
       >
         <table className="w-full text-left text-sm">
-          <caption className="p-3 text-left">{rows.length} record</caption>
+          <caption className="p-3 text-left">{rows.length} {" "}{tx("record")}</caption>
           <thead>
             <tr>
               {table.columns.map((c) => (
@@ -88,7 +92,7 @@ export function DataEditor({
                   {c.name}
                 </th>
               ))}
-              <th className="p-3">Aksi</th>
+              <th className="p-3">{tx("Aksi")}</th>
             </tr>
           </thead>
           <tbody>
@@ -108,8 +112,7 @@ export function DataEditor({
                         setError("");
                       }}
                     >
-                      Edit
-                    </Button>
+                      {"Edit"}</Button>
                     <Button
                       variant="ghost"
                       onClick={() => {
@@ -124,8 +127,7 @@ export function DataEditor({
                         if (!failure) setEditing(null);
                       }}
                     >
-                      Hapus
-                    </Button>
+                      {"Hapus"}</Button>
                   </div>
                 </td>
               </tr>
@@ -139,13 +141,13 @@ export function DataEditor({
         className="space-y-4"
       >
         <h2 className="text-lg font-semibold">
-          {editing === null ? "Tambah record" : "Edit record"}
+          {tx(editing === null ? "Tambah record" : "Edit record")}
         </h2>
         {table.columns.map((c) => (
           <div key={c.id}>
             <Label htmlFor={`cell-${c.id}`}>
               {c.name}
-              {c.primary ? " (PK)" : ""}
+              {tx(c.primary ? " (PK)" : "")}
             </Label>
             <Input
               id={`cell-${c.id}`}
@@ -162,24 +164,22 @@ export function DataEditor({
           </div>
         ))}
         <p className="text-xs text-muted-foreground">
-          Kolom kosong disimpan sebagai NULL. Maksimal 100 record per tabel.
-        </p>
+          {tx("Kolom kosong disimpan sebagai NULL. Maksimal 100 record per tabel.")}</p>
         <div className="flex gap-2">
-          <Button type="submit">Simpan record</Button>
+          <Button type="submit">{tx("Simpan record")}</Button>
           {editing !== null && (
             <Button
               type="button"
               variant="ghost"
               onClick={() => setEditing(null)}
             >
-              Batal
-            </Button>
+              {tx("Batal")}</Button>
           )}
         </div>
       </form>
       {error && (
         <p role="alert" className="text-sm text-destructive">
-          {error}
+          {tx(error)}
         </p>
       )}
     </section>

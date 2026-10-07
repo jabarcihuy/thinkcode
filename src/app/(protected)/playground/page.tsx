@@ -1,3 +1,6 @@
+import { localizeMetadata } from "@/i18n/metadata";
+
+import { getText } from "@/i18n/server";
 import { SqlabPageView } from "@/features/sqlab/components/sqlab-page-view";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -7,13 +10,15 @@ import { SqlabWorkspace } from "@/features/sqlab/components/sqlab-workspace";
 import { createClient } from "@/lib/supabase/server";
 import { requireAccount } from "@/lib/auth/session";
 
-export const metadata: Metadata = {
+const pageMetadata: Metadata = {
   title: "SQLab",
   description:
     "Buat skema, isi tabel, dan jalankan query di database lokal milikmu.",
 };
 
 export default async function PlaygroundPage() {
+  const tx = await getText();
+
   const account = await requireAccount();
   const supabase = await createClient();
   const { data: assessmentActive, error } = await supabase.rpc(
@@ -25,9 +30,7 @@ export default async function PlaygroundPage() {
           role="alert"
           className="mt-8 border-y border-destructive/50 py-5 text-sm leading-6 text-destructive"
         >
-          Status assessment belum dapat diperiksa. Muat ulang halaman sebelum
-          memakai playground.
-        </p>
+          {tx("Status assessment belum dapat diperiksa. Muat ulang halaman sebelum memakai playground.")}</p>
       ) : assessmentActive ? (
         <section
           className="mt-8 border-y border-border py-7"
@@ -42,17 +45,16 @@ export default async function PlaygroundPage() {
             id="playground-locked-title"
             className="mt-3 text-lg font-semibold"
           >
-            SQLab dijeda
-          </h2>
+            {tx("SQLab dijeda")}</h2>
           <p className="mt-2 max-w-[65ch] text-sm leading-6 text-muted-foreground">
-            Selesaikan assessment yang sedang berlangsung sebelum kembali
-            berlatih dengan query.
-          </p>
+            {tx("Selesaikan assessment yang sedang berlangsung sebelum kembali berlatih dengan query.")}</p>
           <Button asChild className="mt-4">
-            <Link href="/assessments">Kembali ke assessment</Link>
+            <Link href="/assessments">{tx("Kembali ke assessment")}</Link>
           </Button>
         </section>
       ) : (
         <SqlabWorkspace userId={account.userId} />
       )}</SqlabPageView>;
 }
+
+export async function generateMetadata() { return localizeMetadata(pageMetadata); }

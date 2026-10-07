@@ -1,5 +1,9 @@
 "use client";
 
+import { useLocale } from "next-intl";
+import { useText } from "@/i18n/use-text";
+
+
 import { useGuestLearning } from "@/features/guest/components/guest-mode";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
@@ -16,6 +20,9 @@ import type { AssessmentAnswer, PublicAssessmentItem } from "@/features/assessme
 export function AssessmentWorkspace({
   sessionId, userId, assessmentTitle, instructions, passingScore, items, diagnostic = false, demo = false,
 }: { sessionId: string; userId: string; assessmentTitle: string; instructions: string; passingScore: number; diagnostic?: boolean; demo?: boolean; items: PublicAssessmentItem[] }) {
+  const tx = useText();
+  const locale = useLocale() === "id" ? "id" : "en";
+
   const router = useRouter();
   const local = useGuestLearning();
   const initial = useMemo(() => initialAssessmentDraft(items), [items]);
@@ -77,43 +84,43 @@ export function AssessmentWorkspace({
     }
   }
 
-  if (!current) return <p className="text-sm text-muted-foreground">Soal assessment belum tersedia.</p>;
+  if (!current) return <p className="text-sm text-muted-foreground">{tx("Soal assessment belum tersedia.")}</p>;
   return <div>
     <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-5">
-      <div><h1 className="text-2xl font-semibold tracking-tight">{assessmentDisplayCopy(assessmentTitle)}</h1><p className="mt-2 max-w-[72ch] text-sm leading-6 text-muted-foreground">{assessmentDisplayCopy(instructions)}</p></div>
+      <div><h1 className="text-2xl font-semibold tracking-tight">{tx(assessmentDisplayCopy(assessmentTitle, locale))}</h1><p className="mt-2 max-w-[72ch] text-sm leading-6 text-muted-foreground">{tx(assessmentDisplayCopy(instructions, locale))}</p></div>
       <div className="min-w-36 text-sm tabular-nums text-muted-foreground">
-        <p>{completeCount}/{items.length} terjawab</p>
-        <div role="progressbar" aria-label="Progres assessment" aria-valuemin={0} aria-valuemax={items.length} aria-valuenow={completeCount} className="mt-2 h-1.5 overflow-hidden rounded-full bg-muted">
+        <p>{completeCount}/{items.length} {" "}{tx("terjawab")}</p>
+        <div role="progressbar" aria-label={tx("Progres assessment")} aria-valuemin={0} aria-valuemax={items.length} aria-valuenow={completeCount} className="mt-2 h-1.5 overflow-hidden rounded-full bg-muted">
           <div className="h-full bg-primary transition-[width]" style={{ width: `${items.length ? (completeCount / items.length) * 100 : 0}%` }} />
         </div>
       </div>
     </div>
-    <p className="mb-6 rounded-md bg-muted px-4 py-3 text-sm">{diagnostic ? "Tes Awal · Tanpa syarat lulus · AI dan petunjuk dinonaktifkan" : `Tes Akhir · Lulus pada skor ${passingScore}+ · AI dan petunjuk dinonaktifkan`}</p>
+    <p className="mb-6 rounded-md bg-muted px-4 py-3 text-sm">{tx(diagnostic ? "Tes Awal · Tanpa syarat lulus · AI dan petunjuk dinonaktifkan" : `Tes Akhir · Lulus pada skor ${passingScore}+ · AI dan petunjuk dinonaktifkan`)}</p>
 
     <div className="mb-6"><DraftStatus status={draft.status} restored={draft.restored} onRetry={() => draft.save(draft.value)} onReset={draft.clear} /></div>
-    {draft.status === "loading" ? <p role="status">Menyiapkan jawaban tes…</p> : <div className="grid min-w-0 grid-cols-1 items-start gap-6 md:grid-cols-[12rem_minmax(0,1fr)]">
+    {draft.status === "loading" ? <p role="status">{tx("Menyiapkan jawaban tes…")}</p> : <div className="grid min-w-0 grid-cols-1 items-start gap-6 md:grid-cols-[12rem_minmax(0,1fr)]">
       <QuestionNavigator items={items} answers={answers} activeIndex={activeIndex} onSelect={selectQuestion} />
       <div className="min-w-0">
         <AssessmentQuestionView item={current} answer={currentAnswer} onAnswer={updateAnswer} disabled={submitPending} />
         <div className="mt-7 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-5">
-          <Button type="button" variant="outline" disabled={activeIndex === 0 || submitPending} onClick={() => selectQuestion(activeIndex - 1)}><ArrowLeft size={15} aria-hidden="true" />Sebelumnya</Button>
+          <Button type="button" variant="outline" disabled={activeIndex === 0 || submitPending} onClick={() => selectQuestion(activeIndex - 1)}><ArrowLeft size={15} aria-hidden="true" />{tx("Sebelumnya")}</Button>
           {activeIndex < items.length - 1
-            ? <Button type="button" variant="outline" disabled={submitPending} onClick={() => selectQuestion(activeIndex + 1)}>Berikutnya<ArrowRight size={15} aria-hidden="true" /></Button>
-            : <Button type="button" disabled={submitPending || completeCount !== items.length} onClick={() => confirmationRef.current?.showModal()}><Send size={15} aria-hidden="true" />{diagnostic ? "Kirim tes awal" : "Kirim tes akhir"}</Button>}
+            ? <Button type="button" variant="outline" disabled={submitPending} onClick={() => selectQuestion(activeIndex + 1)}>{tx("Berikutnya")}<ArrowRight size={15} aria-hidden="true" /></Button>
+            : <Button type="button" disabled={submitPending || completeCount !== items.length} onClick={() => confirmationRef.current?.showModal()}><Send size={15} aria-hidden="true" />{tx(diagnostic ? "Kirim tes awal" : "Kirim tes akhir")}</Button>}
         </div>
-        {error && <p role="alert" className="mt-4 text-sm text-destructive">{error}</p>}
+        {error && <p role="alert" className="mt-4 text-sm text-destructive">{tx(error)}</p>}
       </div>
     </div>}
-    {loginExpired && <Button asChild variant="outline" className="mt-4"><Link href="/login">Masuk kembali</Link></Button>}
+    {loginExpired && <Button asChild variant="outline" className="mt-4"><Link href="/login">{tx("Masuk kembali")}</Link></Button>}
     <dialog ref={confirmationRef} aria-labelledby="assessment-confirm-title" className="m-auto w-[min(28rem,calc(100%-2rem))] rounded-lg border border-border bg-background p-0 text-foreground shadow-surface backdrop:bg-black/50">
       <div className="p-6">
-        <h2 id="assessment-confirm-title" className="text-lg font-semibold">Kirim jawaban assessment?</h2>
-        <p className="mt-2 text-sm leading-6 text-muted-foreground">Semua {items.length} jawaban akan dinilai dan sesi ini akan ditutup. Periksa kembali jawabanmu sebelum melanjutkan.</p>
-        {error && <p role="alert" className="mt-3 text-sm text-destructive">{error}</p>}
+        <h2 id="assessment-confirm-title" className="text-lg font-semibold">{tx("Kirim jawaban assessment?")}</h2>
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">{tx("Semua")}{" "}{items.length} {" "}{tx("jawaban akan dinilai dan sesi ini akan ditutup. Periksa kembali jawabanmu sebelum melanjutkan.")}</p>
+        {error && <p role="alert" className="mt-3 text-sm text-destructive">{tx(error)}</p>}
         <div className="mt-6 flex flex-wrap justify-end gap-3">
-          {loginExpired && <Button asChild variant="outline"><Link href="/login">Masuk kembali</Link></Button>}
-          <Button type="button" variant="outline" disabled={submitPending} onClick={() => { setError(null); confirmationRef.current?.close(); }}>Kembali meninjau</Button>
-          <Button type="button" disabled={submitPending} onClick={() => { void submitAssessment(); }}><Send size={15} aria-hidden="true" />{submitPending ? "Memeriksa jawaban…" : "Kirim jawaban"}</Button>
+          {loginExpired && <Button asChild variant="outline"><Link href="/login">{tx("Masuk kembali")}</Link></Button>}
+          <Button type="button" variant="outline" disabled={submitPending} onClick={() => { setError(null); confirmationRef.current?.close(); }}>{tx("Kembali meninjau")}</Button>
+          <Button type="button" disabled={submitPending} onClick={() => { void submitAssessment(); }}><Send size={15} aria-hidden="true" />{tx(submitPending ? "Memeriksa jawaban…" : "Kirim jawaban")}</Button>
         </div>
       </div>
     </dialog>

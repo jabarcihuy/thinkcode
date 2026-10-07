@@ -2,7 +2,7 @@
 
 ## Product
 
-Quethink is an Indonesian-language platform for learning relational databases through data exploration and SQL. The only active learning path is Database Fundamentals. JavaScript and TypeScript are app implementation languages, not learner course material. There is no programming course or PTI curriculum.
+Quethink is an English/Indonesian bilingual platform (English by default) for learning relational databases through data exploration and SQL. The only active learning path is Database Fundamentals. JavaScript and TypeScript are app implementation languages, not learner course material. There is no programming course or PTI curriculum.
 
 The learner flow is **mandatory diagnostic Pre-test → reading Materi → paired Lab core check → next material → Post-test → completion**. Materi 1–11 is a flat reading/PDF list in Relasi → Read → Write order, with optional video and no embedded exercises, editor or AI. Reading acknowledgement stores read_at; server-verified core practice completes the material. See docs/03-LEARNING_SYSTEM.md for progression and historical-completion policy. Pre-test has zero score weight; post-test requires ≥75. AI is contextual in Lab/chatbot and blocked server-side during any active test.
 
@@ -43,3 +43,7 @@ Guest reading acknowledgement, passed core exercises, test summaries, answer dra
 The session lasts at most eight hours (session cookie; explicit exit clears it). Signing uses a purpose-specific HMAC with the existing server-only Supabase secret. Published content reads use narrowly projected server queries, never expose the privileged client. Same-origin mutations, bounded inputs, output limits, per-session/IP/process request caps guard the demo. Quotas are process-local; multi-instance production deployments require an upstream shared rate limit/WAF for reliable global AI cost protection. No database migration or anonymous Supabase sign-in configuration is required.
 
 Guest access expires after eight hours, but device-local progress survives a new guest session. All guests on the same browser profile share this local profile. Reset from guest Profile clears guest progress and drafts only, leaving account data intact. Storage failure must be visible; do not claim persistence when it fails. Local results are unofficial, not migrated automatically to an account. Server guest grading continues to verify the signed active-test cookie and block AI; browser progress is never trusted for official assessment or authorization.
+
+## Language
+
+Use `src/i18n` for presentation localization. Persist only `en` or `id` in the validated locale cookie; missing/invalid values select English. Keep routes, IDs, answer keys, draft signatures, SQL identifiers and data values language-independent. `useText` supports shared UI components; async server components use `getText`. The server-only course catalog localizes Markdown and PDFs; the public UI catalog includes only public titles/prompts/options, never answer configs or hidden fixtures. When changing shipped content, update both catalogs and verify SQL examples/data remain identical. User-authored text and content inside third-party videos are not rewritten. Video audio availability is labeled. AI follows selected language; assessment AI blocking remains mandatory.

@@ -55,3 +55,7 @@ Account and guest share header/bottom navigation, dashboard, material list, read
 ## Learner terminology
 
 Display the diagnostic pre-test as **Tes Awal** and the post-test as **Tes Akhir** throughout navigation, actions, instructions and result screens. Preserve existing route URLs, database types/slugs and scoring rules. Normalize legacy assessment titles/instructions at the display boundary. In the material list, use sequence number + title and a short **Baca** action; do not repeat “Materi” for every entry. The navigation destination remains **Materi**.
+
+## English and Bahasa Indonesia
+
+English is the default language. A compact labeled header selector is available on public, sign-in, guest and account pages, including mobile. A validated first-party locale cookie preserves the choice for one year; server rendering and the HTML language use the same locale. Existing routes and content/progress identities remain unchanged. UI, published course reading, public questions/options, instructions, results and downloadable PDFs are localized from checked-in catalogs. SQL identifiers, literal dataset values and submitted answers are preserved. AI tutors/content helpers respond in the selected language. Existing optional YouTube audio remains Indonesian and is labeled in English mode. New/edited CMS content must receive catalog translations before claiming bilingual publication; original text is retained if no translation exists. Browser storage and grading security are unchanged.

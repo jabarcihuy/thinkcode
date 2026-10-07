@@ -1,3 +1,5 @@
+
+import { useText } from "@/i18n/use-text";
 import type { LessonState } from "@/features/learning/types";
 
 const marks: Record<LessonState, string> = {
@@ -22,6 +24,8 @@ const tone: Record<LessonState, string> = {
 };
 
 export function LessonStateLabel({ state }: { state: LessonState }) {
+  const tx = useText();
+
   const dashed = state === "LOCKED";
   return (
     <span className={`inline-flex items-center gap-2 text-xs font-semibold ${tone[state]}`}>
@@ -30,7 +34,7 @@ export function LessonStateLabel({ state }: { state: LessonState }) {
         className={`h-0.5 rounded-full ${marks[state]} ${dashed ? "opacity-70" : ""}`}
         style={dashed ? { backgroundImage: "repeating-linear-gradient(to right, currentColor 0 3px, transparent 3px 6px)", backgroundColor: "transparent" } : undefined}
       />
-      {labels[state]}
+      {tx(labels[state])}
     </span>
   );
 }
