@@ -11,8 +11,8 @@ APK (cangkang) ──load──> https://www.barlabs.my.id (web Next.js)
 
 | File | Fungsi |
 |---|---|
-| `output/quethink-1.0.0.apk` | Install langsung ke HP (sideload) |
-| `output/quethink-1.0.0.aab` | Upload ke Google Play Store |
+| `output/quethink-1.0.1.apk` | Install langsung ke HP (sideload) |
+| `output/quethink-1.0.0.aab` | Arsip build sebelumnya; rebuild bundle sebelum upload baru |
 | `output/store-icon-512.png` | Icon Play Store 512×512 |
 
 - Package ID: `com.jabarcihuy.quethink`
@@ -87,7 +87,7 @@ Ganti versi: edit `twa-manifest.json` → `appVersionCode` +1 dan `appVersionNam
 ## Test di HP
 
 ```bash
-adb install -r output/quethink-1.0.0.apk
+adb install -r output/quethink-1.0.1.apk
 ```
 
 Cek apakah TWA penuh (bukan Custom Tab):
@@ -138,3 +138,9 @@ Web production mendaftarkan service worker untuk layar publik saat koneksi terpu
 ## Logo baru
 
 Logo silinder lama telah diganti dengan simbol Q berbentuk tabel. Sumber utama: `../public/assets/quethink/quethink-mark.svg` dan versi ikon `../public/assets/quethink/app-icon.svg`. Dari root project, `node scripts/render-quethink-icons.mjs` memperbarui ekspor PNG web, launcher, maskable, splash, dan store icon. Perubahan ikon web berlaku setelah deployment; ikon launcher/splash yang sudah tertanam dalam APK/AAB memerlukan rebuild dan pemasangan versi baru.
+
+## Rebuild APK — 7 Oktober 2026
+
+Release terbaru: `output/quethink-1.0.1.apk`, versionCode **2**. Memuat logo Q terbaru dan membuka `https://www.barlabs.my.id/app`. Ditandatangani dengan keystore yang sama sehingga dapat memperbarui pemasangan versi 1.0.0.
+
+Validasi selesai: Gradle `assembleRelease`, verifikasi signature APK v1/v2/v3, zip alignment, package ID, versi, dan launch URL. APK tetap memuat web live; perubahan web harus sudah terdeploy agar terlihat pada HP. Uji instalasi, splash, login, navigasi, keyboard dan PDF pada perangkat fisik masih diperlukan. AAB 1.0.0 adalah arsip, belum dibangun ulang pada pekerjaan ini.
