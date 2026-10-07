@@ -33,7 +33,7 @@ export default async function PracticePage({ params }: { params: Promise<{ pathS
   return <div className="min-h-dvh pb-[calc(5rem+env(safe-area-inset-bottom))] lg:pb-0"><LearningHeader account={account} />
     <main id="main-content" className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-12">
       <Link href={lessonHref(pathSlug, lessonSlug)} className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-accent hover:underline"><ArrowLeft size={16} aria-hidden="true" />Baca materi {index + 1}</Link>
-      <h1 className="mt-6 text-3xl font-semibold tracking-tight">Lab · {lesson.title}</h1>
+      <h1 className="mt-6 text-3xl font-semibold tracking-tight">Lab Materi · {lesson.title}</h1>
       <div className="mt-3"><LessonStateLabel state={lesson.state} /></div>
       {assessmentActive ? <section className="mt-8 border-t border-border pt-6"><h2 className="text-xl font-semibold">Assessment sedang berlangsung</h2><p className="mt-3 text-muted-foreground">Selesaikan tes yang sedang berlangsung untuk melanjutkan latihan.</p><Button asChild className="mt-4"><Link href="/assessments">Kembali ke assessment</Link></Button></section> : <>
         <div className="mt-6 lg:hidden"><details className="rounded-md border border-border px-4 py-2"><summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold">Daftar isi Lab</summary>{outline}</details></div>

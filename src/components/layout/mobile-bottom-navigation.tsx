@@ -15,7 +15,7 @@ const entries = [
 ];
 const tools = [
   { href: "/lab", label: "Lab Materi", icon: Database },
-  { href: "/playground", label: "SQL Playground", icon: PanelsTopLeft },
+  { href: "/playground", label: "SQLab", icon: PanelsTopLeft },
   { href: "/schema-builder", label: "Pembuat Skema", icon: ScanLine },
   { href: "/chatbot", label: "Chatbot", icon: MessagesSquare },
   { href: "/pre-test", label: "Pre-test", icon: ClipboardCheck },

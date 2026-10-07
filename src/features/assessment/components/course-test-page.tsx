@@ -36,7 +36,7 @@ export async function CourseTestPage({ diagnostic }: { diagnostic: boolean }) {
     {!diagnostic && baseline?.result && <p className="mt-6 text-sm leading-6 text-muted-foreground">Catatan pre-test: {baseline.result.latestScore}/100. Kedua tes memakai kasus berbeda; selisih skor bukan bukti tunggal keberhasilan belajar.</p>}
     <div className="mt-7 flex flex-col gap-3 sm:flex-row">
       <Button asChild variant="outline"><Link href={learningPathHref(DEFAULT_LEARNING_PATH_SLUG)}>{diagnostic ? "Buka materi" : "Tinjau materi"}</Link></Button>
-      {!diagnostic && <Button asChild variant="outline"><Link href="/lab">Berlatih di Lab SQL</Link></Button>}
+      {!diagnostic && <Button asChild variant="outline"><Link href="/lab">Berlatih di Lab Materi</Link></Button>}
     </div>
     <p className="mt-6 text-sm leading-6 text-muted-foreground">AI dan petunjuk dijeda selama tes berlangsung.</p>
   </main>;

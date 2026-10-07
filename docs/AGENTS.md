@@ -31,4 +31,4 @@ Separate UI, SQL runner, content access, progress, authorization, validation, an
 
 ## Done means
 
-The public app, dashboard, flat material list, reading/PDF, separate core labs and independent SQL Playground, pre-test/post-test, and Admin CMS present the database course only. SQL exercises run on local synthetic data with bounded read and write operations; practice and assessment remain separate. Lint, typecheck, tests, and production build pass.
+The public app, dashboard, flat material list, reading/PDF, separate core labs and independent SQLab playground, pre-test/post-test, and Admin CMS present the database course only. SQL exercises run on local synthetic data with bounded read and write operations; practice and assessment remain separate. Lint, typecheck, tests, and production build pass.

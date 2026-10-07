@@ -2,7 +2,7 @@ import { Database, KeyRound, ArrowDown } from "lucide-react";
 
 export function DatabaseLabPreview() {
   return <figure className="min-w-0 rounded-lg border border-border bg-white" aria-labelledby="lab-preview-title">
-    <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-4"><h2 id="lab-preview-title" className="flex items-center gap-2 text-sm font-semibold"><Database size={17} className="text-primary" aria-hidden="true" />Lab basis data</h2><span className="text-xs text-muted-foreground">Contoh visual</span></div>
+    <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-4"><h2 id="lab-preview-title" className="flex items-center gap-2 text-sm font-semibold"><Database size={17} className="text-primary" aria-hidden="true" />Lab Materi</h2><span className="text-xs text-muted-foreground">Contoh visual</span></div>
     <div className="p-5 sm:p-6"><div className="grid min-w-0 grid-cols-1 items-center gap-2 min-[480px]:grid-cols-[minmax(0,1fr)_1.25rem_minmax(0,1fr)]" aria-label="Relasi satu mahasiswa ke banyak pendaftaran">
       <div className="min-w-0 rounded-md border border-border"><h3 className="rounded-t-md bg-secondary px-3 py-2 font-mono text-xs font-semibold">students</h3><p className="flex flex-wrap items-center gap-1.5 px-3 py-2 font-mono text-xs"><KeyRound size={12} className="shrink-0" aria-label="Primary key" />student_id</p><p className="border-t border-border px-3 py-2 font-mono text-xs">name</p><p className="border-t border-border px-3 py-2 font-mono text-xs">cohort</p></div>
       <span aria-hidden="true" className="mx-auto h-5 w-px bg-primary min-[480px]:h-px min-[480px]:w-full" />

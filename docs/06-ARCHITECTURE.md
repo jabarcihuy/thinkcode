@@ -44,7 +44,7 @@ Supabase:
 
 The registry contains Campus Mini, Katalog Buku, and Toko Mini. Lessons retain campus anchor examples and add aligned transfer activities; public exercise config may select a registered `datasetId`. Practice is local and disposable; user SQL never reaches Supabase. Read and write statements are separately validated against the lesson's supported subset. Invalid or unsupported queries return a safe message. SQLite foreign-key checks are enabled. A reset restores the deterministic seed. Browser results are formative and are not trusted assessment evidence.
 
-The standalone SQL Playground uses the selected registered synthetic seed and Worker as lesson practice. It is account-protected, pauses during an active assessment, and does not save queries or change lesson progress. It never connects to Supabase.
+The standalone SQLab playground uses the selected registered synthetic seed and Worker as lesson practice. It is account-protected, pauses during an active assessment, and retains browser-local query drafts without changing lesson progress. It never connects to Supabase.
 
 ## Assessments
 

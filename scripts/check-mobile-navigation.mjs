@@ -26,7 +26,7 @@ async function login(page, user) {
   await page.getByRole("button", { name: "Masuk", exact: true }).click(); await page.waitForURL("**/dashboard");
   await trigger(page).waitFor();
 }
-const destinations = [["Lab Materi", "/lab"], ["SQL Playground", "/playground"], ["Pembuat Skema", "/schema-builder"], ["Chatbot", "/chatbot"], ["Pre-test", "/pre-test"], ["Post-test", "/post-test"]];
+const destinations = [["Lab Materi", "/lab"], ["SQLab", "/playground"], ["Pembuat Skema", "/schema-builder"], ["Chatbot", "/chatbot"], ["Pre-test", "/pre-test"], ["Post-test", "/post-test"]];
 const nav = page => page.getByRole("navigation", { name: "Navigasi utama", exact: true });
 const panel = page => page.getByRole("navigation", { name: "Fitur lainnya", exact: true });
 const trigger = page => nav(page).getByRole("button", { name: "Menu", exact: true });
@@ -75,6 +75,7 @@ try {
   for (const [label, href] of destinations) {
     await openMenu(page); await panel(page).getByRole("link", { name: label, exact: true }).click();
     await page.waitForURL(`${site}${href}`); await assertExpanded(page, false);
+    if (["/lab", "/playground"].includes(href)) await page.getByRole("heading", { level: 1, name: label, exact: true }).waitFor();
   }
   await page.goto(`${site}/learn/database-fundamentals/lessons/membaca-bentuk-data`); await page.locator("main h1").waitFor();
   await openMenu(page); await fit(page); await panel(page).getByRole("link", { name: "Lab Materi", exact: true }).click(); await page.waitForURL(`${site}/lab`);

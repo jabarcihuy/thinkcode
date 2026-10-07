@@ -28,11 +28,11 @@ Materi 1–11 disajikan sebagai daftar datar, tanpa submateri. Halaman hanya ber
 
 Pilih **Selesai dibaca** untuk mencatat bacaan, lalu lulus satu latihan inti di Lab untuk membuka materi berikutnya. Pre-test wajib selesai sekali sebelum materi baru terbuka. Membuka halaman atau mengunduh PDF saja tidak mengubah progres. Ini merupakan pengakuan membaca, bukan bukti penguasaan materi. Server memeriksa urutan, publication dan akun; URL langsung tidak melewati lock.
 
-### Lab SQL
+### Lab Materi
 
 Buka `/lab` untuk eksplorasi visual dan mencoba query. Lab Relasi menggunakan tabel/key tanpa SQL; Read dan Write memakai SQLite sintetis di browser Worker. Lab tetap vertikal: data → query → hasil. Satu check inti per materi wajib lulus dan dapat diulang. Halaman Lab menampilkan latihan inti saja. Skor latihan terpisah dari nilai post-test. Bookmark halaman `/practice` lama tetap bekerja.
 
-SQL Playground, Pembuat Skema, dan Tutor tersedia sebagai alat bantu dari Lab. Navigasi mobile: **Beranda · Materi · Menu · Tes · Profil**.
+SQLab (playground SQL), Pembuat Skema, dan Tutor tersedia sebagai alat bantu dari Lab. Navigasi mobile: **Beranda · Materi · Menu · Tes · Profil**.
 
 ### Post-test dan penyelesaian
 

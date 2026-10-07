@@ -29,7 +29,7 @@ try {
     await page.goto(site + route); await page.locator("main h1").waitFor();
     await page.getByRole("link", { name: /Quethink/ }).first().focus();
     if (route === "/") {
-      const preview = page.getByRole("figure", { name: "Lab basis data", exact: true });
+      const preview = page.getByRole("figure", { name: "Lab Materi", exact: true });
       await preview.getByText("cohort", { exact: true }).waitFor();
       await preview.getByText("Citra · Danu", { exact: true }).waitFor();
     }

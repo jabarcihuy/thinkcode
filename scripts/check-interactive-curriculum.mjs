@@ -100,7 +100,7 @@ async function passAssessment(user, assessment, lessonId, exerciseId) {
   assert.equal(blockedTutorHistory.response.status, 403, "Chatbot history must also be blocked during an active assessment.");
   const pausedPlayground = await fetch(`${site}/playground`, { headers: { Cookie: user.cookie() } });
   assert.equal(pausedPlayground.status, 200);
-  assert.match(await pausedPlayground.text(), /Playground dijeda/, "Standalone SQL Playground must pause during an active assessment.");
+  assert.match(await pausedPlayground.text(), /SQLab dijeda/, "Standalone SQLab playground must pause during an active assessment.");
 
   const { data: privateItems, error } = await privileged.from("assessment_items")
     .select("id, answer_config").eq("assessment_id", assessment.id);
