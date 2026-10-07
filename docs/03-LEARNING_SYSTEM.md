@@ -14,13 +14,13 @@ Materi 1–11 adalah daftar datar dalam urutan Relasi → Read → Write. Halama
 2. Server menyimpan read_at dan status IN_PROGRESS, bukan langsung COMPLETED.
 3. Pengguna masuk ke Lab terkait, mengamati data/diagram dan menyelesaikan satu latihan inti.
 4. Server memeriksa jawaban deterministik. Materi COMPLETED jika read_at terisi dan semua latihan required/published passed.
-5. Materi prerequisite berikutnya tersedia. Latihan tambahan tidak menghalangi progres; retry tanpa penalti.
+5. Materi prerequisite berikutnya tersedia. Halaman Lab menampilkan latihan inti saja; retry tanpa penalti.
 
 SQL eksplorasi dan Run tetap lokal dalam SQLite Worker. Hasil eksekusi browser tidak menjadi bukti ketuntasan. Latihan inti memakai jawaban deterministik server (prediksi tabel, pilihan, urutan, atau struktur model). Admin hanya boleh mempublikasikan latihan required yang dapat dinilai server.
 
 ## Latihan inti
 
-Materi 1: membedakan record dan schema. Materi 2: menyusun model peminjaman buku dengan tabel, PK, FK dan relasi. Materi 3–11: latihan posisi 3 pada bank existing (SELECT/FROM, filter, urutan/limit, JOIN, agregasi, laporan, INSERT, UPDATE, DELETE). Latihan lain opsional. Model wajib menyertakan tabel/kolom yang ditetapkan prompt; identifier internal bebas. Pemeriksa membandingkan struktur, bukan jumlah tabel saja.
+Materi 1: membedakan record dan schema. Materi 2: menyusun model peminjaman buku dengan tabel, PK, FK dan relasi. Materi 3–11: latihan posisi 3 pada bank existing (SELECT/FROM, filter, urutan/limit, JOIN, agregasi, laporan, INSERT, UPDATE, DELETE). Latihan pendukung lama tidak ditampilkan di Lab; riwayatnya tetap disimpan. Model wajib menyertakan tabel/kolom yang ditetapkan prompt; identifier internal bebas. Pemeriksa membandingkan struktur, bukan jumlah tabel saja.
 
 ## Tes dan selesai
 

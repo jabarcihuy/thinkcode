@@ -30,9 +30,9 @@ Pilih **Selesai dibaca** untuk mencatat bacaan, lalu lulus satu latihan inti di 
 
 ### Lab SQL
 
-Buka `/lab` untuk eksplorasi visual dan mencoba query. Lab Relasi menggunakan tabel/key tanpa SQL; Read dan Write memakai SQLite sintetis di browser Worker. Lab tetap vertikal: data → query → hasil. Satu check inti per materi wajib lulus dan dapat diulang. Check tambahan opsional. Skor latihan terpisah dari nilai post-test. Bookmark halaman `/practice` lama tetap bekerja.
+Buka `/lab` untuk eksplorasi visual dan mencoba query. Lab Relasi menggunakan tabel/key tanpa SQL; Read dan Write memakai SQLite sintetis di browser Worker. Lab tetap vertikal: data → query → hasil. Satu check inti per materi wajib lulus dan dapat diulang. Halaman Lab menampilkan latihan inti saja. Skor latihan terpisah dari nilai post-test. Bookmark halaman `/practice` lama tetap bekerja.
 
-SQL Playground, Pembuat Skema, dan Tutor tersedia sebagai alat bantu dari Lab. Navigasi mobile: **Beranda · Materi · Lab · Tes · Profil**.
+SQL Playground, Pembuat Skema, dan Tutor tersedia sebagai alat bantu dari Lab. Navigasi mobile: **Beranda · Materi · Menu · Tes · Profil**.
 
 ### Post-test dan penyelesaian
 

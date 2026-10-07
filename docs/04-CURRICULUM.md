@@ -51,11 +51,13 @@ The Write sequence is intentionally conservative: `INSERT` first, then `UPDATE`,
 
 ## Separate practice: Investigasi Kampus Mini
 
-Each material pairs with one required server-checked core in Lab. Supporting concept checks and transfer activities remain optional. Reading acknowledgement plus core success completes the material.
+Each material pairs with one required server-checked core in Lab. Supporting concept checks and transfer exercises from the historical bank are no longer displayed on learner Lab pages. Reading acknowledgement plus core success completes the material.
 
 The 2D schema visualizer connects named PK/FK columns. Select tables and records to follow real relationships, including confirmed local mutations. SQL-free Relasi lessons do not introduce query syntax.
 
-| Material | Optional practice A | Optional practice B | Core consolidation (except Materi 2: schema model) |
+The table below records the historical supporting bank; only the core column is shown in learner Lab. Existing attempts remain stored.
+
+| Material | Historical supporting practice A | Historical supporting practice B | Core consolidation (except Materi 2: schema model) |
 |---|---|---|---|
 | Membaca Bentuk Data | Tabel: Temukan tabel yang tepat | Kolom: Kolom atau nilai? | Record dan schema: Bedakan isi dan struktur |
 | Key dan Hubungan Antar Tabel | Primary key: Identitas bukan nama | Foreign key: Ikuti foreign key | Model Peminjaman Buku: susun tabel, PK, dan FK |

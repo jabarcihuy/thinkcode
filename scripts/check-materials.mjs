@@ -74,7 +74,11 @@ try {
         assert.equal(await download.failure(), null);
         }
       }
-      if (name === "practice") await page.getByRole("heading", { name: "Latihan inti", exact: true }).waitFor();
+      if (name === "practice") {
+        await page.getByRole("heading", { name: "Latihan inti", exact: true }).waitFor();
+        assert.equal(await page.getByText("Latihan tambahan · opsional", { exact: true }).count(), 0);
+        assert.equal(await page.locator('section[id^="practice-"]').count(), 1, "Only the required core is rendered.");
+      }
       const size = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));
       assert.ok(size.content <= size.viewport, `${name} ${width} overflow: ${JSON.stringify(size)}`);
       await page.screenshot({ path: `.impeccable/review/material-reading/${name}-${width}.png`, fullPage: true });

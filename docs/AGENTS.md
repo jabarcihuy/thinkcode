@@ -8,7 +8,7 @@ The learner flow is **mandatory diagnostic Pre-test → reading Materi → paire
 
 ## Product guardrails
 
-- Keep the interface focused and easy to follow.
+- Keep the interface focused and easy to follow. Learner Lab displays required core exercises only; preserve historical optional attempts without rendering the additional-exercise section.
 - Teach relational tables, rows, columns, primary/foreign keys, SELECT, FROM, WHERE, AND/OR, ORDER BY, LIMIT, INNER JOIN, COUNT, AVG, GROUP BY, and single-row INSERT/targeted UPDATE/guarded DELETE.
 - Use the shipped synthetic dataset registry: Campus Mini for the anchor examples and optional practice, Katalog Buku and Toko Mini for transfer activities. Keep each lab confined to its selected schema; switch/reset creates a fresh local session.
 - SQL practice runs only against local SQLite WASM data. Post-test SQL authoring uses the same SQLite/WASM engine in a bounded, server-only Node Worker against isolated synthetic fixtures. Neither execution path connects to Supabase or production data.
@@ -31,4 +31,4 @@ Separate UI, SQL runner, content access, progress, authorization, validation, an
 
 ## Done means
 
-The public app, dashboard, flat material list, reading/PDF, separate core/optional labs, pre-test/post-test, and Admin CMS present the database course only. SQL exercises run on local synthetic data with bounded read and write operations; practice and assessment remain separate. Lint, typecheck, tests, and production build pass.
+The public app, dashboard, flat material list, reading/PDF, separate core labs and independent SQL Playground, pre-test/post-test, and Admin CMS present the database course only. SQL exercises run on local synthetic data with bounded read and write operations; practice and assessment remain separate. Lint, typecheck, tests, and production build pass.
