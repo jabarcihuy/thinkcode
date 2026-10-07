@@ -1,6 +1,6 @@
 import type { SchemaDraft } from "../domain/schema-draft";
 
-export function createDraftStore(scenarioId: string) {
+export function createDraftStore(scenarioId: string, persistent = true) {
   const key = `quethink:schema-draft:v1:${scenarioId}`;
   let snapshot: string | null | undefined;
   const listeners = new Set<() => void>();
@@ -8,7 +8,7 @@ export function createDraftStore(scenarioId: string) {
   return {
     getSnapshot() {
       if (snapshot === undefined) {
-        try { snapshot = localStorage.getItem(key); } catch { snapshot = null; }
+        try { snapshot = persistent ? localStorage.getItem(key) : null; } catch { snapshot = null; }
       }
       return snapshot;
     },
@@ -21,7 +21,7 @@ export function createDraftStore(scenarioId: string) {
     save(draft: SchemaDraft) {
       snapshot = JSON.stringify(draft);
       let persisted = true;
-      try { localStorage.setItem(key, snapshot); } catch { persisted = false; }
+      try { if (persistent) localStorage.setItem(key, snapshot); } catch { persisted = false; }
       emit();
       return persisted;
     },

@@ -25,7 +25,8 @@
     "test:sql-assessment:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-sql-assessment.mjs",
     "test:mobile:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-mobile-navigation.mjs",
     "test:ui:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-public-dashboard-ui.mjs",
-    "test:sqlab:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-schema-builder.mjs"
+    "test:sqlab:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-schema-builder.mjs",
+    "test:guest:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-guest-mode.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

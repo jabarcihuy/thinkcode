@@ -82,3 +82,6 @@ Jalankan `npm run test:sql-assessment:integration` setelah production build untu
 
 ### SQLab
 Buat database lokal sendiri di tab Skema, isi tabel di Data, jalankan SQL di Query, atau minta rancangan sintetis di AI lalu tinjau dan terapkan. Diagram 2D mengikuti struktur. Draf tersimpan hanya di browser dan akun yang sama; tidak memengaruhi nilai dan tidak mengakses database produksi. Maksimal 6 tabel, 8 kolom/tabel, 12 relasi dan 100 record/tabel.
+
+### Mode tamu
+Pilih **Coba sebagai tamu**, isi nama, lalu coba semua fitur belajar dari `/guest`: materi/PDF, Lab, SQLab, AI dan tes percobaan. Tidak perlu email/password; tidak ada akun Supabase yang dibuat. Semua materi terbuka, sementara jawaban, database percobaan dan hasil hanya hidup di halaman yang sedang dibuka. Tidak ada progres atau nilai resmi yang tersimpan. Keluar dari mode tamu menghapus sesi nama.

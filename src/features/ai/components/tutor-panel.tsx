@@ -1,5 +1,6 @@
 "use client";
 
+import { useGuestMode } from "@/features/guest/components/guest-mode";
 import { useEffect, useState, type FormEvent } from "react";
 import { Lightbulb, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,8 @@ export function TutorPanel({
   visibleOutput?: string;
   visibleTestResults?: Array<{ position: number; passed: boolean }>;
 }) {
+  const guest = useGuestMode();
+  const endpoint = guest ? "/api/guest/tutor" : "/api/ai/tutor";
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [messages, setMessages] = useState<TutorMessage[]>([]);
   const [draft, setDraft] = useState("");
@@ -42,7 +45,7 @@ export function TutorPanel({
     const query = new URLSearchParams({ lessonId });
     if (exerciseId) query.set("exerciseId", exerciseId);
     let cancelled = false;
-    fetch(`/api/ai/tutor?${query}`, { cache: "no-store" }).then(async (response) => {
+    fetch(`${endpoint}?${query}`, { cache: "no-store" }).then(async (response) => {
       const payload = await response.json().catch(() => null) as { sessionId?: string | null; messages?: TutorMessage[]; error?: string } | null;
       if (cancelled) return;
       if (!response.ok) {
@@ -56,7 +59,7 @@ export function TutorPanel({
       if (!cancelled) setError("Riwayat chatbot belum dapat dimuat. Kamu masih bisa memulai percakapan baru.");
     }).finally(() => { if (!cancelled) setLoadingHistory(false); });
     return () => { cancelled = true; };
-  }, [lessonId, exerciseId]);
+  }, [lessonId, exerciseId, endpoint]);
 
   async function ask(action: TutorAction, text = "") {
     if (pending) return;
@@ -64,7 +67,7 @@ export function TutorPanel({
     const displayText = text.trim() || actions.find((item) => item.action === action)?.label || "Minta bantuan";
     setMessages((current) => [...current, { role: "USER", content: displayText }, { role: "ASSISTANT", content: "" }]);
     try {
-      const response = await fetch("/api/ai/tutor", {
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ lessonId, exerciseId, sessionId: sessionId ?? undefined, action, message: text,

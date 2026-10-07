@@ -39,3 +39,11 @@ RLS membatasi progres/hasil ke pemilik. Mutasi ketuntasan melalui RPC server; pe
 ## Versi post-test SQL
 
 Post-test konsep lama ditarik dari publikasi; soal, sesi dan hasil lama tetap tersimpan. Nilai lama bukan bukti lulus tugas SQL versi baru. Dashboard menggunakan post-test published saat ini; baseline dan ketuntasan materi tidak direset. Rollout menunggu sesi post-test lama selesai.
+
+## Named guest demo mode
+
+Users may enter `/guest/start` with only a display name. This creates a signed HttpOnly session cookie, not a Supabase user/profile or new role. `/guest` provides dashboard, all published Database Fundamentals materials/PDFs, core Labs, SQLab, contextual AI and pre/post-test demos without learning prerequisites. Guest pages and APIs are separate from authenticated learner/admin routes; existing RBAC, RLS and official progression remain unchanged.
+
+Guest answers, schema/data drafts and results are memory-only, disappear on leaving/reloading their workspace, and never create lesson_progress, exercise_attempts, AI conversations, assessment_sessions or assessment_results. Guest tests are graded by the existing trusted server adapters; private answer/fixture fields are never serialized. Only transient test mode and hint level are kept in the signed session cookie. AI/Lab helpers block during an active demo test. A signed-in user with an active official test is also blocked from guest endpoints. Guest mode never grants admin access.
+
+The session lasts at most eight hours (session cookie; explicit exit clears it). Signing uses a purpose-specific HMAC with the existing server-only Supabase secret. Published content reads use narrowly projected server queries, never expose the privileged client. Same-origin mutations, bounded inputs, output limits, per-session/IP/process request caps guard the demo. Quotas are process-local; multi-instance production deployments require an upstream shared rate limit/WAF for reliable global AI cost protection. No database migration or anonymous Supabase sign-in configuration is required.

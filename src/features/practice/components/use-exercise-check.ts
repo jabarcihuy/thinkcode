@@ -1,11 +1,13 @@
 "use client";
 
+import { useGuestMode } from "@/features/guest/components/guest-mode";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { GradeResult } from "@/features/practice/types";
 
 export function useExerciseCheck(exerciseId: string, pathSlug: string, previewOnly = false, reviewHref?: string) {
   const router = useRouter();
+  const guest = useGuestMode();
   const [pending, setPending] = useState(false);
   const [result, setResult] = useState<GradeResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -14,7 +16,7 @@ export function useExerciseCheck(exerciseId: string, pathSlug: string, previewOn
     if (pending || previewOnly) return;
     setPending(true); setError(null); setResult(null);
     try {
-      const response = await fetch(`/api/exercises/${exerciseId}/check`, {
+      const response = await fetch(guest ? `/api/guest/check/${exerciseId}` : `/api/exercises/${exerciseId}/check`, {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ pathSlug, ...payload }),
       });
@@ -25,7 +27,7 @@ export function useExerciseCheck(exerciseId: string, pathSlug: string, previewOn
       }
       const grade = data as GradeResult;
       setResult(grade);
-      if (grade.passed) router.refresh();
+      if (grade.passed && !guest) router.refresh();
     } catch { setError("Koneksi terputus. Coba periksa jawaban lagi."); }
     finally { setPending(false); }
   }

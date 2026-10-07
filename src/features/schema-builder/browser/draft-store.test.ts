@@ -22,3 +22,14 @@ describe("local visual drafts", () => {
     expect(readDraft(store.getSnapshot())).toEqual(MODELING_SCENARIOS[0]!.reference);
   });
 });
+
+it("keeps guest models memory-only without touching browser storage", () => {
+  const getItem = vi.fn(), setItem = vi.fn();
+  vi.stubGlobal("localStorage", { getItem, setItem });
+  const store = createDraftStore("guest", false);
+  expect(store.getSnapshot()).toBeNull();
+  store.save(MODELING_SCENARIOS[0]!.reference);
+  expect(readDraft(store.getSnapshot())).not.toBeNull();
+  expect(getItem).not.toHaveBeenCalled(); expect(setItem).not.toHaveBeenCalled();
+  expect(createDraftStore("guest", false).getSnapshot()).toBeNull();
+});

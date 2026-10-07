@@ -1,10 +1,12 @@
 "use client";
+import { useGuestMode } from "@/features/guest/components/guest-mode";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { ModelDiagram } from "@/features/schema-builder/components/model-diagram";
 import { parseDocument, type SqlabDocument } from "../domain/document";
 export function AiDesigner({ apply }: { apply: (doc: SqlabDocument) => void }) {
+  const guest = useGuestMode();
   const [draft, setDraft] = useState<SqlabDocument | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -18,7 +20,7 @@ export function AiDesigner({ apply }: { apply: (doc: SqlabDocument) => void }) {
     controller.current = new AbortController();
     try {
       const prompt = String(new FormData(event.currentTarget).get("prompt"));
-      const response = await fetch("/api/sqlab/generate", {
+      const response = await fetch(guest ? "/api/guest/sqlab" : "/api/sqlab/generate", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ prompt }),

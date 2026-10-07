@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Play, RotateCcw, StepBack, StepForward } from "lucide-react";
 import { DraftStatus } from "@/components/forms/draft-status";
+import { useGuestMode } from "@/features/guest/components/guest-mode";
 import { useLocalDraft } from "@/lib/browser/use-local-draft";
 import { readQueryDraft } from "../domain/query-draft";
 import { Button } from "@/components/ui/button";
@@ -89,6 +90,7 @@ export function DatabaseQueryLab({
   const starterSql = suppliedStarterSql ?? dataset.starterSql;
   const [snapshot, setSnapshot] = useState(() => initialDatasetSnapshot(dataset));
   const initialDraft = useMemo(() => ({ queryText: starterSql, prediction: "" }), [starterSql]);
+  const guest = useGuestMode();
   const draft = useLocalDraft({ key: userId ? `quethink:query-draft:v1:${userId}:${lessonId ?? "playground"}:${datasetId}` : null, signature: starterSql, initial: initialDraft, parse: readQueryDraft });
   const { queryText, prediction } = draft.value;
   function setQueryText(queryText: string) { draft.save({ ...draft.value, queryText }); }
@@ -206,7 +208,7 @@ export function DatabaseQueryLab({
           onKeyDown={(event) => { if ((event.ctrlKey || event.metaKey) && event.key === "Enter") { event.preventDefault(); void runQuery(); } }}
           maxLength={4_096} spellCheck={false} autoCapitalize="off" autoCorrect="off" disabled={pending || draft.status === "loading" || Boolean(preview)} rows={7}
           className="mt-3 min-h-40 w-full resize-y rounded-md border border-input bg-code-surface p-4 font-mono text-base leading-6 text-code-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-70 sm:text-sm" />
-        {userId && <div className="mt-3"><DraftStatus status={draft.status} restored={draft.restored} onRetry={() => draft.save(draft.value)} onReset={draft.clear} /><p className="mt-1 text-xs leading-5 text-muted-foreground">Draf menyimpan query dan prediksi. Saat halaman dibuka ulang, data kembali ke kondisi awal; jalankan query untuk melihat hasil.</p></div>}
+        {userId && <div className="mt-3"><DraftStatus status={draft.status} restored={draft.restored} onRetry={() => draft.save(draft.value)} onReset={draft.clear} /><p className="mt-1 text-xs leading-5 text-muted-foreground">{guest ? "Query dan prediksi hanya tersedia selama halaman ini terbuka." : "Draf menyimpan query dan prediksi. Saat halaman dibuka ulang, data kembali ke kondisi awal; jalankan query untuk melihat hasil."}</p></div>}
         <p className="mt-2 text-xs leading-5 text-muted-foreground">{isMutation ? "Pratinjau sebelum menerapkan perubahan." : "SELECT membaca data tanpa mengubahnya."} Ctrl/⌘ + Enter untuk Run.</p>
 
         <label htmlFor="database-prediction" className="mt-6 block text-sm font-semibold">Sebelum Run, berapa {isMutation ? "record yang akan berubah" : "baris hasilnya"}?</label>
