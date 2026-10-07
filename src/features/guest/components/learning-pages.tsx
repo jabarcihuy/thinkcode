@@ -37,7 +37,7 @@ export function GuestLearningPages({ view, userId, activeTest }: { view: string;
   const result = test ? local?.value.tests[test.id] : undefined;
   const available = diagnostic || postAvailable;
   const active = Boolean(test && activeTest === test.id);
-  const label = active ? "Lanjutkan tes" : result ? diagnostic ? "Ulangi pre-test" : "Ulangi post-test" : diagnostic ? "Mulai pre-test" : "Mulai post-test";
+  const label = active ? "Lanjutkan tes" : result ? diagnostic ? "Ulangi tes awal" : "Ulangi tes akhir" : diagnostic ? "Mulai tes awal" : "Mulai tes akhir";
   const action = test && (available || active) ? active ? <Button asChild className="mt-5"><Link href={`/guest/tests/${test.id}`}>{label}</Link></Button> : <form action={startGuestTest} className="mt-5"><input type="hidden" name="testId" value={test.id} /><Button type="submit">{label}</Button></form> : null;
   return <CourseTestView diagnostic={diagnostic} overview={overview} title={test?.title} result={result ? { latestScore: result.score, highestScore: result.highestScore ?? result.score, passed: result.passed } : undefined} resultHref={result ? `/guest?view=${diagnostic ? "pre-result" : "post-result"}` : undefined} baselineScore={pre ? local?.value.tests[pre.id]?.score : undefined} available={available} active={active} studied={Boolean(overview?.lessons.some((lesson) => lesson.readAt))} startAction={action} guest />;
  }

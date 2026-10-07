@@ -7,5 +7,5 @@ describe("resume the mandatory journey", () => {
   it("prioritizes an active test over reading", () => expect(nextLearningAction(overview, "session", false).href).toBe("/assessments/sessions/session"));
   it("offers mandatory baseline before new material", () => expect(nextLearningAction({ ...overview, baselineComplete: false }, null, false).href).toBe("/pre-test"));
   it("resumes core Lab after reading acknowledgement", () => expect(nextLearningAction({ ...overview, metrics: { ...overview.metrics, currentLesson: { ...lesson, readAt: "today" } } }, null, false).href).toMatch(/\/practice#lesson-practice$/));
-  it("offers post-test after all material completion", () => expect(nextLearningAction({ ...overview, metrics: { ...overview.metrics, currentLesson: null } }, null, false).label).toBe("Mulai post-test"));
+  it("offers post-test after all material completion", () => expect(nextLearningAction({ ...overview, metrics: { ...overview.metrics, currentLesson: null } }, null, false).label).toBe("Mulai tes akhir"));
 });

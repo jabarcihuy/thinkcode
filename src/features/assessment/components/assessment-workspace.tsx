@@ -3,6 +3,7 @@
 import { useGuestLearning } from "@/features/guest/components/guest-mode";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { assessmentDisplayCopy } from "../domain/display-copy";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -79,7 +80,7 @@ export function AssessmentWorkspace({
   if (!current) return <p className="text-sm text-muted-foreground">Soal assessment belum tersedia.</p>;
   return <div>
     <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-5">
-      <div><h1 className="text-2xl font-semibold tracking-tight">{assessmentTitle}</h1><p className="mt-2 max-w-[72ch] text-sm leading-6 text-muted-foreground">{instructions}</p></div>
+      <div><h1 className="text-2xl font-semibold tracking-tight">{assessmentDisplayCopy(assessmentTitle)}</h1><p className="mt-2 max-w-[72ch] text-sm leading-6 text-muted-foreground">{assessmentDisplayCopy(instructions)}</p></div>
       <div className="min-w-36 text-sm tabular-nums text-muted-foreground">
         <p>{completeCount}/{items.length} terjawab</p>
         <div role="progressbar" aria-label="Progres assessment" aria-valuemin={0} aria-valuemax={items.length} aria-valuenow={completeCount} className="mt-2 h-1.5 overflow-hidden rounded-full bg-muted">
@@ -87,7 +88,7 @@ export function AssessmentWorkspace({
         </div>
       </div>
     </div>
-    <p className="mb-6 rounded-md bg-muted px-4 py-3 text-sm">{diagnostic ? "Pre-test · Tanpa syarat lulus · AI dan petunjuk dinonaktifkan" : `Post-test · Lulus pada skor ${passingScore}+ · AI dan petunjuk dinonaktifkan`}</p>
+    <p className="mb-6 rounded-md bg-muted px-4 py-3 text-sm">{diagnostic ? "Tes Awal · Tanpa syarat lulus · AI dan petunjuk dinonaktifkan" : `Tes Akhir · Lulus pada skor ${passingScore}+ · AI dan petunjuk dinonaktifkan`}</p>
 
     <div className="mb-6"><DraftStatus status={draft.status} restored={draft.restored} onRetry={() => draft.save(draft.value)} onReset={draft.clear} /></div>
     {draft.status === "loading" ? <p role="status">Menyiapkan jawaban tes…</p> : <div className="grid min-w-0 grid-cols-1 items-start gap-6 md:grid-cols-[12rem_minmax(0,1fr)]">
@@ -98,7 +99,7 @@ export function AssessmentWorkspace({
           <Button type="button" variant="outline" disabled={activeIndex === 0 || submitPending} onClick={() => selectQuestion(activeIndex - 1)}><ArrowLeft size={15} aria-hidden="true" />Sebelumnya</Button>
           {activeIndex < items.length - 1
             ? <Button type="button" variant="outline" disabled={submitPending} onClick={() => selectQuestion(activeIndex + 1)}>Berikutnya<ArrowRight size={15} aria-hidden="true" /></Button>
-            : <Button type="button" disabled={submitPending || completeCount !== items.length} onClick={() => confirmationRef.current?.showModal()}><Send size={15} aria-hidden="true" />{diagnostic ? "Kirim pre-test" : "Kirim post-test"}</Button>}
+            : <Button type="button" disabled={submitPending || completeCount !== items.length} onClick={() => confirmationRef.current?.showModal()}><Send size={15} aria-hidden="true" />{diagnostic ? "Kirim tes awal" : "Kirim tes akhir"}</Button>}
         </div>
         {error && <p role="alert" className="mt-4 text-sm text-destructive">{error}</p>}
       </div>

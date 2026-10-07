@@ -86,7 +86,7 @@ export const assessmentInput = z.object({
   position, is_published: z.boolean().default(false),
 }).superRefine((value, context) => {
   if (value.type === "PRETEST" && (value.course_weight_percent !== 0 || value.passing_score !== 0)) {
-    context.addIssue({ code: "custom", message: "Pre-test tidak memiliki bobot nilai atau syarat lulus." });
+    context.addIssue({ code: "custom", message: "Tes Awal tidak memiliki bobot nilai atau syarat lulus." });
   }
 });
 export const assessmentItemInput = z.object({

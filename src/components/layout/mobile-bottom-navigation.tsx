@@ -21,8 +21,8 @@ const tools = [
   { href: "/lab", label: "Lab Materi", icon: Database },
   { href: "/playground", label: "SQLab", icon: PanelsTopLeft },
   { href: "/chatbot", label: "Chatbot", icon: MessagesSquare },
-  { href: "/pre-test", label: "Pre-test", icon: ClipboardCheck },
-  { href: "/post-test", label: "Post-test", icon: ClipboardCheck },
+  { href: "/pre-test", label: "Tes Awal", icon: ClipboardCheck },
+  { href: "/post-test", label: "Tes Akhir", icon: ClipboardCheck },
 ];
 const itemClass = "flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 rounded-md px-1 transition-colors hover:bg-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 function matchesPath(pathname: string, prefix: string) {

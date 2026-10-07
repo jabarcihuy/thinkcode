@@ -35,8 +35,8 @@ try {
   const { data: lessons, error: lessonError } = await db.from('lessons').select('id,slug,title,content,chapter_id,position').in('chapter_id', chapters.map(chapter => chapter.id)).eq('is_published', true); assert.ifError(lessonError);
   const positions = new Map(chapters.map(chapter => [chapter.id, chapter.position]));
   lessons.sort((a,b) => positions.get(a.chapter_id) - positions.get(b.chapter_id) || a.position - b.position);
-  await page.getByRole('link', { name: 'Mulai pre-test', exact: true }).click();
-  await page.getByRole('button', { name: 'Mulai pre-test', exact: true }).click();
+  await page.getByRole('link', { name: 'Mulai tes awal', exact: true }).click();
+  await page.getByRole('button', { name: 'Mulai tes awal', exact: true }).click();
   await page.waitForURL(site + '/guest/tests/' + pre.id);
   assert.equal((await request.post(site + '/api/guest/tutor', { data: {} })).status(), 403);
   await page.locator('input[type=radio]').first().check();
@@ -49,7 +49,7 @@ try {
     await page.locator('input[type=radio]').first().check();
     if (i < count - 1) await page.getByRole('button', { name: 'Berikutnya', exact: true }).click();
   }
-  await page.getByRole('button', { name: 'Kirim pre-test', exact: true }).click();
+  await page.getByRole('button', { name: 'Kirim tes awal', exact: true }).click();
   const submitted = page.waitForResponse(response => response.url().includes('/api/guest/tests/') && response.request().method() === 'POST');
   await page.getByRole('dialog').getByRole('button', { name: 'Kirim jawaban', exact: true }).click();
   const submittedResponse = await submitted;

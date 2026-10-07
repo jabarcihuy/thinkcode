@@ -9,14 +9,14 @@ import { DEFAULT_LEARNING_PATH_SLUG } from "@/features/learning/config";
 
 export const metadata: Metadata = {
   title: "Quethink — Belajar basis data, lihat cara kerjanya",
-  description: "Platform belajar basis data dengan materi dan PDF, video pendamping, skema visual 2D, latihan SQL, SQLab, Tutor AI, serta pre-test dan post-test.",
+  description: "Platform belajar basis data dengan materi dan PDF, video pendamping, skema visual 2D, latihan SQL, SQLab, Tutor AI, serta tes awal dan tes akhir.",
 };
 
 const journey = [
-  ["Pre-test", "Kenali pemahaman awalmu. Tidak ada syarat lulus untuk mulai belajar."],
+  ["Tes Awal", "Kenali pemahaman awalmu. Tidak ada syarat lulus untuk mulai belajar."],
   ["Materi", "Baca satu konsep. Unduh PDF atau tonton video pendamping yang tersedia."],
   ["Lab Materi", "Amati tabel dan relasinya, lalu selesaikan latihan inti untuk membuka materi berikutnya."],
-  ["Post-test", "Uji pemahaman secara mandiri setelah seluruh materi tuntas. Nilai kelulusan minimal 75."],
+  ["Tes Akhir", "Uji pemahaman secara mandiri setelah seluruh materi tuntas. Nilai kelulusan minimal 75."],
 ];
 const topics = [
   ["Relasi", "Pahami tabel, baris, kolom, dan kunci. Lihat bagaimana data saling terhubung.", "2 materi"],
@@ -75,7 +75,7 @@ export default function HomePage() {
             <div><h2 id="lab-title" className="text-3xl font-semibold tracking-tight">Lihat hubungan. Amati hasilnya.</h2><p className="mt-4 max-w-[48ch] leading-7 text-muted-foreground">Di Lab Materi, amati tabel dan hubungan PK–FK melalui skema 2D. Prediksi hasil query, jalankan, lalu bandingkan dengan data yang muncul.</p><p className="mt-4 max-w-[48ch] text-sm leading-7 text-muted-foreground">Latihan menggunakan kasus kampus, katalog buku, dan toko. Data latihan terisolasi dan bisa direset.</p></div>
             <div className="space-y-7">
               <section><h3 className="text-xl font-semibold">Tutor AI saat kamu buntu</h3><p className="mt-2 text-sm leading-7 text-muted-foreground">Minta petunjuk tentang konsep, query, atau kesalahan di Lab Materi. Chatbot juga tersedia dari menu. Kamu tetap yang mencoba dan mengambil keputusan.</p></section>
-              <section className="border-t border-primary/15 pt-6"><h3 className="text-xl font-semibold">Latihan untuk mencoba. Tes untuk mengukur.</h3><p className="mt-2 text-sm leading-7 text-muted-foreground">Ulangi latihan tanpa penalti. Pre-test mencatat titik awal; post-test menilai pemahaman akhir. Saat tes aktif, bantuan AI dinonaktifkan.</p></section>
+              <section className="border-t border-primary/15 pt-6"><h3 className="text-xl font-semibold">Latihan untuk mencoba. Tes untuk mengukur.</h3><p className="mt-2 text-sm leading-7 text-muted-foreground">Ulangi latihan tanpa penalti. Tes Awal mencatat titik awal; tes akhir menilai pemahaman akhir. Saat tes aktif, bantuan AI dinonaktifkan.</p></section>
             </div>
           </div>
         </section>

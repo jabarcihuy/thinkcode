@@ -13,7 +13,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ sl
       .eq("slug", slug).eq("learning_path_id", path.id).maybeSingle();
     if (error || !assessment?.is_published) return Response.json({ error: "Assessment tidak tersedia." }, { status: 404 });
     const { data: sessionId, error: startError } = await client.rpc("start_assessment_session", { p_assessment_id: assessment.id });
-    if (startError || !sessionId) return Response.json({ error: "Tes belum dapat dimulai. Selesaikan sesi aktif atau materi prasyarat; pre-test hanya dapat dikirim sekali." }, { status: 403 });
+    if (startError || !sessionId) return Response.json({ error: "Tes belum dapat dimulai. Selesaikan sesi aktif atau materi prasyarat; tes awal hanya dapat dikirim sekali." }, { status: 403 });
     return Response.json({ sessionId }, { headers: { "cache-control": "no-store" } });
   } catch (error) {
     if (error instanceof AssessmentAuthError) return Response.json({ error: error.message }, { status: error.status });

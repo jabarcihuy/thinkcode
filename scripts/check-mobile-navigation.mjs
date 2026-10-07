@@ -26,7 +26,7 @@ async function login(page, user) {
   await page.getByRole("button", { name: "Masuk", exact: true }).click(); await page.waitForURL("**/dashboard");
   await trigger(page).waitFor();
 }
-const destinations = [["Lab Materi", "/lab"], ["SQLab", "/playground"], ["Chatbot", "/chatbot"], ["Pre-test", "/pre-test"], ["Post-test", "/post-test"]];
+const destinations = [["Lab Materi", "/lab"], ["SQLab", "/playground"], ["Chatbot", "/chatbot"], ["Tes Awal", "/pre-test"], ["Tes Akhir", "/post-test"]];
 const nav = page => page.getByRole("navigation", { name: "Navigasi utama", exact: true });
 const panel = page => page.getByRole("navigation", { name: "Fitur lainnya", exact: true });
 const trigger = page => nav(page).getByRole("button", { name: "Menu", exact: true });

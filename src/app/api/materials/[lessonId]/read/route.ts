@@ -13,7 +13,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ le
   try {
     const overview = await getLearningOverview(DEFAULT_LEARNING_PATH_SLUG, account.userId);
     const lesson = overview?.lessons.find((item) => item.id === lessonId);
-    if (!lesson || lesson.state === "LOCKED") return Response.json({ error: "Selesaikan pre-test dan materi sebelumnya terlebih dahulu." }, { status: 403 });
+    if (!lesson || lesson.state === "LOCKED") return Response.json({ error: "Selesaikan tes awal dan materi sebelumnya terlebih dahulu." }, { status: 403 });
     const db = await createClient();
     const { error } = await db.rpc("acknowledge_material_read", { p_lesson_id: lessonId });
     if (error) return Response.json({ error: "Progres belum dapat disimpan. Selesaikan tes aktif, lalu coba lagi." }, { status: 409 });

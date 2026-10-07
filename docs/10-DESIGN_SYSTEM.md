@@ -51,3 +51,7 @@ Reusable vectors live in `public/assets/quethink/`: `quethink-mark.svg` (Q with 
 
 ## Guest parity and local recovery
 Account and guest share header/bottom navigation, dashboard, material list, reading/PDF/video, Lab, SQLab, chatbot, test introduction/questions and results components. Guest uses the same local learning sequence. Add one concise storage notice: “Mode tamu · progres tersimpan di perangkat ini”, with explicit failure/invalid states. Guest Profile keeps the account layout and adds local reset confirmation; results are marked unofficial. Reset must not clear account drafts.
+
+## Learner terminology
+
+Display the diagnostic pre-test as **Tes Awal** and the post-test as **Tes Akhir** throughout navigation, actions, instructions and result screens. Preserve existing route URLs, database types/slugs and scoring rules. Normalize legacy assessment titles/instructions at the display boundary. In the material list, use sequence number + title and a short **Baca** action; do not repeat “Materi” for every entry. The navigation destination remains **Materi**.
