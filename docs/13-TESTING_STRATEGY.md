@@ -94,3 +94,7 @@ Question revision regression checks registered public dataset/table references, 
 
 
 Run `npm run test:sql-assessment:integration` on the production build. Check six reference queries and private variants, alternative SQL/aliases, hidden-fixture rejection of hardcoded output, full mutation post-state and foreign keys, oversized query/output, expensive join interruption, rejected system/file/environment/extension functions and DDL. Check owned/active sessions, forged scores, no hidden references/rows in JSON/HTML/bundles, AI blocking, recorded server scores, retry lifecycle, restored SQL drafts, real public-seed Run/preview/confirm, mobile 360/768/1280 overflow and admin denial. Use disposable accounts removed in finally. Vercel-hosted runtime smoke is separate from local production QA.
+
+## Landing/dashboard responsive regression
+
+`npm run test:ui:integration` uses the production build and a disposable learner account to verify clean hydration, a valid 60-character profile name, and landing/dashboard widths at 320/360/768/1280px with 100% and 200% text. It also verifies that the expanded mobile menu stays above the bottom bar and navigation captions do not overlap neighboring controls. Test accounts are removed after the run. Browser-extension DOM attributes are investigated in a clean profile rather than hidden with hydration-warning suppression.

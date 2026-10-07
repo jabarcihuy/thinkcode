@@ -31,10 +31,20 @@ export function MobileBottomNavigation({ role }: { role: Role }) {
   const practice = pathname.endsWith("/practice");
   const menuId = useId();
   const panel = useRef<HTMLElement>(null);
+  const bar = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(false);
   const menuActive = practice || ["/lab", "/playground", "/schema-builder", "/chatbot", "/admin"].some((prefix) => matchesPath(pathname, prefix));
   function closeMenu() { panel.current?.hidePopover(); }
   useEffect(() => { panel.current?.hidePopover(); }, [pathname]);
+  useEffect(() => {
+    const navigation = bar.current, menu = panel.current;
+    if (!navigation || !menu) return;
+    const updateHeight = () => menu.style.setProperty("--mobile-navigation-height", `${navigation.getBoundingClientRect().height}px`);
+    updateHeight();
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(navigation);
+    return () => observer.disconnect();
+  }, []);
   useEffect(() => {
     const desktop = window.matchMedia("(min-width: 1024px)");
     const closeOnDesktop = () => { if (desktop.matches) panel.current?.hidePopover(); };
@@ -55,11 +65,11 @@ export function MobileBottomNavigation({ role }: { role: Role }) {
       })}</ul>
       <form action={logoutAction} className="mt-3 border-t border-border pt-2"><button type="submit" onClick={closeMenu} className="flex min-h-11 w-full items-center gap-3 rounded-md px-3 text-sm font-medium text-muted-foreground hover:bg-secondary focus-visible:outline-2 focus-visible:outline-ring"><LogOut size={20} aria-hidden="true" />Keluar</button></form>
     </nav>
-    <nav aria-label="Navigasi utama" className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-white pb-[env(safe-area-inset-bottom)] lg:hidden">
+    <nav ref={bar} aria-label="Navigasi utama" className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-white pb-[env(safe-area-inset-bottom)] lg:hidden">
       <ul className="mx-auto grid max-w-xl grid-cols-5 gap-1 px-2 pt-1">{entries.map(({ href, label, icon: Icon, prefixes }) => {
-        if (href === null) return <li key="menu"><button type="button" popoverTarget={menuId} aria-controls={menuId} aria-expanded={open} className={`${itemClass} w-full ${open || menuActive ? "bg-secondary text-primary" : "text-muted-foreground"}`}><ChevronUp size={20} aria-hidden="true" className={`transition-transform motion-reduce:transition-none ${open ? "rotate-180" : ""}`} /><span className="text-xs font-medium leading-none">Menu</span></button></li>;
+        if (href === null) return <li key="menu"><button type="button" popoverTarget={menuId} aria-controls={menuId} aria-expanded={open} className={`${itemClass} w-full ${open || menuActive ? "bg-secondary text-primary" : "text-muted-foreground"}`}><ChevronUp size={20} aria-hidden="true" className={`transition-transform motion-reduce:transition-none ${open ? "rotate-180" : ""}`} /><span className="max-w-full text-center text-xs font-medium leading-tight [overflow-wrap:anywhere]">Menu</span></button></li>;
         const active = (label !== "Materi" || !practice) && prefixes.some((prefix) => matchesPath(pathname, prefix));
-        return <li key={href}><Link href={href} onClick={closeMenu} aria-current={active ? "page" : undefined} className={`${itemClass} ${active ? "bg-secondary text-primary" : "text-muted-foreground"}`}><Icon size={19} aria-hidden="true" /><span className="whitespace-nowrap text-xs font-medium leading-none">{label}</span></Link></li>;
+        return <li key={href}><Link href={href} onClick={closeMenu} aria-current={active ? "page" : undefined} className={`${itemClass} ${active ? "bg-secondary text-primary" : "text-muted-foreground"}`}><Icon size={19} aria-hidden="true" /><span className="max-w-full text-center text-xs font-medium leading-tight [overflow-wrap:anywhere]">{label}</span></Link></li>;
       })}
       </ul>
     </nav>

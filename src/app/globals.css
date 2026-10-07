@@ -67,10 +67,10 @@ button:disabled { cursor: not-allowed; }
 .mobile-navigation-panel {
   position: fixed;
   inset: auto;
-  bottom: calc(4.25rem + env(safe-area-inset-bottom));
+  bottom: calc(var(--mobile-navigation-height, calc(4.25rem + env(safe-area-inset-bottom))) + 0.5rem);
   left: 50%;
   width: min(calc(100% - 1.5rem), 34rem);
-  max-height: calc(100dvh - 6rem - env(safe-area-inset-bottom));
+  max-height: calc(100dvh - var(--mobile-navigation-height, calc(4.25rem + env(safe-area-inset-bottom))) - 1.75rem);
   margin: 0;
   border: 0;
   overflow-y: auto;

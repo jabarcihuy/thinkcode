@@ -23,7 +23,8 @@
     "test:recovery:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-learning-recovery.mjs",
     "audit:assessment": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/audit-assessment-alignment.mjs",
     "test:sql-assessment:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-sql-assessment.mjs",
-    "test:mobile:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-mobile-navigation.mjs"
+    "test:mobile:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-mobile-navigation.mjs",
+    "test:ui:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-public-dashboard-ui.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

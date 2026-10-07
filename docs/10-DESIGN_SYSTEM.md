@@ -25,3 +25,7 @@ Show Belum dibaca, Lab inti, Tuntas and Terkunci with text, not color alone. Vis
 ## Source
 
 Learning rules: 03-LEARNING_SYSTEM.md. Token/implementation record: ../DESIGN.md. User approved Indigo–apricot and the focused mobile LMS direction.
+
+## Responsive edge cases
+
+Landing and dashboard must reflow at 320px and 200% text size. Use bounded grid columns, allow long names/headings to wrap, and let progress labels stack. Bottom-navigation captions must wrap within their own target when text is enlarged; never force them onto a single line. The expanded panel uses the measured navigation height (including safe-area padding), so wrapping captions cannot make the panel overlap the bar. The landing schema preview stacks tables below 480px; every column used by its example query must be visible in the preview.

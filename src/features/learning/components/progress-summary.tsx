@@ -7,7 +7,7 @@ export function ProgressSummary({ metrics, compact = false }: { metrics: Learnin
 
   return (
     <section aria-label="Progres pembelajaran" className={compact ? "space-y-3" : "space-y-4"}>
-      <div className="flex items-end justify-between gap-3">
+      <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-sm font-medium text-muted-foreground">Progres belajar</p>
           <p className="mt-1 text-3xl font-semibold tabular-nums tracking-tight">{metrics.percentage}%</p>
