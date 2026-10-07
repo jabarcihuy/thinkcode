@@ -1,5 +1,6 @@
 "use client";
 
+import { guestDraftKey } from "@/features/guest/domain/local-progress";
 import { useGuestMode } from "@/features/guest/components/guest-mode";
 import { useMemo, useState, useSyncExternalStore, type FormEvent, type KeyboardEvent, type ReactNode } from "react";
 import { Plus, RotateCcw } from "lucide-react";
@@ -30,7 +31,7 @@ export function SchemaBuilder() {
 
 export function ScenarioWorkspace({ scenario, storageKey = scenario.id, renderCheck }: { scenario: ModelingScenario; storageKey?: string; renderCheck?: (draft: SchemaDraft) => ReactNode }) {
   const guest = useGuestMode();
-  const store = useMemo(() => createDraftStore(storageKey, !guest), [storageKey, guest]);
+  const store = useMemo(() => createDraftStore(guest ? guestDraftKey(storageKey) : storageKey), [storageKey, guest]);
   const raw = useSyncExternalStore(store.subscribe, store.getSnapshot, () => null);
   const parsed = useMemo(() => readDraft(raw), [raw]);
   const draft = useMemo(() => parsed ?? emptyDraft(), [parsed]);
@@ -64,7 +65,7 @@ export function ScenarioWorkspace({ scenario, storageKey = scenario.id, renderCh
 
   return <>
     <div className="mt-4 flex items-center justify-between gap-2 border-y border-border py-2">
-      <p role="status" className="min-w-0 flex-1 text-xs leading-5 text-muted-foreground">{guest ? "Mode tamu: draft tidak disimpan." : !storageAvailable ? "Draft belum tersimpan; hanya tersedia selama halaman ini terbuka." : raw && parsed ? "Draft tersimpan di browser." : "Draft baru."}<span className="block">{renderCheck ? "Periksa model untuk menuntaskan latihan inti." : "Tidak mengubah progres atau nilai."}</span></p>
+      <p role="status" className="min-w-0 flex-1 text-xs leading-5 text-muted-foreground">{!storageAvailable ? "Draft belum tersimpan; hanya tersedia selama halaman ini terbuka." : raw && parsed ? "Draft tersimpan di browser." : "Draft baru."}<span className="block">{renderCheck ? "Periksa model untuk menuntaskan latihan inti." : "Tidak mengubah progres atau nilai."}</span></p>
       <Button type="button" variant="ghost" className="shrink-0 px-2" disabled={!draft.tables.length && !raw} onClick={() => setConfirmReset(true)}><RotateCcw size={15} aria-hidden="true" />Mulai ulang</Button>
     </div>
     {confirmReset && <div className="mt-4" role="group" aria-label="Konfirmasi mulai ulang"><p className="text-sm leading-6">Kosongkan draft untuk kasus {scenario.title.toLowerCase()}?</p><div className="mt-2 flex gap-2"><Button type="button" variant="outline" onClick={() => { change(emptyDraft()); setError(""); setActiveId(null); setConfirmReset(false); }}>Ya, kosongkan</Button><Button type="button" variant="ghost" onClick={() => setConfirmReset(false)}>Batal</Button></div></div>}

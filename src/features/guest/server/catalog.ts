@@ -11,15 +11,15 @@ export const guestCatalog = cache(async () => {
   const db = createPrivilegedClient();
   const { data: path, error } = await db
     .from("learning_paths")
-    .select("id, title")
+    .select("id, slug, title, description")
     .eq("slug", "database-fundamentals")
     .eq("is_published", true)
     .maybeSingle();
   if (error) throw error;
-  if (!path) return { lessons: [], tests: [] };
+  if (!path) return { path: null, lessons: [], exercises: [], tests: [] };
   const chapters = await db
     .from("chapters")
-    .select("id, position")
+    .select("id, title, position, is_required")
     .eq("learning_path_id", path.id)
     .eq("is_published", true);
   if (chapters.error) throw chapters.error;
@@ -28,7 +28,7 @@ export const guestCatalog = cache(async () => {
     ids.length
       ? db
           .from("lessons")
-          .select("id, slug, title, summary, chapter_id, position")
+          .select("id, slug, title, summary, chapter_id, position, is_required, is_preview")
           .in("chapter_id", ids)
           .eq("is_published", true)
       : Promise.resolve({ data: [], error: null }),
@@ -43,12 +43,17 @@ export const guestCatalog = cache(async () => {
   const positions = new Map(
     (chapters.data ?? []).map((c) => [c.id, c.position]),
   );
+  const lessonIds = (lessons.data ?? []).map((lesson) => lesson.id);
+  const exercises = lessonIds.length ? await db.from("exercises").select("id, lesson_id").in("lesson_id", lessonIds).eq("is_published", true).eq("is_required", true) : { data: [], error: null };
+  if (exercises.error) throw exercises.error;
   return {
+    path,
+    exercises: exercises.data ?? [],
     lessons: (lessons.data ?? []).sort(
       (a, b) =>
         (positions.get(a.chapter_id) ?? 0) -
           (positions.get(b.chapter_id) ?? 0) || a.position - b.position,
-    ),
+    ).map((lesson) => { const chapter = chapters.data?.find((entry) => entry.id === lesson.chapter_id); return { ...lesson, chapterPosition: chapter?.position ?? 0, chapterTitle: chapter?.title ?? "", chapterIsRequired: chapter?.is_required ?? true }; }),
     tests: tests.data ?? [],
   };
 });
@@ -67,7 +72,7 @@ export async function guestMaterial(slug: string) {
     ...lesson,
     content: result.data.content,
     exampleSql: result.data.example_sql,
-    number: catalog.lessons.indexOf(lesson) + 1,
+    number: catalog.lessons.findIndex((entry) => entry.id === lesson.id) + 1,
   };
 }
 export async function guestExercises(
@@ -87,6 +92,9 @@ export async function guestExercises(
     .eq("is_required", true)
     .order("position");
   if (error) throw error;
+  const ids = (data ?? []).map((exercise) => exercise.id);
+  const tests = ids.length ? await createPrivilegedClient().from("test_cases").select("id, exercise_id, stdin, expected_output, position").in("exercise_id", ids).eq("is_hidden", false).order("position") : { data: [], error: null };
+  if (tests.error) throw tests.error;
   return (data ?? []).flatMap((r) =>
     r.id && r.lesson_id && r.title && r.prompt && r.type && r.position !== null
       ? [
@@ -101,7 +109,7 @@ export async function guestExercises(
             position: r.position,
             isRequired: r.is_required ?? false,
             passed: false,
-            visibleTests: [],
+            visibleTests: (tests.data ?? []).filter((test) => test.exercise_id === r.id).map((test) => ({ id: test.id, stdin: test.stdin ?? "", expectedOutput: test.expected_output ?? "", position: test.position })),
           },
         ]
       : [],

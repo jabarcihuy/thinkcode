@@ -51,8 +51,16 @@ export async function clearGuest() {
 }
 export function rejectCrossOrigin(request: Request) {
   const origin = request.headers.get("origin");
-  if (origin && origin !== new URL(request.url).origin)
-    throw new GuestError(403, "Permintaan tidak diizinkan.");
+  if (!origin) return;
+  const url = new URL(request.url);
+  // Next can normalize request.url to localhost for a local-IP request.
+  // The browser controls Host; use its actual destination, never Origin as authority.
+  const host = request.headers.get("host");
+  let sameOrigin = origin === url.origin;
+  if (!sameOrigin && host && !/[\s,/@]/.test(host)) {
+    try { sameOrigin = origin === new URL(`${url.protocol}//${host}`).origin; } catch { sameOrigin = false; }
+  }
+  if (!sameOrigin) throw new GuestError(403, "Permintaan tidak diizinkan.");
 }
 export function guestFailure(error: unknown) {
   return Response.json(

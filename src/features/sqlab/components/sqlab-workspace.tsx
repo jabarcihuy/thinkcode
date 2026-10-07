@@ -1,5 +1,4 @@
 "use client";
-import { useGuestMode } from "@/features/guest/components/guest-mode";
 import { useState, type KeyboardEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,7 +24,6 @@ import { QueryPanel } from "./query-panel";
 import { AiDesigner } from "./ai-designer";
 const tabs = ["Skema", "Data", "Query", "AI"] as const;
 export function SqlabWorkspace({ userId }: { userId: string }) {
-  const guest = useGuestMode();
   const store = useLocalDraft({
     key: `quethink:sqlab:v1:${userId}`,
     signature: "sqlab-v1",
@@ -72,7 +70,7 @@ export function SqlabWorkspace({ userId }: { userId: string }) {
     <div className="mt-8 min-w-0">
       <div className="flex flex-wrap items-center justify-between gap-3 border-y border-border py-3">
         <p role="status" className="text-xs leading-5 text-muted-foreground">
-          {guest ? "Mode tamu · perubahan tidak disimpan" : store.status === "failed"
+          {store.status === "failed"
             ? "Belum tersimpan. Jangan tutup halaman."
             : store.status === "invalid"
               ? "Draf lama tidak dapat dibaca. Mulai ulang untuk membuat database baru."

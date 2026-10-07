@@ -11,7 +11,7 @@ vi.mock("@/lib/supabase/server", () => ({
     rpc: mock.rpc,
   }),
 }));
-import { authorizeGuest, assertNoAccountTest } from "./session";
+import { authorizeGuest, assertNoAccountTest, rejectCrossOrigin } from "./session";
 import { encodeGuest } from "../domain/session";
 import { AuthSessionMissingError } from "@supabase/supabase-js";
 beforeEach(() => {
@@ -57,4 +57,10 @@ it("does not bypass an active official assessment or a failed guard", async () =
   await expect(authorizeGuest(true)).rejects.toMatchObject({ status: 403 });
   mock.rpc.mockResolvedValue({ data: null, error: new Error("unavailable") });
   await expect(authorizeGuest()).rejects.toMatchObject({ status: 503 });
+});
+
+it("accepts local browser Host without accepting another Origin or protocol", () => {
+ expect(() => rejectCrossOrigin(new Request("http://localhost:3225/api/guest/check", { headers: { host: "127.0.0.1:3225", origin: "http://127.0.0.1:3225" } }))).not.toThrow();
+ expect(() => rejectCrossOrigin(new Request("https://app.example/api/guest/check", { headers: { host: "app.example", origin: "https://other.example" } }))).toThrow();
+ expect(() => rejectCrossOrigin(new Request("https://app.example/api/guest/check", { headers: { host: "app.example", origin: "http://app.example" } }))).toThrow();
 });

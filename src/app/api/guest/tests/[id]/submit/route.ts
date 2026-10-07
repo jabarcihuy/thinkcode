@@ -65,6 +65,7 @@ export async function POST(
         score: grade.score,
         totalCorrect: grade.totalCorrect,
         totalItems: grade.totalItems,
+        topicSummary: grade.topicSummary,
         passed: data.assessment.type !== "PRETEST" && grade.passed,
         saved: false,
       },

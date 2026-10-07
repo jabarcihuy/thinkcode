@@ -23,7 +23,7 @@ describe("local visual drafts", () => {
   });
 });
 
-it("keeps guest models memory-only without touching browser storage", () => {
+it("keeps explicitly transient preview models memory-only without touching browser storage", () => {
   const getItem = vi.fn(), setItem = vi.fn();
   vi.stubGlobal("localStorage", { getItem, setItem });
   const store = createDraftStore("guest", false);

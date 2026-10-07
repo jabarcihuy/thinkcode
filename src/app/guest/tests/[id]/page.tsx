@@ -17,7 +17,7 @@ export default async function GuestTestPage({
   return (
     <main id="main-content" className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
       <p className="mb-5 text-sm font-semibold text-primary">
-        Tes percobaan · hasil tidak disimpan
+        Tes percobaan · hasil tersimpan di perangkat ini
       </p>
       <AssessmentWorkspace
         demo

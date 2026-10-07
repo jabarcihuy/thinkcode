@@ -1,5 +1,6 @@
 "use client";
 
+import { useGuestLearning } from "@/features/guest/components/guest-mode";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -15,7 +16,7 @@ export function AssessmentWorkspace({
   sessionId, userId, assessmentTitle, instructions, passingScore, items, diagnostic = false, demo = false,
 }: { sessionId: string; userId: string; assessmentTitle: string; instructions: string; passingScore: number; diagnostic?: boolean; demo?: boolean; items: PublicAssessmentItem[] }) {
   const router = useRouter();
-  const [demoResult, setDemoResult] = useState<{ score: number; totalCorrect: number; totalItems: number } | null>(null);
+  const local = useGuestLearning();
   const initial = useMemo(() => initialAssessmentDraft(items), [items]);
   const parse = useMemo(() => (value: unknown) => readAssessmentDraft(value, items), [items]);
   const draft = useLocalDraft({ key: `quethink:assessment-draft:v1:${userId}:${sessionId}`, signature: assessmentDraftSignature(items), initial, parse });
@@ -50,7 +51,7 @@ export function AssessmentWorkspace({
         method: "POST", headers: { "content-type": "application/json" },
         body: JSON.stringify({ answers: items.map((item) => ({ itemId: item.id, answer: answers[item.id] })) }),
       });
-      const payload = await response.json() as { error?: string; score: number; totalCorrect: number; totalItems: number };
+      const payload = await response.json() as { error?: string; score: number; totalCorrect: number; totalItems: number; topicSummary?: { topic: string; passed: boolean }[] };
       if (response.status === 401) {
         setLoginExpired(true);
         throw new Error("Sesi login habis. Masuk kembali untuk melanjutkan tes; jawaban tidak dihapus dari halaman ini.");
@@ -67,7 +68,7 @@ export function AssessmentWorkspace({
       }
       if (!response.ok) throw new Error(payload.error ?? "Jawaban belum dapat dikirim.");
       draft.clear();
-      if (demo) { setDemoResult(payload); return; }
+      if (demo) { local?.recordTest(sessionId, { ...payload, passed: !diagnostic && payload.score >= passingScore }); router.replace(`/guest?view=${diagnostic ? "pre-result" : "post-result"}`); return; }
       router.replace(`/assessments/sessions/${sessionId}/result`);
     } catch (cause) {
       setError(cause instanceof Error && !(cause instanceof TypeError) ? cause.message : "Koneksi terputus. Jawaban tidak dihapus; periksa koneksi lalu kirim lagi.");
@@ -75,7 +76,6 @@ export function AssessmentWorkspace({
     }
   }
 
-  if (demoResult) return <section aria-labelledby="demo-result-title"><h1 id="demo-result-title" className="text-2xl font-semibold">Hasil percobaan</h1><p className="mt-5 text-4xl font-semibold tabular-nums">{demoResult.score}<span className="text-lg text-muted-foreground"> / 100</span></p><p className="mt-3 text-sm">{demoResult.totalCorrect} dari {demoResult.totalItems} soal berhasil.</p><p className="mt-3 text-sm leading-6 text-muted-foreground">Hasil ini tidak disimpan sebagai nilai resmi. Buat akun untuk menyimpan progres belajar.</p><div className="mt-6 flex flex-wrap gap-3"><Button asChild><Link href="/guest?view=tests">Kembali ke tes</Link></Button><Button asChild variant="outline"><Link href="/register">Buat akun</Link></Button></div></section>;
   if (!current) return <p className="text-sm text-muted-foreground">Soal assessment belum tersedia.</p>;
   return <div>
     <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-5">
@@ -89,7 +89,7 @@ export function AssessmentWorkspace({
     </div>
     <p className="mb-6 rounded-md bg-muted px-4 py-3 text-sm">{diagnostic ? "Pre-test · Tanpa syarat lulus · AI dan petunjuk dinonaktifkan" : `Post-test · Lulus pada skor ${passingScore}+ · AI dan petunjuk dinonaktifkan`}</p>
 
-    <div className="mb-6">{demo ? <p className="text-sm text-muted-foreground">Jawaban hanya tersedia selama halaman ini terbuka.</p> : <DraftStatus status={draft.status} restored={draft.restored} onRetry={() => draft.save(draft.value)} onReset={draft.clear} />}</div>
+    <div className="mb-6"><DraftStatus status={draft.status} restored={draft.restored} onRetry={() => draft.save(draft.value)} onReset={draft.clear} /></div>
     {draft.status === "loading" ? <p role="status">Menyiapkan jawaban tes…</p> : <div className="grid min-w-0 grid-cols-1 items-start gap-6 md:grid-cols-[12rem_minmax(0,1fr)]">
       <QuestionNavigator items={items} answers={answers} activeIndex={activeIndex} onSelect={selectQuestion} />
       <div className="min-w-0">

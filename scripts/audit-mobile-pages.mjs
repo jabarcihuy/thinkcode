@@ -83,9 +83,13 @@ try{
   const {ctx:freshCtx}=await fixture('USER',false,lessons),fresh=await freshCtx.newPage();await capture(fresh,'new-user-dashboard','/dashboard');await capture(fresh,'locked-material',`/learn/database-fundamentals/lessons/${lessons.at(-1).slug}`);
   // Named guest routes and all published lesson/lab variants.
   await publicPage.goto(site+'/guest/start');await publicPage.getByLabel('Nama',{exact:true}).fill('Audit Mobile');await publicPage.getByRole('button',{name:'Masuk sebagai tamu'}).click();await publicPage.waitForURL(site+'/guest');
+  // Local demo fixture for visual coverage only; no official progress is written.
+  const guestPre=await checked(db.from('assessments').select('id').eq('type','PRETEST').eq('is_published',true).limit(1).single());
+  const guestCore=await checked(db.from('exercises').select('id').in('lesson_id',lessons.map(l=>l.id)).eq('is_required',true).eq('is_published',true));
+  await publicPage.evaluate(({ids,preId,exerciseIds})=>localStorage.setItem('quethink:guest-local:v1:progress',JSON.stringify({version:1,signature:'guest-progress-v1',value:{name:'',read:Object.fromEntries(ids.map(id=>[id,new Date().toISOString()])),passedExercises:exerciseIds,tests:{[preId]:{score:0,totalCorrect:0,totalItems:10,passed:false}}}})),{ids:lessons.map(l=>l.id),preId:guestPre.id,exerciseIds:guestCore.map(e=>e.id)});
   for(const view of ['', 'materials','sqlab','chatbot','tests','profile'])await capture(publicPage,'guest-'+(view||'dashboard'),'/guest'+(view?'?view='+view:''));
   for(let i=0;i<lessons.length;i++){await capture(publicPage,`guest-material-${i+1}`,'/guest/materials/'+lessons[i].slug);await capture(publicPage,`guest-lab-${i+1}`,'/guest/lab/'+lessons[i].slug);}
-  await publicPage.goto(site+'/guest?view=tests');await publicPage.getByRole('button',{name:'Coba tes',exact:true}).first().click();await publicPage.waitForURL('**/guest/tests/*');await capture(publicPage,'guest-test',new URL(publicPage.url()).pathname,360,false);
+  await publicPage.goto(site+'/guest?view=tests');await publicPage.getByRole('button',{name:'Ulangi pre-test',exact:true}).first().click();await publicPage.waitForURL('**/guest/tests/*');await capture(publicPage,'guest-test',new URL(publicPage.url()).pathname,360,false);
   await writeFile(out+'/results.json',JSON.stringify({date:'2026-10-07',results,interactions,errors},null,2));
   const overflow=results.filter(r=>r.scrollWidth>r.viewport+1);console.log(JSON.stringify({captures:results.length,overflow:overflow.map(r=>r.name),pageErrors:errors,interactions},null,2));
 }finally{

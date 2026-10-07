@@ -55,3 +55,5 @@ A new learner can complete the Relasi → Read → Write path, inspect the data 
 **Pre-test wajib sekali → Materi membaca → Lab latihan inti → materi berikutnya → Post-test (lulus ≥75) → selesai.**
 
 Aturan aktif dan transisi pengguna lama mengikuti [03-LEARNING_SYSTEM.md](03-LEARNING_SYSTEM.md). Materi tetap halaman membaca/PDF; Lab, tes, dan AI berada di halaman terpisah.
+
+Local guest data survives renewed guest access, is shared by guests on the same browser profile, and is reset explicitly from Profile without deleting account drafts. Local progress/results are untrusted and unofficial: never accept them for account authorization, official scores, or migration to an account. Server validates the signed active-test session and grades published fixtures, keeping private data off the client. Storage failures must be shown; reset/clear-browser-data removes local recovery. AI conversation remains transient and server quotas unchanged.

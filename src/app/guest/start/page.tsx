@@ -8,12 +8,11 @@ export default function GuestStartPage() {
         Coba dulu, cukup nama.
       </h1>
       <p className="mt-4 text-sm leading-6 text-muted-foreground">
-        Jelajahi materi, Lab, SQLab, AI, dan tes. Progres, jawaban, serta hasil
-        percobaan tidak disimpan.
+        Jelajahi materi, Lab, SQLab, AI, dan tes. Progres, jawaban, dan draf SQLab tersimpan di perangkat ini, bukan di cloud.
       </p>
       <GuestNameForm />
       <p className="mt-5 text-center text-sm text-muted-foreground">
-        Ingin menyimpan progres?{" "}
+        Ingin progres lintas perangkat?{" "}
         <Link href="/register" className="inline-flex min-h-11 items-center font-semibold text-primary underline">
           Buat akun
         </Link>

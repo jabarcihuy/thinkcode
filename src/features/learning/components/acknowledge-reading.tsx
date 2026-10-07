@@ -1,5 +1,6 @@
 "use client";
 
+import { useGuestLearning, useGuestMode } from "@/features/guest/components/guest-mode";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -8,10 +9,13 @@ import { Button } from "@/components/ui/button";
 
 export function AcknowledgeReading({ lessonId, completed, labHref }: { lessonId: string; completed: boolean; labHref: string }) {
   const router = useRouter();
+  const guest = useGuestMode();
+  const local = useGuestLearning();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   async function acknowledge() {
     if (pending) return;
+    if (guest) { local?.markRead(lessonId); router.push(labHref); return; }
     setPending(true); setError(null);
     try {
       const response = await fetch(`/api/materials/${lessonId}/read`, { method: "POST" });
