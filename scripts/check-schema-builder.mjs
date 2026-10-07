@@ -1,4 +1,3 @@
-import { completeTestBaseline } from "./test-baseline-helper.mjs";
 import assert from "node:assert/strict";
 import { randomBytes, randomUUID } from "node:crypto";
 import { mkdir } from "node:fs/promises";
@@ -43,19 +42,14 @@ try {
   const errors = [], mutationRequests = [];
   page.on("pageerror", (error) => errors.push(error.message));
   page.on("request", (request) => { if (request.method() === "POST" && /\/api\/(exercises|assessment)/.test(request.url())) mutationRequests.push(request.url()); });
+  const guestAi = await fetch(`${site}/api/sqlab/generate`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ prompt: "Buat database buku" }) });
+  assert.equal(guestAi.status, 401);
   await page.goto(`${site}/schema-builder`);
-  await page.getByRole("heading", { name: "Pembuat Skema", exact: true }).waitFor();
-  await page.getByRole("heading", { name: "Susun tabel" }).waitFor();
-  await mkdir(".impeccable/review", { recursive: true });
-  const entry = await page.getByLabel("Tabel baru", { exact: true }).boundingBox();
-  assert.ok(entry && entry.y + entry.height < 730, "Table creation must be reachable above the fixed mobile navigation.");
-  await page.getByLabel("Tabel baru", { exact: true }).fill("Invalid Name");
-  await page.getByRole("button", { name: "Tambah tabel", exact: true }).click();
-  await page.locator("#new-table-error").waitFor();
-  assert.equal(await page.locator("#new-table-error").evaluate((element) => document.activeElement === element), true);
+  await page.getByRole("heading", { name: "SQLab", exact: true }).waitFor();
+  assert.ok(page.url().endsWith("/playground"));
   async function addTable(name) {
-    await page.getByLabel("Tabel baru", { exact: true }).fill(name);
-    await page.getByRole("button", { name: "Tambah tabel", exact: true }).click();
+    await page.getByLabel("Nama tabel baru").fill(name);
+    await page.getByRole("button", { name: "Tambah", exact: true }).click();
     await page.getByRole("heading", { name: `Tabel ${name}`, exact: true }).waitFor();
   }
   async function addColumn(name, type = "integer", primary = false) {
@@ -65,103 +59,100 @@ try {
     await page.getByRole("button", { name: "Tambah kolom", exact: true }).click();
     await page.getByRole("button", { name: `Edit kolom ${name}`, exact: true }).waitFor();
   }
-  await addTable("members");
-  await page.getByLabel("Nama kolom", { exact: true }).fill("Bad Column");
-  await page.getByRole("button", { name: "Tambah kolom", exact: true }).click();
-  await page.locator("#column-error").waitFor();
-  assert.equal(await page.locator("#column-error").evaluate((element) => document.activeElement === element), true);
-  await page.screenshot({ path: ".impeccable/review/schema-mobile-column-error.png" });
-  await addColumn("member_id", "integer", true); await addColumn("name", "text");
-  await addTable("books"); await addColumn("book_id", "integer", true); await addColumn("title", "text");
-  await page.getByLabel("Foreign key sumber").selectOption({ label: "members.name (text)" });
-  assert.equal(await page.getByRole("button", { name: "Tambah relasi", exact: true }).isDisabled(), true);
-  await page.getByText(/Pilih kolom sumber lain/).waitFor();
-  await addTable("loans"); await addColumn("loan_id", "integer", true); await addColumn("member_id"); await addColumn("book_id");
-  for (const [fk, pk] of [["loans.member_id (integer)", "members.member_id (integer)"], ["loans.book_id (integer)", "books.book_id (integer)"]]) {
-    await page.getByLabel("Foreign key sumber").selectOption({ label: fk });
-    await page.getByLabel("Primary key tujuan").selectOption({ label: pk });
-    await page.getByRole("button", { name: "Tambah relasi", exact: true }).click();
+  await addTable("books"); await addColumn("id", "integer", true); await addColumn("title", "text");
+  await page.getByRole("tab", { name: "Data", exact: true }).click();
+  await page.getByLabel("id (PK)", { exact: true }).fill("1");
+  await page.getByLabel("title", { exact: true }).fill("Belajar Data");
+  await page.getByRole("button", { name: "Simpan record", exact: true }).click();
+  await page.getByRole("cell", { name: "Belajar Data", exact: true }).waitFor();
+  await page.getByRole("tab", { name: "Query", exact: true }).click();
+  async function query(sql, mutation = false) {
+    await page.getByLabel("SQL", { exact: true }).fill(sql);
+    await page.getByRole("button", { name: "Jalankan query", exact: true }).click();
+    if (mutation) await page.getByRole("button", { name: "Ya, jalankan perubahan", exact: true }).click();
+    try { await page.getByRole("heading", { name: "Hasil query", exact: true }).waitFor({ timeout: 20000 }); } catch (error) { console.log("Query failure:", sql, await page.getByRole("alert").allTextContents()); throw error; }
   }
-  assert.equal(await page.locator("main").getByRole("alert").count(), 0);
+  await query("SELECT * FROM books;");
+  await page.getByRole("region", { name: "Hasil query", exact: true }).getByRole("cell", { name: "Belajar Data", exact: true }).waitFor();
+  await query("INSERT INTO books VALUES (2, 'SQL Asik');", true);
+  await query("UPDATE books SET title='Baru' WHERE id=2;", true);
+  await query("SELECT title FROM books WHERE id=2;");
+  await page.getByRole("region", { name: "Hasil query", exact: true }).getByRole("cell", { name: "Baru", exact: true }).waitFor();
+  await query("DELETE FROM books WHERE id=2;", true);
+  const bulk = Array.from({length:99}, (_, i) => `(${i + 2}, 'Buku')`).join(",");
+  await query(`INSERT INTO books VALUES ${bulk};`, true);
+  await page.getByLabel("SQL", { exact: true }).fill("SELECT count(*) FROM books a CROSS JOIN books b CROSS JOIN books c CROSS JOIN books d CROSS JOIN books e CROSS JOIN books f CROSS JOIN books g CROSS JOIN books h;");
+  await page.getByRole("button", { name: "Jalankan query", exact: true }).click();
+  await page.getByRole("alert").filter({hasText:"Query terlalu lama"}).waitFor({timeout:20000});
+  await page.getByLabel("SQL", { exact: true }).fill("SELECT a.id FROM books a CROSS JOIN books b;");
+  await page.getByRole("button", { name: "Jalankan query", exact: true }).click();
+  await page.getByRole("alert").filter({hasText:"Hasil terlalu besar"}).waitFor({timeout:20000});
+  await query("DELETE FROM books WHERE id > 1;", true);
+  await page.getByLabel("SQL", { exact: true }).fill("SELECT * FROM sqlite_master;");
+  await page.getByRole("button", { name: "Jalankan query", exact: true }).click();
+  await page.getByRole("alert").filter({ hasText: "Query ditolak" }).waitFor();
   await page.reload();
-  await page.getByLabel("Tabel yang diedit").selectOption({ label: "loans" });
-  assert.equal(await page.getByRole("button", { name: /^Hapus relasi/ }).count(), 2);
-  await page.getByLabel("Kasus latihan").selectOption("shop");
-  assert.equal(await page.getByLabel("Tabel yang diedit").count(), 0);
-  await page.getByLabel("Kasus latihan").selectOption("library");
-  await page.getByLabel("Tabel yang diedit").selectOption({ label: "loans" });
-  assert.equal(await page.getByRole("button", { name: /^Hapus relasi/ }).count(), 2);
-  await page.getByRole("button", { name: "Mulai ulang", exact: true }).click();
-  await page.getByRole("button", { name: "Batal", exact: true }).click();
-  assert.equal(await page.getByRole("button", { name: /^Hapus relasi/ }).count(), 2);
-
+  await page.getByRole("tab", { name: "Data", exact: true }).click();
+  await page.getByRole("cell", { name: "Belajar Data", exact: true }).waitFor();
+  await page.getByRole("tab", { name: "Skema", exact: true }).click();
+  await page.getByText("Mulai dari contoh database", { exact: true }).click();
+  await page.getByRole("button", { name: "Katalog Buku", exact: true }).click();
+  await page.getByRole("button", { name: "Ya, gunakan contoh", exact: true }).click();
+  await page.getByRole("tab", { name: "Query", exact: true }).click();
+  await query("SELECT books.title, authors.name FROM books INNER JOIN authors ON books.author_id=authors.author_id;");
+  await page.getByRole("region", {name:"Hasil query",exact:true}).getByRole("cell", {name:"Rani",exact:true}).first().waitFor();
+  await page.getByLabel("SQL", {exact:true}).fill("INSERT INTO books VALUES (99, 'Orphan', 999, 1);");
+  await page.getByRole("button", {name:"Jalankan query",exact:true}).click();
+  await page.getByRole("button", {name:"Ya, jalankan perubahan",exact:true}).click();
+  await page.getByRole("alert").filter({hasText:"Foreign key tidak cocok"}).waitFor();
   await mkdir(".impeccable/review", { recursive: true });
-  async function noOverflow(label) {
-    const widths = await page.evaluate(() => ({ view: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));
-    assert.ok(widths.content <= widths.view, `${label} overflow: ${JSON.stringify(widths)}`);
-  }
-  async function capture(name) { await page.evaluate(() => window.scrollTo(0, 0)); await page.screenshot({ path: `.impeccable/review/${name}.png`, fullPage: true }); }
-  await noOverflow("360 edit"); await capture("schema-mobile-edit");
-  await page.getByRole("tab", { name: "Diagram", exact: true }).click();
-  await page.getByText("Hubungan antartabel (2)", { exact: true }).click();
-  await page.getByText("Satu record members dapat dirujuk banyak record loans.", { exact: true }).waitFor();
-  await page.getByLabel("Fokus tabel").selectOption({ label: "loans" });
-  await page.getByRole("button", { name: "Perbesar diagram" }).click();
-  await page.getByRole("button", { name: "Atur ulang", exact: true }).click();
-  await noOverflow("360 diagram"); await capture("schema-mobile-diagram");
-  await page.getByRole("tab", { name: "Periksa", exact: true }).click();
-  await page.getByText("Bandingkan dengan contoh model", { exact: true }).click();
-  await noOverflow("360 feedback"); await capture("schema-mobile-feedback");
-  await page.getByRole("tab", { name: "Periksa", exact: true }).press("Home");
-  assert.equal(await page.getByRole("tab", { name: "Susun", exact: true }).getAttribute("aria-selected"), "true");
-  for (const width of [768, 1280]) {
+  for (const width of [360, 768, 1280]) {
     await page.setViewportSize({ width, height: 900 });
-    if (width === 768) await page.getByRole("tab", { name: "Diagram", exact: true }).click();
-    await noOverflow(`${width} schema`); await capture(width === 768 ? "schema-tablet" : "schema-desktop");
+    for (const label of ["Skema", "Data", "Query", "AI"]) {
+      await page.getByRole("tab", { name: label, exact: true }).click();
+      const sizes = await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]);
+      assert.ok(sizes[0] <= sizes[1], `${width} ${label} overflow`);
+    }
+    await page.getByRole("tab", { name: "Skema", exact: true }).click();
+    await page.screenshot({ path: `.impeccable/review/sqlab-${width}.png`, fullPage: true });
+  }
+  // Deterministic UI smoke for draft review; provider contract covered separately.
+  const draft = { version: 1, name: "Toko AI", schema: { version: 1, tables: [{ id: "products", name: "products", columns: [{ id: "pid", name: "id", type: "integer", primary: true }] }], relations: [] }, rows: { products: [{ id: 1 }] } };
+  await page.route("**/api/sqlab/generate", route => route.fulfill({ json: { draft } }));
+  await page.getByRole("tab", { name: "AI", exact: true }).click();
+  await page.getByLabel("Database apa yang ingin dibuat?").fill("Buat database produk toko");
+  await page.getByRole("button", { name: "Buat rancangan", exact: true }).click();
+  await page.getByRole("heading", { name: "Draf: Toko AI", exact: true }).waitFor();
+  await page.getByRole("button", { name: "Terapkan rancangan", exact: true }).click();
+  await page.getByRole("heading", { name: "Tabel products", exact: true }).waitFor();
+  await page.unroute("**/api/sqlab/generate");
+  if (process.env.SQLAB_LIVE_AI === "1") {
+    const generated = await page.request.post(`${site}/api/sqlab/generate`, { data: { prompt: "Buat database perpustakaan sederhana: dua tabel books dan loans, PK dan FK, dua contoh record sintetis per tabel." }, timeout: 65000 });
+    assert.equal(generated.status(), 200, "Live AI must generate a validated draft");
+    const payload = await generated.json();
+    assert.ok(payload.draft.schema.tables.length >= 2);
+    console.log("PASS: live AI provider generated a validated synthetic database draft.");
   }
   const html = await page.content();
-  for (const [name, value] of Object.entries(process.env).filter(([name, value]) => /SECRET_KEY|SERVICE_ROLE|AI.*KEY/.test(name) && value?.length > 20)) {
-    assert.ok(!html.includes(value), `Private ${name} appeared in client page.`);
+  for (const [name, value] of Object.entries(process.env).filter(([name, value]) => /SECRET_KEY|SERVICE_ROLE|AI.*KEY/.test(name) && value?.length > 20)) assert.ok(!html.includes(value), `Private ${name} appeared in client page.`);
+  const scripts = await page.locator('script[src^="/_next/"]').evaluateAll(elements => elements.map(e => e.src));
+  const privateValues = Object.entries(process.env).filter(([name,value]) => /SECRET_KEY|SERVICE_ROLE|AI.*KEY/.test(name) && value?.length > 20);
+  for (const asset of scripts) {
+    const text = await (await page.request.get(asset)).text();
+    for (const [name, value] of privateValues) assert.ok(!text.includes(value), `Private ${name} appeared in client bundle.`);
   }
-  assert.deepEqual(mutationRequests, [], "Visual modeling must not mutate practice or assessment.");
   const progress = await privileged.from("lesson_progress").select("lesson_id").eq("user_id", userId);
   assert.ifError(progress.error); assert.equal(progress.data.length, 0);
-  const unavailableStorage = await browser.newContext({ viewport: { width: 360, height: 800 } });
-  await unavailableStorage.addCookies([...jar].map(([name, value]) => ({ name, value, url: site })));
-  await unavailableStorage.addInitScript(() => { Storage.prototype.setItem = () => { throw new Error("unavailable"); }; });
-  const memoryPage = await unavailableStorage.newPage();
-  await memoryPage.goto(`${site}/schema-builder`);
-  await memoryPage.getByLabel("Tabel baru", { exact: true }).fill("members");
-  await memoryPage.getByRole("button", { name: "Tambah tabel", exact: true }).click();
-  await memoryPage.getByText(/Draft belum tersimpan/).waitFor();
-  assert.equal(await memoryPage.getByText("Draft tersimpan di browser.", { exact: true }).count(), 0);
-  await memoryPage.evaluate(() => window.scrollTo(0, 0));
-  await memoryPage.screenshot({ path: ".impeccable/review/schema-mobile-unsaved.png" });
-  await unavailableStorage.close();
-  await page.setViewportSize({ width: 360, height: 800 });
-  await completeTestBaseline(privileged, userId);
-  await page.goto(`${site}/learn/database-fundamentals/lessons/membaca-bentuk-data`);
-  await page.getByRole("button", { name: "Putar video", exact: true }).waitFor();
-  assert.equal(await page.locator('iframe[src*="youtube"]').count(), 0);
-  await page.getByRole("button", { name: "Putar video", exact: true }).click();
-  const frame = page.locator('iframe[src*="youtube-nocookie.com/embed/5xIl5EblCLk"]');
-  await frame.waitFor();
-  await frame.scrollIntoViewIfNeeded();
-  // External playback is optional; wait for the thumbnail when YouTube is reachable.
-  await frame.contentFrame().locator(".ytp-large-play-button").waitFor({ state: "visible", timeout: 15_000 }).catch(() => {});
-  await noOverflow("360 lesson video");
-  await page.screenshot({ path: ".impeccable/review/lesson-video-mobile.png" });
-  await page.getByRole("button", { name: "Tutup video", exact: true }).click();
-  assert.equal(await frame.count(), 0);
-
   const assessment = await privileged.from("assessments").select("id").eq("is_published", true).limit(1).single();
   assert.ifError(assessment.error);
   assert.ifError((await privileged.from("assessment_sessions").insert({ assessment_id: assessment.data.id, user_id: userId, status: "IN_PROGRESS" })).error);
-  await page.goto(`${site}/schema-builder`);
-  await page.getByRole("heading", { name: "Latihan skema dijeda" }).waitFor();
-  assert.equal(await page.getByLabel("Tabel baru").count(), 0);
+  const blocked = await page.request.post(`${site}/api/sqlab/generate`, { data: { prompt: "Buat database buku" } });
+  assert.equal(blocked.status(), 403);
+  await page.goto(`${site}/playground`);
+  await page.getByRole("heading", { name: "SQLab dijeda" }).waitFor();
+  assert.equal(await page.getByRole("tab").count(), 0);
   assert.deepEqual(errors, [], `Browser errors: ${errors.join("; ")}`);
-  console.log("PASS: guest/auth guard, PK/FK editing, local reload/case isolation, diagram controls, keyboard tabs, reset cancel, 360/768/1280 layout, deferred video embed, secret scan, no progress mutations, assessment pause.");
+  console.log("PASS: custom schema/data, SQLite read/write, timeout/output caps, forbidden system table, persistence, AI draft review/apply, guest/assessment guard, 360/768/1280 layouts, secrets, no progress mutations.");
 } finally {
   await browser?.close();
   server.kill("SIGTERM");

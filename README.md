@@ -32,7 +32,7 @@ Pilih **Selesai dibaca** untuk mencatat bacaan, lalu lulus satu latihan inti di 
 
 Buka `/lab` untuk eksplorasi visual dan mencoba query. Lab Relasi menggunakan tabel/key tanpa SQL; Read dan Write memakai SQLite sintetis di browser Worker. Lab tetap vertikal: data → query → hasil. Satu check inti per materi wajib lulus dan dapat diulang. Halaman Lab menampilkan latihan inti saja. Skor latihan terpisah dari nilai post-test. Bookmark halaman `/practice` lama tetap bekerja.
 
-SQLab (playground SQL), Pembuat Skema, dan Tutor tersedia sebagai alat bantu dari Lab. Navigasi mobile: **Beranda · Materi · Menu · Tes · Profil**.
+SQLab (skema, data, query, dan perancang database AI) dan Tutor tersedia sebagai alat bantu dari Lab. Navigasi mobile: **Beranda · Materi · Menu · Tes · Profil**.
 
 ### Post-test dan penyelesaian
 
@@ -79,3 +79,6 @@ Tema mobile LMS menggunakan Indigo–apricot dan DM Sans lokal. Navigasi bawah m
 Migration `20261006033506_trusted_sql_post_test.sql` membuat versi post-test baru tanpa menghapus hasil lama. Baseline dan progres materi tetap. Nilai konsep versi lama tidak dianggap sebagai kelulusan tugas SQL versi baru. Tidak ada key atau runner berbayar tambahan.
 
 Jalankan `npm run test:sql-assessment:integration` setelah production build untuk menguji Run, pratinjau write, draft, submit, skor server, retry, ownership, AI block, kebocoran hidden data/secret dan layout 360/768/1280. Akun uji dibersihkan setelah tes. Vercel belum di-deploy; lakukan smoke test pada runtime Node 24 setelah deployment.
+
+### SQLab
+Buat database lokal sendiri di tab Skema, isi tabel di Data, jalankan SQL di Query, atau minta rancangan sintetis di AI lalu tinjau dan terapkan. Diagram 2D mengikuti struktur. Draf tersimpan hanya di browser dan akun yang sama; tidak memengaruhi nilai dan tidak mengakses database produksi. Maksimal 6 tabel, 8 kolom/tabel, 12 relasi dan 100 record/tabel.

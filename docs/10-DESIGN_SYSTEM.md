@@ -12,7 +12,7 @@ Typography: DM Sans interface/prose and Geist Mono SQL. Controls radius 12px, gr
 
 ## Mobile shell
 
-Bottom navigation: Beranda, Materi, Menu, Tes, Profil (maximum five); Menu central, Profil right. Menu expands upward into a compact two-column panel above the bar: Lab Materi, SQLab, Pembuat Skema, Chatbot, Pre-test and Post-test, plus Admin CMS for ADMIN only and an explicit Keluar action. Keep short labels, at least 44px touch targets, safe-area padding and a scrollable panel on short screens. Menu closes on selection, outside tap, Escape, its close button, or switching to desktop width; keyboard focus returns to the trigger on Escape. Respect reduced motion. Desktop uses header navigation. Dashboard resumes active test or current reading/core step. Reading is one column. Lab stacks schema, query and result; only required core exercises are displayed. Relasi modeling uses Susun/Diagram/Periksa tabs and labeled forms. Result tables scroll within their region.
+Bottom navigation: Beranda, Materi, Menu, Tes, Profil (maximum five); Menu central, Profil right. Menu expands upward into a compact two-column panel above the bar: Lab Materi, SQLab, Chatbot, Pre-test and Post-test, plus Admin CMS for ADMIN only and an explicit Keluar action. Keep short labels, at least 44px touch targets, safe-area padding and a scrollable panel on short screens. Menu closes on selection, outside tap, Escape, its close button, or switching to desktop width; keyboard focus returns to the trigger on Escape. Respect reduced motion. Desktop uses header navigation. Dashboard resumes active test or current reading/core step. Reading is one column. Lab stacks schema, query and result; only required core exercises are displayed. Relasi modeling uses Susun/Diagram/Periksa tabs and labeled forms. Result tables scroll within their region.
 
 ## Landing
 
@@ -29,3 +29,6 @@ Learning rules: 03-LEARNING_SYSTEM.md. Token/implementation record: ../DESIGN.md
 ## Responsive edge cases
 
 Landing and dashboard must reflow at 320px and 200% text size. Use bounded grid columns, allow long names/headings to wrap, and let progress labels stack. Bottom-navigation captions must wrap within their own target when text is enlarged; never force them onto a single line. The expanded panel uses the measured navigation height (including safe-area padding), so wrapping captions cannot make the panel overlap the bar. The landing schema preview stacks tables below 480px; every column used by its example query must be visible in the preview.
+
+## SQLab workspace
+Mobile has four labeled tabs: Skema, Data, Query, AI. Schema forms precede the 2D diagram; SQL precedes result tables. Desktop may place schema forms beside the diagram. Reuse the existing modeling forms, key labels, zoom and focus controls. Data editing uses labeled per-column inputs and accessible scroll regions. AI drafts show schema and sample records before explicit replacement. Keep reset and replacement confirmations inline; label local-only storage clearly.

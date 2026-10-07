@@ -2,7 +2,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, ChevronUp, ClipboardCheck, Database, House, LogOut, MessagesSquare, PanelsTopLeft, ScanLine, ShieldCheck, UserRound, X } from "lucide-react";
+import { BookOpen, ChevronUp, ClipboardCheck, Database, House, LogOut, MessagesSquare, PanelsTopLeft, ShieldCheck, UserRound, X } from "lucide-react";
 import { DEFAULT_LEARNING_PATH_SLUG } from "@/features/learning/config";
 import { logoutAction } from "@/lib/auth/actions";
 import type { Role } from "@/types/auth";
@@ -16,7 +16,6 @@ const entries = [
 const tools = [
   { href: "/lab", label: "Lab Materi", icon: Database },
   { href: "/playground", label: "SQLab", icon: PanelsTopLeft },
-  { href: "/schema-builder", label: "Pembuat Skema", icon: ScanLine },
   { href: "/chatbot", label: "Chatbot", icon: MessagesSquare },
   { href: "/pre-test", label: "Pre-test", icon: ClipboardCheck },
   { href: "/post-test", label: "Post-test", icon: ClipboardCheck },

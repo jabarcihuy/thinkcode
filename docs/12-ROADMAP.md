@@ -31,7 +31,7 @@ Programming-language lessons, PTI mapping, external/paid query runner, arbitrary
 
 ## Current supporting work
 
-- Pembuat Skema: guided library/shop cases, tables/columns/PK/FK, automatic 2D layout, local drafts, structural feedback, and public reference explanations.
+- Schema creation now lives in SQLab: custom tables/columns/PK/FK, 2D diagram, local row editing, bounded SQLite queries and AI-generated synthetic drafts with review/apply. Guided modeling and structural grading remain in the Relasi core exercise.
 - Four optional lesson videos: source metadata/descriptions checked, dialect notes included; reflection belongs to practice. Full audiovisual review and Write segment selection remain pending.
 - [Student trial package](evaluation/2026-10-03-uji-mahasiswa/README.md): moderator protocol, participant tasks, rubric/survey, empty observation sheets, and report template prepared. Student sessions and results are not yet available.
 

@@ -26,7 +26,7 @@ async function login(page, user) {
   await page.getByRole("button", { name: "Masuk", exact: true }).click(); await page.waitForURL("**/dashboard");
   await trigger(page).waitFor();
 }
-const destinations = [["Lab Materi", "/lab"], ["SQLab", "/playground"], ["Pembuat Skema", "/schema-builder"], ["Chatbot", "/chatbot"], ["Pre-test", "/pre-test"], ["Post-test", "/post-test"]];
+const destinations = [["Lab Materi", "/lab"], ["SQLab", "/playground"], ["Chatbot", "/chatbot"], ["Pre-test", "/pre-test"], ["Post-test", "/post-test"]];
 const nav = page => page.getByRole("navigation", { name: "Navigasi utama", exact: true });
 const panel = page => page.getByRole("navigation", { name: "Fitur lainnya", exact: true });
 const trigger = page => nav(page).getByRole("button", { name: "Menu", exact: true });
@@ -97,7 +97,7 @@ try {
   await page.setViewportSize({ width: 360, height: 800 });
   await panel(page).getByRole("link", { name: "Admin CMS", exact: true }).click(); await page.waitForURL(`${site}/admin`); await page.locator("main h1").waitFor();
   assert.deepEqual(errors, []);
-  console.log("PASS: five ordered mobile items; upward feature panel; all six destinations; keyboard/Escape/focus/outside/toggle/close; primary navigation and reading shell; reduced motion; scrollable short viewport; admin visibility and USER denial; logout; 360/768/1280 screenshots without overflow.");
+  console.log("PASS: five ordered mobile items; upward feature panel; all tool destinations; keyboard/Escape/focus/outside/toggle/close; primary navigation and reading shell; reduced motion; scrollable short viewport; admin visibility and USER denial; logout; 360/768/1280 screenshots without overflow.");
 } finally {
   await browser?.close(); server.kill("SIGTERM");
   for (const id of userIds) assert.ifError((await db.auth.admin.deleteUser(id)).error);

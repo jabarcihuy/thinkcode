@@ -25,7 +25,7 @@ Practice SQL runs entirely in the browser Worker against synthetic in-memory SQL
 
 The protected `/playground` page reuses this Worker with a registered dataset selection without a lesson-specific prompt or progress write. It checks active assessment state server-side and pauses while an assessment is in progress. `/chatbot` is a protected UI over the existing tutor API and selects the user's current/next lesson as context; it adds no new provider endpoint.
 
-`UPDATE` and `DELETE` must show the matching target rows before confirmation. The Worker returns only visible result rows, affected-row count, and safe errors. Reset reseeds the disposable database. Worker startup accepts `{ action: "init", datasetId: "campus" | "library" | "shop" }` only; all table definitions and rows come from the shipped registry. Public transfer exercise config includes only its dataset ID, question options, or output columns—not its answer or grading configuration.
+`UPDATE` and `DELETE` must show the matching target rows before confirmation. The Worker returns only visible result rows, affected-row count, and safe errors. Reset reseeds the disposable database. Course Worker startup accepts `{ action: "init", datasetId: "campus" | "library" | "shop" }` only; all table definitions and rows come from the shipped registry. Public transfer exercise config includes only its dataset ID, question options, or output columns—not its answer or grading configuration.
 
 ## Admin
 
@@ -47,3 +47,9 @@ Aturan aktif dan transisi pengguna lama mengikuti [03-LEARNING_SYSTEM.md](03-LEA
 ## Assessment SQL boundary
 
 The submit handler loads private references/fixtures only after session ownership and active status checks. SQLite/WASM runs in a disposable server Worker; it never runs against Supabase. The response allowlist contains score, passing state, topic summaries and fixture pass counts only, never query references, hidden rows, expected results or raw SQLite errors. Public session JSON allowlists options/blocks or mode=sql, registered dataset, operation and table. Coba query stays browser-local on public seed and has no grading endpoint. Runtime/configuration failure returns safe 503 and keeps the session open for retry.
+
+## SQLab AI database designer
+
+`POST /api/sqlab/generate` accepts `{ prompt: string }` (10–2,000 characters; request ≤10 KB). Requires authentication, no active assessment and shared AI quota. Returns `{ draft: SqlabDocument }` only after validating schema, PK/FK and bounded synthetic rows. Statuses: 400 invalid input, 401 guest, 403 active assessment/cross-origin, 429 quota, 502 provider/invalid generated draft, 503 assessment state unavailable. Private/no-store response; no automatic write or publish.
+
+SQLab query execution has no server endpoint: a dedicated browser Worker receives a validated document and one SELECT/INSERT/UPDATE/DELETE statement. It returns result rows/columns and a revalidated local snapshot, or a safe error with no changed snapshot. Custom schema/data never enter the course registry, progress API or assessment grader. See 06-ARCHITECTURE.md for caps.
