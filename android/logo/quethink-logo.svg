@@ -1,12 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
   <title id="title">Ikon aplikasi Quethink</title>
-  <desc id="desc">Simbol Q berbentuk tabel dengan penghubung apricot, berada di area aman ikon aplikasi.</desc>
-  <rect width="512" height="512" fill="#F8F7FC"/>
+  <desc id="desc">Q putih dengan dua tabel terhubung dan aksen apricot pada bidang indigo.</desc>
+  <rect width="512" height="512" fill="#4F46E5"/>
   <g transform="translate(96 96) scale(5)">
-  <rect x="7" y="7" width="46" height="46" rx="14" fill="#4F46E5"/>
-  <rect x="17" y="17" width="26" height="26" rx="5" fill="#FFFFFF"/>
-  <path d="M18 26H42M18 34H42M28 18V42" fill="none" stroke="#4F46E5" stroke-width="3"/>
-  <path d="M40 40L56 56" fill="none" stroke="#C56A25" stroke-width="8" stroke-linecap="round"/>
-  <circle cx="55" cy="55" r="4" fill="#C56A25"/>
+  <path fill="#FFFFFF" fill-rule="evenodd" d="M24 6H38C48 6 56 14 56 24V38C56 48 48 56 38 56H24C14 56 6 48 6 38V24C6 14 14 6 24 6ZM25 18C21 18 18 21 18 25V37C18 41 21 44 25 44H37C41 44 44 41 44 37V25C44 21 41 18 37 18H25Z"/>
+  <g fill="#FFFFFF">
+    <rect x="22" y="25" width="7" height="12" rx="2"/>
+    <rect x="34" y="25" width="7" height="12" rx="2"/>
+    <path d="M28 29.5H35V32.5H28Z"/>
+  </g>
+  <path d="M42 42L53 53" fill="none" stroke="#C56A25" stroke-width="9" stroke-linecap="round"/>
   </g>
 </svg>
