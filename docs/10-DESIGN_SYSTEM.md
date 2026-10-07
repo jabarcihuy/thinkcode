@@ -16,7 +16,7 @@ Bottom navigation: Beranda, Materi, Menu, Tes, Profil (maximum five); Menu centr
 
 ## Landing
 
-Simple hero, clear value proposition and real compact 2D schema preview. Follow with learning flow, three content groups, visual Lab, tutor and tests, then CTA. No invented statistics, large decorative illustration, excessive gradient, glassmorphism or endless cards.
+Simple hero, clear value proposition and real compact 2D schema preview. Follow with the pre-test → Materi → Lab Materi → post-test flow, three content groups, visual Lab, tutor and tests, then a dedicated SQLab section and CTA. Distinguish required course Labs from optional independent SQLab; describe downloadable PDFs, selectively available Indonesian videos, and name-only guest access without saved progress. SQLab previews stay static and lightweight; do not load the runner or AI on the public landing page. No invented statistics, large decorative illustration, excessive gradient, glassmorphism or endless cards.
 
 ## States and accessibility
 
