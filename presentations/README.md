@@ -1,5 +1,11 @@
 # Presentasi pengenalan Quethink
 
+## Penyesuaian PPT pengguna
+
+[Konsep dan tujuan — sesuai web saat ini](Quethink-Konsep-dan-Tujuan-Sesuai-Web.pptx)
+
+Revisi terbatas dari file yang diberikan pengguna: mempertahankan enam slide, desain, font, gambar, dan urutan. Alur diperbarui tanpa Tes Awal; target mahasiswa Informatika semester awal; nama Tantangan Akhir; pendamping Chatbot, Forum, dan SQLab dengan AI. Slide cover, alasan pembuatan, dan Masukan dan saran tetap sama.
+
 ## Versi terbaru — 8 Oktober 2026
 
 [Unduh PPT pengenalan terbaru](Quethink-Pengenalan-Terbaru.pptx)
