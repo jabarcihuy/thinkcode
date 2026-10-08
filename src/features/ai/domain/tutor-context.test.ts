@@ -30,4 +30,24 @@ describe("AI tutor context and hints", () => {
     expect(nextHintLevel("message", 2, false)).toBe(2);
     expect(nextHintLevel("message", 2, true)).toBe(5);
   });
+  it("sets a beginner-friendly, grounded database tutor policy in the selected language", () => {
+    const prompt = createTutorMessages(snapshot, [], "Why?", "message", 1, "id")[0].content;
+    expect(prompt).toContain("Bahasa Indonesia");
+    expect(prompt).toContain("first-semester");
+    expect(prompt).toContain("SQLite");
+    expect(prompt).toContain("untrusted data");
+    expect(prompt).toContain("previewing the target rows");
+    expect(prompt).toContain("you have not executed anything");
+  });
+
+  it("bounds individual context fields without dropping the learner query", () => {
+    const large = { ...snapshot, lesson: { ...snapshot.lesson, content: "x".repeat(30000) } };
+    const messages = createTutorMessages(large, Array.from({ length: 12 }, () => ({ role: "user" as const, content: "y".repeat(3000) })), "z".repeat(2000), "hint", 2);
+    expect(messages[0].content).toContain(snapshot.sourceCode);
+    expect(messages[0].content).not.toContain("x".repeat(6001));
+    expect(messages).toHaveLength(10);
+    expect(messages[1].content).toHaveLength(1500);
+    expect(messages[9].content).toHaveLength(1200);
+  });
+
 });

@@ -18,7 +18,7 @@ export function SqlabPageView({ children, dashboardHref = "/dashboard" }: { chil
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
           {tx("SQLab")}</h1>
         <p className="mt-3 leading-7 text-muted-foreground">
-          {tx("Buat database sendiri, hubungkan tabel, isi data, lalu coba query. Mulai dari nol atau minta AI menyusun rancangan.")}</p>
+          {tx("Ceritakan ide database kamu. AI menyusun tabel, relasi, dan contoh data yang bisa kamu tinjau, ubah, lalu jelajahi dengan SQL.")}</p>
       </header>
 
       {children}

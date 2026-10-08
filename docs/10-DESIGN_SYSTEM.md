@@ -31,7 +31,7 @@ Learning rules: 03-LEARNING_SYSTEM.md. Token/implementation record: ../DESIGN.md
 Landing and dashboard must reflow at 320px and 200% text size. Use bounded grid columns, allow long names/headings to wrap, and let progress labels stack. Bottom-navigation captions must wrap within their own target when text is enlarged; never force them onto a single line. The expanded panel uses the measured navigation height (including safe-area padding), so wrapping captions cannot make the panel overlap the bar. The landing schema preview stacks tables below 480px; every column used by its example query must be visible in the preview.
 
 ## SQLab workspace
-Mobile has four labeled tabs: Skema, Data, Query, AI. Schema forms precede the 2D diagram; SQL precedes result tables. Desktop may place schema forms beside the diagram. Reuse the existing modeling forms, key labels, zoom and focus controls. Data editing uses labeled per-column inputs and accessible scroll regions. AI drafts show schema and sample records before explicit replacement. Keep reset and replacement confirmations inline; label local-only storage clearly.
+Mobile has four labeled tabs: AI Designer, Skema, Data, Query. AI Designer is selected on arrival, with localized idea prompts and a clear review/apply workflow. Manual editing remains available in Skema. Schema forms precede the 2D diagram; SQL precedes result tables. Desktop may place schema forms beside the diagram. Reuse the existing modeling forms, key labels, zoom and focus controls. Data editing uses labeled per-column inputs and accessible scroll regions. AI drafts show schema and sample records before explicit replacement. Keep reset and replacement confirmations inline; label local-only storage clearly.
 
 
 ## Mobile Lab density and shell

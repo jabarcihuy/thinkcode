@@ -47,7 +47,7 @@
   "Buat akun": "Create account",
   "Buat akun untuk menyimpan progres": "Create an account to save your progress",
   "Buat atau ubah draft, pratinjau Markdown yang akan dilihat learner, validasi kolom wajib, lalu publikasikan secara eksplisit. Progres learner yang sudah ada tetap tersimpan saat konten ditarik dari publikasi.": "Create or edit a draft, preview the Markdown that learners will see, validate the required fields, then publish explicitly. Existing learner progress remains saved when content is unpublished.",
-  "Buat database perpustakaan dengan buku, anggota, dan peminjaman. Isi contoh datanya.": "Create a library database with books, members, and loans. Fill in the sample data.",
+  "Buat database perpustakaan dengan buku, anggota, dan peminjaman. Isi contoh datanya.": "Create a library database with books, members, and loans. Include sample data.",
   "Buat database sendiri, hubungkan tabel, isi data, lalu coba query. Mulai dari nol atau minta AI menyusun rancangan.": "Create your own database, connect the tables, fill in data, then try queries. Start from scratch or ask the AI to put together a design.",
   "Buat rancangan": "Create a design",
   "Buat saran draft": "Suggest a draft",
@@ -1884,5 +1884,17 @@
   "Target skor 75/100. Kamu boleh mencoba lagi setelah sesi sebelumnya selesai.": "Aim for 75/100. You can try again once your previous session ends.",
   "Kerjakan mandiri. AI, petunjuk, dan forum dijeda selama tantangan berlangsung.": "Work independently. AI, hints, and the forum are paused during the challenge.",
   "Tantangan belum dapat dimulai. Selesaikan sesi aktif atau materi prasyarat.": "The challenge cannot start yet. Finish your active session or the required materials.",
-  "Platform belajar basis data dengan materi dan PDF, video pendamping, skema visual 2D, latihan SQL, SQLab, Tutor AI, serta Tantangan Akhir.": "Learn databases with materials and PDFs, companion videos, visual 2D schemas, SQL practice, SQLab, AI Tutor and a Final Challenge."
+  "Platform belajar basis data dengan materi dan PDF, video pendamping, skema visual 2D, latihan SQL, SQLab, Tutor AI, serta Tantangan Akhir.": "Learn databases with materials and PDFs, companion videos, visual 2D schemas, SQL practice, SQLab, AI Tutor and a Final Challenge.",
+  "AI Designer": "AI Designer",
+  "Ceritakan ide database kamu. AI menyusun tabel, relasi, dan contoh data yang bisa kamu tinjau, ubah, lalu jelajahi dengan SQL.": "Describe your database idea. AI drafts tables, relationships, and sample data for you to review, edit, and explore with SQL.",
+  "Dari ide menjadi database": "Turn an idea into a database",
+  "Jelaskan kebutuhanmu. Tinjau skema dan contoh data, lalu terapkan saat sudah sesuai.": "Describe what you need. Review the schema and sample data, then apply the draft when it fits.",
+  "Contoh ide database": "Database ideas",
+  "Toko online": "Online shop",
+  "Perpustakaan": "Library",
+  "Reservasi": "Reservations",
+  "Buat database toko online dengan pelanggan, produk, pesanan, dan detail pesanan. Tambahkan contoh data sintetis.": "Create an online shop database with customers, products, orders, and order items. Include synthetic sample data.",
+  "Buat database reservasi ruang dengan ruangan, pengguna, dan pemesanan. Tambahkan contoh data sintetis.": "Create a room reservation database with rooms, users, and bookings. Include synthetic sample data.",
+  "Tanyakan tentang konsep basis data…": "Ask about a database concept…",
+  "Contoh data": "Sample data"
 }

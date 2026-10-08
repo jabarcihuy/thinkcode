@@ -37,6 +37,7 @@ try {
   assert.ifError((await user.auth.signInWithPassword({ email, password })).error);
   browser = await chromium.launch({ executablePath: "/usr/bin/chromium", headless: true, args: ["--no-sandbox"] });
   const context = await browser.newContext({ viewport: { width: 360, height: 800 } });
+  await context.addCookies([{ name: "quethink_locale", value: "id", url: site }]);
   await context.addCookies([...jar].map(([name, value]) => ({ name, value, url: site })));
   const page = await context.newPage();
   const errors = [], mutationRequests = [];
@@ -47,6 +48,8 @@ try {
   await page.goto(`${site}/schema-builder`);
   await page.getByRole("heading", { name: "SQLab", exact: true }).waitFor();
   assert.ok(page.url().endsWith("/playground"));
+  await page.getByRole("tab", { name: "Perancang AI", exact: true }).waitFor();
+  await page.getByRole("tab", { name: "Skema", exact: true }).click();
   async function addTable(name) {
     await page.getByLabel("Nama tabel baru").fill(name);
     await page.getByRole("button", { name: "Tambah", exact: true }).click();
@@ -108,7 +111,7 @@ try {
   await mkdir(".impeccable/review", { recursive: true });
   for (const width of [360, 768, 1280]) {
     await page.setViewportSize({ width, height: 900 });
-    for (const label of ["Skema", "Data", "Query", "AI"]) {
+    for (const label of ["Skema", "Data", "Query", "Perancang AI"]) {
       await page.getByRole("tab", { name: label, exact: true }).click();
       const sizes = await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]);
       assert.ok(sizes[0] <= sizes[1], `${width} ${label} overflow`);
@@ -119,10 +122,15 @@ try {
   // Deterministic UI smoke for draft review; provider contract covered separately.
   const draft = { version: 1, name: "Toko AI", schema: { version: 1, tables: [{ id: "products", name: "products", columns: [{ id: "pid", name: "id", type: "integer", primary: true }] }], relations: [] }, rows: { products: [{ id: 1 }] } };
   await page.route("**/api/sqlab/generate", route => route.fulfill({ json: { draft } }));
-  await page.getByRole("tab", { name: "AI", exact: true }).click();
+  await page.getByRole("tab", { name: "Perancang AI", exact: true }).click();
   await page.getByLabel("Database apa yang ingin dibuat?").fill("Buat database produk toko");
   await page.getByRole("button", { name: "Buat rancangan", exact: true }).click();
   await page.getByRole("heading", { name: "Draf: Toko AI", exact: true }).waitFor();
+  for (const width of [360, 768, 1280]) {
+    await page.setViewportSize({ width, height: 900 });
+    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `AI draft ${width} overflow`);
+    await page.screenshot({ path: `.impeccable/review/sqlab-ai-draft-${width}.png`, fullPage: true });
+  }
   await page.getByRole("button", { name: "Terapkan rancangan", exact: true }).click();
   await page.getByRole("heading", { name: "Tabel products", exact: true }).waitFor();
   await page.unroute("**/api/sqlab/generate");

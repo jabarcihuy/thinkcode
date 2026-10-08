@@ -9,10 +9,11 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { ModelDiagram } from "@/features/schema-builder/components/model-diagram";
 import { parseDocument, type SqlabDocument } from "../domain/document";
-export function AiDesigner({ apply }: { apply: (doc: SqlabDocument) => void }) {
+export function AiDesigner({ apply }: { apply: (doc: SqlabDocument) => string | null }) {
   const tx = useText();
 
   const guest = useGuestMode();
+  const [prompt, setPrompt] = useState("");
   const [draft, setDraft] = useState<SqlabDocument | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -25,7 +26,7 @@ export function AiDesigner({ apply }: { apply: (doc: SqlabDocument) => void }) {
     setDraft(null);
     controller.current = new AbortController();
     try {
-      const prompt = String(new FormData(event.currentTarget).get("prompt"));
+
       const response = await fetch(guest ? "/api/guest/sqlab" : "/api/sqlab/generate", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -47,12 +48,18 @@ export function AiDesigner({ apply }: { apply: (doc: SqlabDocument) => void }) {
   }
   return (
     <section className="space-y-5">
-      <h2 className="text-lg font-semibold">{tx("Rancang database bersama AI")}</h2>
+      <div className="max-w-[68ch]">
+        <h2 className="text-2xl font-semibold tracking-tight">{tx("Dari ide menjadi database")}</h2>
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">{tx("Jelaskan kebutuhanmu. Tinjau skema dan contoh data, lalu terapkan saat sudah sesuai.")}</p>
+      </div>
       <form onSubmit={generate} className="space-y-3">
         <Label htmlFor="sqlab-prompt">{tx("Database apa yang ingin dibuat?")}</Label>
         <textarea
           id="sqlab-prompt"
           name="prompt"
+          value={prompt}
+          onChange={(event) => setPrompt(event.target.value)}
+          disabled={busy}
           minLength={10}
           maxLength={2000}
           required
@@ -60,9 +67,16 @@ export function AiDesigner({ apply }: { apply: (doc: SqlabDocument) => void }) {
           className="w-full rounded-lg border border-border bg-background p-3 text-base focus-visible:outline-2 focus-visible:outline-ring"
           placeholder={tx("Buat database perpustakaan dengan buku, anggota, dan peminjaman. Isi contoh datanya.")}
         />
+        <div className="flex flex-wrap gap-2" aria-label={tx("Contoh ide database")}>
+          {[
+            ["Toko online", "Buat database toko online dengan pelanggan, produk, pesanan, dan detail pesanan. Tambahkan contoh data sintetis."],
+            ["Perpustakaan", "Buat database perpustakaan dengan buku, anggota, dan peminjaman. Isi contoh datanya."],
+            ["Reservasi", "Buat database reservasi ruang dengan ruangan, pengguna, dan pemesanan. Tambahkan contoh data sintetis."],
+          ].map(([label, example]) => <Button key={label} type="button" variant="outline" size="sm" disabled={busy} onClick={() => { setPrompt(tx(example!)); document.getElementById("sqlab-prompt")?.focus(); }}>{tx(label!)}</Button>)}
+        </div>
         <p className="text-xs leading-5 text-muted-foreground">
           {tx("Gunakan data sintetis. AI tidak membaca isi database kamu; hanya deskripsi ini yang dikirim.")}</p>
-        <Button disabled={busy} type="submit">
+        <Button disabled={busy || prompt.trim().length < 10} type="submit" className="w-full sm:w-auto">
           {tx(busy ? "Menyusun rancangan…" : "Buat rancangan")}
         </Button>
       </form>
@@ -85,7 +99,7 @@ export function AiDesigner({ apply }: { apply: (doc: SqlabDocument) => void }) {
             {draft.schema.tables.map((t) => (
               <div key={t.id} className="mt-3">
                 <h4 className="font-mono">{t.name}</h4>
-                <pre className="mt-2 max-h-60 overflow-auto rounded-lg bg-secondary p-3 text-xs">
+                <pre tabIndex={0} aria-label={`${tx("Contoh data")} ${t.name}`} className="mt-2 max-h-60 overflow-auto rounded-lg bg-secondary p-3 text-xs focus-visible:outline-2 focus-visible:outline-ring">
                   {JSON.stringify(draft.rows[t.id] ?? [], null, 2)}
                 </pre>
               </div>
@@ -95,8 +109,9 @@ export function AiDesigner({ apply }: { apply: (doc: SqlabDocument) => void }) {
             {tx("Menerapkan draf mengganti skema dan data SQLab saat ini. Tinjau sebelum melanjutkan.")}</p>
           <Button
             onClick={() => {
-              apply(draft);
-              setDraft(null);
+              const failure = apply(draft);
+              if (failure) setError(failure);
+              else setDraft(null);
             }}
           >
             {tx("Terapkan rancangan")}</Button>

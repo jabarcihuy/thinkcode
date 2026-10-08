@@ -64,6 +64,7 @@ try {
   await page.reload(); await page.getByText('1 dari ' + lessons.length + ' selesai', { exact: true }).waitFor();
   // SQLab draft must survive reload and a new signed guest session.
   await page.goto(site + '/guest?view=sqlab');
+  await page.getByRole('tab', { name: 'Skema', exact: true }).click();
   await page.getByLabel('Nama tabel baru').fill('books'); await page.getByRole('button', { name: 'Tambah', exact: true }).click();
   await page.getByLabel('Nama kolom', { exact: true }).fill('id'); await page.getByLabel('Tipe data', { exact: true }).selectOption('integer'); await page.getByRole('checkbox', { name: 'Primary key', exact: true }).check(); await page.getByRole('button', { name: 'Tambah kolom', exact: true }).click();
   await page.reload(); await page.getByRole('heading', { name: 'Tabel books', exact: true }).waitFor();
@@ -73,7 +74,7 @@ try {
   await page.waitForURL(site + '/');
   await page.goto(site + '/guest/start'); await page.getByLabel('Nama', { exact: true }).fill('Sesi Baru'); await page.getByRole('button', { name: 'Masuk sebagai tamu', exact: true }).click(); await page.waitForURL(site + '/guest');
   await page.getByRole('heading', { name: 'Halo, Nama Lokal.', exact: true }).waitFor(); await page.getByText('1 dari ' + lessons.length + ' selesai', { exact: true }).waitFor();
-  await page.goto(site + '/guest?view=sqlab'); await page.getByRole('heading', { name: 'Tabel books', exact: true }).waitFor();
+  await page.goto(site + '/guest?view=sqlab'); await page.getByRole('tab', { name: 'Skema', exact: true }).click(); await page.getByRole('heading', { name: 'Tabel books', exact: true }).waitFor();
   // No guest database writes, unchanged account/admin authorization.
   for (const table of ['profiles','lesson_progress','exercise_attempts','ai_sessions','assessment_sessions','assessment_results']) {
     const column = table === 'profiles' ? 'id' : 'user_id';

@@ -1884,5 +1884,17 @@
   "Target skor 75/100. Kamu boleh mencoba lagi setelah sesi sebelumnya selesai.": "Target skor 75/100. Kamu boleh mencoba lagi setelah sesi sebelumnya selesai.",
   "Kerjakan mandiri. AI, petunjuk, dan forum dijeda selama tantangan berlangsung.": "Kerjakan mandiri. AI, petunjuk, dan forum dijeda selama tantangan berlangsung.",
   "Tantangan belum dapat dimulai. Selesaikan sesi aktif atau materi prasyarat.": "Tantangan belum dapat dimulai. Selesaikan sesi aktif atau materi prasyarat.",
-  "Platform belajar basis data dengan materi dan PDF, video pendamping, skema visual 2D, latihan SQL, SQLab, Tutor AI, serta Tantangan Akhir.": "Platform belajar basis data dengan materi dan PDF, video pendamping, skema visual 2D, latihan SQL, SQLab, Tutor AI, serta Tantangan Akhir."
+  "Platform belajar basis data dengan materi dan PDF, video pendamping, skema visual 2D, latihan SQL, SQLab, Tutor AI, serta Tantangan Akhir.": "Platform belajar basis data dengan materi dan PDF, video pendamping, skema visual 2D, latihan SQL, SQLab, Tutor AI, serta Tantangan Akhir.",
+  "AI Designer": "Perancang AI",
+  "Ceritakan ide database kamu. AI menyusun tabel, relasi, dan contoh data yang bisa kamu tinjau, ubah, lalu jelajahi dengan SQL.": "Ceritakan ide database kamu. AI menyusun tabel, relasi, dan contoh data yang bisa kamu tinjau, ubah, lalu jelajahi dengan SQL.",
+  "Dari ide menjadi database": "Dari ide menjadi database",
+  "Jelaskan kebutuhanmu. Tinjau skema dan contoh data, lalu terapkan saat sudah sesuai.": "Jelaskan kebutuhanmu. Tinjau skema dan contoh data, lalu terapkan saat sudah sesuai.",
+  "Contoh ide database": "Contoh ide database",
+  "Toko online": "Toko online",
+  "Perpustakaan": "Perpustakaan",
+  "Reservasi": "Reservasi",
+  "Buat database toko online dengan pelanggan, produk, pesanan, dan detail pesanan. Tambahkan contoh data sintetis.": "Buat database toko online dengan pelanggan, produk, pesanan, dan detail pesanan. Tambahkan contoh data sintetis.",
+  "Buat database reservasi ruang dengan ruangan, pengguna, dan pemesanan. Tambahkan contoh data sintetis.": "Buat database reservasi ruang dengan ruangan, pengguna, dan pemesanan. Tambahkan contoh data sintetis.",
+  "Tanyakan tentang konsep basis data…": "Tanyakan tentang konsep basis data…",
+  "Contoh data": "Contoh data"
 }

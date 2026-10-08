@@ -25,7 +25,7 @@ import { StructureEditor } from "./structure-editor";
 import { DataEditor } from "./data-editor";
 import { QueryPanel } from "./query-panel";
 import { AiDesigner } from "./ai-designer";
-const tabs = ["Skema", "Data", "Query", "AI"] as const;
+const tabs = ["Skema", "Data", "Query", "AI Designer"] as const;
 export function SqlabWorkspace({ userId }: { userId: string }) {
   const tx = useText();
 
@@ -36,7 +36,7 @@ export function SqlabWorkspace({ userId }: { userId: string }) {
     parse: parseDocument,
   });
   const doc = store.value;
-  const [tab, setTab] = useState(0);
+  const [tab, setTab] = useState(3);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [reset, setReset] = useState(false);
@@ -56,15 +56,17 @@ export function SqlabWorkspace({ userId }: { userId: string }) {
     return save(reconcileSchema(doc, parsed.data));
   }
   function navigate(e: KeyboardEvent<HTMLDivElement>) {
+    const order = [3, 0, 1, 2];
+    const position = order.indexOf(tab);
     const next =
       e.key === "ArrowRight"
-        ? (tab + 1) % 4
+        ? order[(position + 1) % 4]!
         : e.key === "ArrowLeft"
-          ? (tab + 3) % 4
+          ? order[(position + 3) % 4]!
           : e.key === "Home"
-            ? 0
+            ? 3
             : e.key === "End"
-              ? 3
+              ? 2
               : -1;
     if (next < 0 || busy) return;
     e.preventDefault();
@@ -112,9 +114,9 @@ export function SqlabWorkspace({ userId }: { userId: string }) {
         onKeyDown={navigate}
         className="mt-5 grid grid-cols-4 border-b border-border"
       >
-        {tabs.map((label, i) => (
+        {[3, 0, 1, 2].map((i) => (
           <button
-            key={label}
+            key={tabs[i]}
             id={`sqlab-tab-${i}`}
             role="tab"
             aria-selected={tab === i}
@@ -124,7 +126,7 @@ export function SqlabWorkspace({ userId }: { userId: string }) {
             onClick={() => setTab(i)}
             className={`min-h-12 border-b-2 px-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-ring ${tab === i ? "border-accent" : "border-transparent text-muted-foreground"}`}
           >
-            {tx(label)}
+            {tx(tabs[i]!)}
           </button>
         ))}
       </div>
@@ -211,12 +213,13 @@ export function SqlabWorkspace({ userId }: { userId: string }) {
           <AiDesigner
             apply={(next) => {
               const failure = save(next);
-              if (failure) setError(failure);
+              if (failure) return failure;
               else {
                 setError("");
                 setRevision((value) => value + 1);
                 setTab(0);
               }
+              return null;
             }}
           />
         </div>

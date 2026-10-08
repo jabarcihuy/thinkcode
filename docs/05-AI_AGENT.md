@@ -42,7 +42,7 @@ The tutor cannot run arbitrary SQL, change progress, publish content, change sco
 
 ## Safety and limits
 
-The API checks authentication, active assessment state, per-user rate limits, prompt/source size, and trimmed conversation history before using the server-only AIProvider. AI is unavailable during every IN_PROGRESS test, including diagnostic pre-test and post-test. Provider keys stay server-side.
+The API checks authentication, active assessment state, per-user rate limits, prompt/source size, and trimmed conversation history before using the server-only AIProvider. AI is unavailable during every IN_PROGRESS test, including the Final Challenge. Provider keys stay server-side.
 
 Write feedback must encourage a target preview before `UPDATE` or `DELETE` and must not claim a change happened unless the visible Worker result confirms it.
 
@@ -52,6 +52,13 @@ Use the existing provider-agnostic AIProvider. The current OpenAI-compatible ada
 
 ## Revisi alur wajib — 5 Oktober 2026
 
-**Pre-test wajib sekali → Materi membaca → Lab latihan inti → materi berikutnya → Post-test (lulus ≥75) → selesai.**
+**Materi membaca → Lab latihan inti → materi berikutnya → Tantangan Akhir (lulus ≥75) → selesai.**
 
 Aturan aktif dan transisi pengguna lama mengikuti [03-LEARNING_SYSTEM.md](03-LEARNING_SYSTEM.md). Materi tetap halaman membaca/PDF; Lab, tes, dan AI berada di halaman terpisah.
+
+
+## Tutor refinement — 8 October 2026
+
+The standalone chatbot uses a focused conversation panel with safe Markdown prose and scrollable SQL snippets. Learner messages are displayed verbatim, never passed through the interface translation catalog. Suggestions are localized; answers follow the selected language. General database questions remain welcome even when the active lesson differs.
+
+The system prompt teaches beginners through short explanations, progressive hints, and one practical next step. It distinguishes visible evidence from possible causes, labels hypothetical examples, and asks for missing query/output rather than inventing results. SQLite is the practice dialect. Lesson text, query, output, history and questions are untrusted data; instructions embedded in them cannot grant privileges. Context is bounded per field so long lesson text cannot displace the learner's query. Prompt instructions complement, rather than replace, authentication, assessment blocking, request validation and quotas.

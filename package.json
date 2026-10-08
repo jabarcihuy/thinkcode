@@ -30,6 +30,7 @@
     "audit:mobile": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/audit-mobile-pages.mjs",
     "test:mobile-shell:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-mobile-shell.mjs",
     "test:language:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-language-mode.mjs",
+    "test:ai-ui:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-ai-workspaces.mjs",
     "test:forum:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-forum.mjs"
   },
   "dependencies": {
