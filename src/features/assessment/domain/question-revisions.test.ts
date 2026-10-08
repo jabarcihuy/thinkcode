@@ -71,6 +71,29 @@ describe("complete contextual question bank", () => {
       expect(db.prepare("SELECT COUNT(*) AS count FROM courses").get()).toMatchObject({count:3});
     });
   });
+  it("keeps diagnostic prompts and their choices consistent with the displayed tables", () => {
+    const diagnostic = ASSESSMENT_REVISIONS.filter((q) => q.slug === "pre-test-basis-data");
+    for (const item of diagnostic) {
+      const config = item.publicConfig;
+      if (!config || typeof config !== "object" || Array.isArray(config)) throw new Error("Missing public configuration");
+      expect(readQuestionData(config.data)?.relations).toBe(false);
+      expect(config.options).toEqual(expect.arrayContaining([{ id: "unknown", text: "Belum tahu" }]));
+    }
+    expect(diagnostic[8]!.prompt).toContain("**3 menjadi 4**");
+    expect(diagnostic[8]!.prompt).toContain("`book_id = 30`");
+    withDatabase("library", db => {
+      expect(db.prepare("SELECT title FROM books").all()).toHaveLength(4);
+      expect(db.prepare("SELECT COUNT(*) AS count FROM books").get()).toMatchObject({ count: 4 });
+      const target = db.prepare("SELECT * FROM books WHERE book_id = 20").all();
+      expect(target).toHaveLength(1);
+      expect(db.prepare("SELECT * FROM books WHERE author_id = 1").all()).toHaveLength(2);
+      expect(db.prepare("SELECT * FROM books WHERE stock > 0").all()).toHaveLength(3);
+      const before = db.prepare("SELECT book_id,stock FROM books WHERE book_id <> 30 ORDER BY book_id").all();
+      db.exec("UPDATE books SET stock = 4 WHERE book_id = 30");
+      expect(db.prepare("SELECT stock FROM books WHERE book_id = 30").get()).toMatchObject({ stock: 4 });
+      expect(db.prepare("SELECT book_id,stock FROM books WHERE book_id <> 30 ORDER BY book_id").all()).toEqual(before);
+    });
+  });
   it.each(predictions)("matches every prediction answer to actual SQL: $starter_code", (exercise) => {
     withDatabase(exercise.config.public.datasetId ?? "campus", db => {
       const result=db.prepare(exercise.starter_code).all().map(row => Object.values(row).join(" | ")).join("\n");

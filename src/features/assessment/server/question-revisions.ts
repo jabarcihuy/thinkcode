@@ -6,8 +6,8 @@ export const ASSESSMENT_REVISIONS: {slug:string; position:number; title:string; 
   {
     "slug": "pre-test-basis-data",
     "position": 1,
-    "title": "Membaca kolom katalog",
-    "prompt": "Petugas perpustakaan menyimpan daftar buku pada tabel `books` di bawah. Setiap baris mewakili satu buku, sedangkan judul kolom menyatakan atributnya.\n\nManakah yang merupakan **nama kolom** pada tabel tersebut?",
+    "title": "Mengenali kolom",
+    "prompt": "Perhatikan tabel `books` di bawah. Petugas ingin mengambil **judul buku**, bukan nomor buku atau jumlah stok.\n\n**Kolom mana yang menyimpan judul buku?**",
     "publicConfig": {
       "mode": "choice",
       "options": [
@@ -17,11 +17,11 @@ export const ASSESSMENT_REVISIONS: {slug:string; position:number; title:string; 
         },
         {
           "id": "b",
-          "text": "Dasar Basis Data"
+          "text": "book_id"
         },
         {
           "id": "c",
-          "text": "5"
+          "text": "stock"
         },
         {
           "id": "unknown",
@@ -40,8 +40,8 @@ export const ASSESSMENT_REVISIONS: {slug:string; position:number; title:string; 
   {
     "slug": "pre-test-basis-data",
     "position": 2,
-    "title": "Identitas mahasiswa",
-    "prompt": "Bagian akademik menyimpan mahasiswa pada tabel `students`. Mahasiswa yang berbeda boleh memiliki nama dan angkatan yang sama. Setiap `student_id` diberikan kepada satu mahasiswa dan tidak boleh kosong.\n\nKolom mana yang tepat digunakan untuk membedakan setiap record mahasiswa?",
+    "title": "Memilih identitas record",
+    "prompt": "Tabel `students` menyimpan data mahasiswa. Nama dan angkatan boleh sama untuk beberapa mahasiswa. Nomor `student_id` diberikan kepada satu mahasiswa dan tidak boleh kosong.\n\nPetugas perlu memilih satu mahasiswa secara tepat tanpa tertukar. **Kolom mana yang paling sesuai dijadikan primary key atau identitas unik setiap mahasiswa?**",
     "publicConfig": {
       "mode": "choice",
       "options": [
@@ -74,22 +74,22 @@ export const ASSESSMENT_REVISIONS: {slug:string; position:number; title:string; 
   {
     "slug": "pre-test-basis-data",
     "position": 3,
-    "title": "Rujukan buku ke penulis",
-    "prompt": "Perpustakaan menyimpan buku dan penulis pada dua tabel terpisah. Nilai `books.author_id` harus merujuk `authors.author_id` yang sudah ada.\n\nApa tujuan rujukan tersebut ketika sebuah buku dicatat?",
+    "title": "Memahami hubungan antartabel",
+    "prompt": "Perpustakaan menyimpan data buku dalam `books` dan data penulis dalam `authors`.\n\nBuku **Algoritma Ringkas** memiliki `author_id = 2`. Pada tabel `authors`, nomor tersebut dimiliki oleh **Budi**.\n\n**Mengapa tabel buku menyimpan `author_id`?**",
     "publicConfig": {
       "mode": "choice",
       "options": [
         {
           "id": "a",
-          "text": "Menentukan urutan judul buku di katalog."
+          "text": "Untuk menentukan urutan buku berdasarkan judul."
         },
         {
           "id": "b",
-          "text": "Menghitung jumlah stok setiap buku."
+          "text": "Untuk menyimpan jumlah stok buku."
         },
         {
           "id": "c",
-          "text": "Menghubungkan buku dengan record penulisnya."
+          "text": "Untuk menghubungkan setiap buku dengan data penulisnya."
         },
         {
           "id": "unknown",
@@ -109,8 +109,8 @@ export const ASSESSMENT_REVISIONS: {slug:string; position:number; title:string; 
   {
     "slug": "pre-test-basis-data",
     "position": 4,
-    "title": "Daftar judul untuk pengunjung",
-    "prompt": "Petugas ingin menyiapkan daftar yang hanya berisi judul buku dari tabel `books`. Kolom lain tidak diperlukan dan data asli tidak boleh berubah.\n\nQuery mana yang menghasilkan daftar tersebut?",
+    "title": "Menampilkan satu kolom",
+    "prompt": "Petugas ingin menampilkan **judul seluruh buku** dari tabel `books`. Hasilnya harus memiliki satu kolom saja, yaitu `title`.\n\n**Query mana yang memenuhi kebutuhan tersebut?**",
     "publicConfig": {
       "mode": "choice",
       "options": [
@@ -120,7 +120,7 @@ export const ASSESSMENT_REVISIONS: {slug:string; position:number; title:string; 
         },
         {
           "id": "b",
-          "text": "SELECT stock FROM books;"
+          "text": "SELECT title, stock FROM books;"
         },
         {
           "id": "c",
@@ -143,22 +143,22 @@ export const ASSESSMENT_REVISIONS: {slug:string; position:number; title:string; 
   {
     "slug": "pre-test-basis-data",
     "position": 5,
-    "title": "Memilih buku dengan stok cukup",
-    "prompt": "Perpustakaan menyiapkan daftar buku untuk kegiatan membaca bersama. Hanya buku dengan stok **lebih dari 2** yang boleh dipilih.\n\nJika kondisi query adalah `WHERE stock > 2`, pasangan judul mana yang masuk hasil berdasarkan data di bawah?",
+    "title": "Menentukan hasil filter",
+    "prompt": "Perpustakaan hanya akan meminjamkan buku untuk kegiatan kelompok jika stoknya **lebih dari 2**.\n\nPetugas menjalankan query:\n\n```sql\nSELECT title\nFROM books\nWHERE stock > 2;\n```\n\n**Judul buku mana saja yang masuk dalam hasil query? Abaikan urutan hasilnya.**",
     "publicConfig": {
       "mode": "choice",
       "options": [
         {
           "id": "a",
-          "text": "Dasar Basis Data dan Pengantar SQL"
+          "text": "Dasar Basis Data dan Pengantar SQL."
         },
         {
           "id": "b",
-          "text": "Dasar Basis Data dan Algoritma Ringkas"
+          "text": "Dasar Basis Data dan Algoritma Ringkas."
         },
         {
           "id": "c",
-          "text": "Algoritma Ringkas dan Pengantar SQL"
+          "text": "Algoritma Ringkas dan Pengantar SQL."
         },
         {
           "id": "unknown",
@@ -177,8 +177,8 @@ export const ASSESSMENT_REVISIONS: {slug:string; position:number; title:string; 
   {
     "slug": "pre-test-basis-data",
     "position": 6,
-    "title": "Laporan buku dan penulis",
-    "prompt": "Petugas membutuhkan judul buku bersama nama penulisnya. Informasi judul berada di `books`, sedangkan nama penulis berada di `authors`. `books.author_id` menyimpan rujukan penulis.\n\nPasangan kolom mana yang harus dicocokkan saat menghubungkan kedua tabel?",
+    "title": "Menggabungkan data buku dan penulis",
+    "prompt": "Petugas ingin membuat laporan yang menampilkan **judul buku beserta nama penulisnya**.\n\nJudul tersedia di tabel `books`, sedangkan nama penulis tersedia di tabel `authors`.\n\n**Kondisi JOIN mana yang memasangkan buku dengan penulis yang benar?**",
     "publicConfig": {
       "mode": "choice",
       "options": [
@@ -212,8 +212,8 @@ export const ASSESSMENT_REVISIONS: {slug:string; position:number; title:string; 
   {
     "slug": "pre-test-basis-data",
     "position": 7,
-    "title": "Menghitung judul terdaftar",
-    "prompt": "Petugas ingin mengetahui banyaknya record buku dalam katalog, bukan total eksemplar stok. Setiap baris tabel `books` mewakili satu judul terdaftar.\n\nBerapa hasil query berikut berdasarkan seluruh data tabel?\n\n```sql\nSELECT COUNT(*) FROM books;\n```",
+    "title": "Menghitung record",
+    "prompt": "Setiap baris pada tabel `books` mewakili **satu judul buku**. Kolom `stock` menunjukkan jumlah eksemplar yang tersedia.\n\nPetugas menjalankan:\n\n```sql\nSELECT COUNT(*)\nFROM books;\n```\n\n**Angka berapa yang dihasilkan query tersebut?**",
     "publicConfig": {
       "mode": "choice",
       "options": [
@@ -246,8 +246,8 @@ export const ASSESSMENT_REVISIONS: {slug:string; position:number; title:string; 
   {
     "slug": "pre-test-basis-data",
     "position": 8,
-    "title": "Mencatat buku baru",
-    "prompt": "Perpustakaan menerima satu judul baru yang belum tercatat. Petugas ingin menambahkan satu record ke tabel `books` dan mempertahankan seluruh record sebelumnya.\n\nPerintah SQL apa yang digunakan untuk kebutuhan tersebut?",
+    "title": "Menambahkan record baru",
+    "prompt": "Perpustakaan menerima judul baru bernama **Belajar SQL** yang belum ada dalam tabel `books`.\n\nPetugas ingin **menambahkan satu baris baru**, tanpa mengubah atau menghapus buku yang sudah tercatat.\n\n**Perintah SQL mana yang digunakan?**",
     "publicConfig": {
       "mode": "choice",
       "options": [
@@ -280,8 +280,8 @@ export const ASSESSMENT_REVISIONS: {slug:string; position:number; title:string; 
   {
     "slug": "pre-test-basis-data",
     "position": 9,
-    "title": "Memperbarui stok satu buku",
-    "prompt": "Setelah menerima tambahan eksemplar, stok buku dengan `book_id = 30` harus menjadi **4**. Stok buku lain tidak boleh berubah.\n\nQuery mana yang memperbarui hanya record yang dimaksud?",
+    "title": "Mengubah satu record",
+    "prompt": "Stok **Algoritma Ringkas**, dengan `book_id = 30`, bertambah dari **3 menjadi 4**.\n\nPetugas harus memperbarui stok buku tersebut. Stok semua buku lainnya harus tetap sama.\n\n**Query mana yang tepat?**",
     "publicConfig": {
       "mode": "choice",
       "options": [
@@ -314,22 +314,22 @@ export const ASSESSMENT_REVISIONS: {slug:string; position:number; title:string; 
   {
     "slug": "pre-test-basis-data",
     "position": 10,
-    "title": "Menghapus record secara terarah",
-    "prompt": "Buku dengan `book_id = 20` akan dikeluarkan dari katalog. Petugas perlu memastikan bahwa hanya buku tersebut yang dihapus dan data penulis tetap ada.\n\nApa langkah yang tepat **sebelum** menjalankan DELETE?",
+    "title": "Memeriksa target sebelum menghapus",
+    "prompt": "Perpustakaan akan menghapus **Logika Data**, dengan `book_id = 20`, dari katalog.\n\nSebelum menjalankan DELETE, petugas ingin memastikan bahwa kondisi penghapusan memilih **buku itu saja**, tanpa memilih buku lain.\n\n**Query SELECT mana yang sebaiknya digunakan untuk memeriksa target?**",
     "publicConfig": {
       "mode": "choice",
       "options": [
         {
           "id": "a",
-          "text": "Periksa record dengan SELECT dan WHERE book_id = 20, lalu gunakan kondisi yang sama untuk DELETE."
+          "text": "SELECT * FROM books WHERE book_id = 20;"
         },
         {
           "id": "b",
-          "text": "Periksa semua buku, lalu jalankan DELETE FROM books tanpa WHERE."
+          "text": "SELECT * FROM books WHERE author_id = 1;"
         },
         {
           "id": "c",
-          "text": "Periksa penulis buku, lalu hapus record penulisnya."
+          "text": "SELECT * FROM books WHERE stock > 0;"
         },
         {
           "id": "unknown",

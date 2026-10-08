@@ -2,17 +2,17 @@
 
 Versi revisi: 10 soal pre-test diagnostik, 45 latihan, dan 16 soal post-test (10 konsep + 6 kasus SQL). Dokumen berisi soal, data sintetis publik, pilihan/blok, dan kriteria tugas. Tidak memuat kunci jawaban atau varian pengujian privat. Riwayat hasil pengguna tetap disimpan.
 
-Status penerapan saat audit: revisi latihan dan post-test sudah diterapkan. Revisi pre-test disiapkan, tetapi menunggu sesi diagnostik yang masih aktif selesai agar pertanyaan dan jawaban tidak berubah di tengah tes.
+Status 8 Oktober 2026: revisi sepuluh soal pre-test yang lebih jelas beserta tabel acuannya sudah diterapkan melalui MCP Supabase. Atas instruksi eksplisit pengguna, satu sesi akun yang masih aktif ditutup sebagai ABANDONED sebelum revisi; riwayat tidak dihapus, nilai lama tidak diubah, dan tes harus dimulai ulang. Guard penolakan perubahan saat ada sesi aktif tetap ada pada migration. Revisi latihan dan post-test sebelumnya tidak berubah.
 
-## Pre-test
+## Pre-test — naskah jelas, 8 Oktober 2026
 
-Jawab sesuai pengetahuan awal; pilih Belum tahu jika belum mengetahui. Tidak ada batas kelulusan atau kontribusi pada nilai akhir.
+Jawab sesuai pengetahuan awal; pilih Belum tahu jika belum mengetahui. Tidak ada batas kelulusan atau kontribusi pada nilai akhir. Tabel pendukung selalu tampil bersama soal, sebelum pilihan jawaban, tanpa label kunci PK/FK atau diagram yang membocorkan jawaban. Data mengikuti registry sintetis aplikasi.
 
-### 1. Membaca kolom katalog
+### 1. Mengenali kolom
 
-Petugas perpustakaan menyimpan daftar buku pada tabel `books` di bawah. Setiap baris mewakili satu buku, sedangkan judul kolom menyatakan atributnya.
+Perhatikan tabel `books` di bawah. Petugas ingin mengambil **judul buku**, bukan nomor buku atau jumlah stok.
 
-Manakah yang merupakan **nama kolom** pada tabel tersebut?
+**Kolom mana yang menyimpan judul buku?**
 
 **Data acuan: Katalog Buku (keadaan awal)**
 
@@ -25,19 +25,18 @@ Manakah yang merupakan **nama kolom** pada tabel tersebut?
 | 30 | Algoritma Ringkas | 2 | 3 |
 | 40 | Pengantar SQL | 3 | 2 |
 
-
 **Pilihan jawaban**
 
 - title
-- Dasar Basis Data
-- 5
+- book_id
+- stock
 - Belum tahu
 
-### 2. Identitas mahasiswa
+### 2. Memilih identitas record
 
-Bagian akademik menyimpan mahasiswa pada tabel `students`. Mahasiswa yang berbeda boleh memiliki nama dan angkatan yang sama. Setiap `student_id` diberikan kepada satu mahasiswa dan tidak boleh kosong.
+Tabel `students` menyimpan data mahasiswa. Nama dan angkatan boleh sama untuk beberapa mahasiswa. Nomor `student_id` diberikan kepada satu mahasiswa dan tidak boleh kosong.
 
-Kolom mana yang tepat digunakan untuk membedakan setiap record mahasiswa?
+Petugas perlu memilih satu mahasiswa secara tepat tanpa tertukar. **Kolom mana yang paling sesuai dijadikan primary key atau identitas unik setiap mahasiswa?**
 
 **Data acuan: Kampus Mini (keadaan awal)**
 
@@ -50,7 +49,6 @@ Kolom mana yang tepat digunakan untuk membedakan setiap record mahasiswa?
 | 3 | Citra | 2024 |
 | 4 | Danu | 2024 |
 
-
 **Pilihan jawaban**
 
 - name
@@ -58,11 +56,13 @@ Kolom mana yang tepat digunakan untuk membedakan setiap record mahasiswa?
 - cohort
 - Belum tahu
 
-### 3. Rujukan buku ke penulis
+### 3. Memahami hubungan antartabel
 
-Perpustakaan menyimpan buku dan penulis pada dua tabel terpisah. Nilai `books.author_id` harus merujuk `authors.author_id` yang sudah ada.
+Perpustakaan menyimpan data buku dalam `books` dan data penulis dalam `authors`.
 
-Apa tujuan rujukan tersebut ketika sebuah buku dicatat?
+Buku **Algoritma Ringkas** memiliki `author_id = 2`. Pada tabel `authors`, nomor tersebut dimiliki oleh **Budi**.
+
+**Mengapa tabel buku menyimpan `author_id`?**
 
 **Data acuan: Katalog Buku (keadaan awal)**
 
@@ -83,19 +83,18 @@ Apa tujuan rujukan tersebut ketika sebuah buku dicatat?
 | 30 | Algoritma Ringkas | 2 | 3 |
 | 40 | Pengantar SQL | 3 | 2 |
 
-
 **Pilihan jawaban**
 
-- Menentukan urutan judul buku di katalog.
-- Menghitung jumlah stok setiap buku.
-- Menghubungkan buku dengan record penulisnya.
+- Untuk menentukan urutan buku berdasarkan judul.
+- Untuk menyimpan jumlah stok buku.
+- Untuk menghubungkan setiap buku dengan data penulisnya.
 - Belum tahu
 
-### 4. Daftar judul untuk pengunjung
+### 4. Menampilkan satu kolom
 
-Petugas ingin menyiapkan daftar yang hanya berisi judul buku dari tabel `books`. Kolom lain tidak diperlukan dan data asli tidak boleh berubah.
+Petugas ingin menampilkan **judul seluruh buku** dari tabel `books`. Hasilnya harus memiliki satu kolom saja, yaitu `title`.
 
-Query mana yang menghasilkan daftar tersebut?
+**Query mana yang memenuhi kebutuhan tersebut?**
 
 **Data acuan: Katalog Buku (keadaan awal)**
 
@@ -107,20 +106,27 @@ Query mana yang menghasilkan daftar tersebut?
 | 20 | Logika Data | 1 | 0 |
 | 30 | Algoritma Ringkas | 2 | 3 |
 | 40 | Pengantar SQL | 3 | 2 |
-
 
 **Pilihan jawaban**
 
 - SELECT title FROM books;
-- SELECT stock FROM books;
+- SELECT title, stock FROM books;
 - SELECT * FROM books;
 - Belum tahu
 
-### 5. Memilih buku dengan stok cukup
+### 5. Menentukan hasil filter
 
-Perpustakaan menyiapkan daftar buku untuk kegiatan membaca bersama. Hanya buku dengan stok **lebih dari 2** yang boleh dipilih.
+Perpustakaan hanya akan meminjamkan buku untuk kegiatan kelompok jika stoknya **lebih dari 2**.
 
-Jika kondisi query adalah `WHERE stock > 2`, pasangan judul mana yang masuk hasil berdasarkan data di bawah?
+Petugas menjalankan query:
+
+```sql
+SELECT title
+FROM books
+WHERE stock > 2;
+```
+
+**Judul buku mana saja yang masuk dalam hasil query? Abaikan urutan hasilnya.**
 
 **Data acuan: Katalog Buku (keadaan awal)**
 
@@ -133,19 +139,20 @@ Jika kondisi query adalah `WHERE stock > 2`, pasangan judul mana yang masuk hasi
 | 30 | Algoritma Ringkas | 2 | 3 |
 | 40 | Pengantar SQL | 3 | 2 |
 
-
 **Pilihan jawaban**
 
-- Dasar Basis Data dan Pengantar SQL
-- Dasar Basis Data dan Algoritma Ringkas
-- Algoritma Ringkas dan Pengantar SQL
+- Dasar Basis Data dan Pengantar SQL.
+- Dasar Basis Data dan Algoritma Ringkas.
+- Algoritma Ringkas dan Pengantar SQL.
 - Belum tahu
 
-### 6. Laporan buku dan penulis
+### 6. Menggabungkan data buku dan penulis
 
-Petugas membutuhkan judul buku bersama nama penulisnya. Informasi judul berada di `books`, sedangkan nama penulis berada di `authors`. `books.author_id` menyimpan rujukan penulis.
+Petugas ingin membuat laporan yang menampilkan **judul buku beserta nama penulisnya**.
 
-Pasangan kolom mana yang harus dicocokkan saat menghubungkan kedua tabel?
+Judul tersedia di tabel `books`, sedangkan nama penulis tersedia di tabel `authors`.
+
+**Kondisi JOIN mana yang memasangkan buku dengan penulis yang benar?**
 
 **Data acuan: Katalog Buku (keadaan awal)**
 
@@ -165,7 +172,6 @@ Pasangan kolom mana yang harus dicocokkan saat menghubungkan kedua tabel?
 | 20 | Logika Data | 1 | 0 |
 | 30 | Algoritma Ringkas | 2 | 3 |
 | 40 | Pengantar SQL | 3 | 2 |
-
 
 **Pilihan jawaban**
 
@@ -174,15 +180,18 @@ Pasangan kolom mana yang harus dicocokkan saat menghubungkan kedua tabel?
 - books.author_id = authors.author_id
 - Belum tahu
 
-### 7. Menghitung judul terdaftar
+### 7. Menghitung record
 
-Petugas ingin mengetahui banyaknya record buku dalam katalog, bukan total eksemplar stok. Setiap baris tabel `books` mewakili satu judul terdaftar.
+Setiap baris pada tabel `books` mewakili **satu judul buku**. Kolom `stock` menunjukkan jumlah eksemplar yang tersedia.
 
-Berapa hasil query berikut berdasarkan seluruh data tabel?
+Petugas menjalankan:
 
 ```sql
-SELECT COUNT(*) FROM books;
+SELECT COUNT(*)
+FROM books;
 ```
+
+**Angka berapa yang dihasilkan query tersebut?**
 
 **Data acuan: Katalog Buku (keadaan awal)**
 
@@ -194,7 +203,6 @@ SELECT COUNT(*) FROM books;
 | 20 | Logika Data | 1 | 0 |
 | 30 | Algoritma Ringkas | 2 | 3 |
 | 40 | Pengantar SQL | 3 | 2 |
-
 
 **Pilihan jawaban**
 
@@ -203,11 +211,13 @@ SELECT COUNT(*) FROM books;
 - 3
 - Belum tahu
 
-### 8. Mencatat buku baru
+### 8. Menambahkan record baru
 
-Perpustakaan menerima satu judul baru yang belum tercatat. Petugas ingin menambahkan satu record ke tabel `books` dan mempertahankan seluruh record sebelumnya.
+Perpustakaan menerima judul baru bernama **Belajar SQL** yang belum ada dalam tabel `books`.
 
-Perintah SQL apa yang digunakan untuk kebutuhan tersebut?
+Petugas ingin **menambahkan satu baris baru**, tanpa mengubah atau menghapus buku yang sudah tercatat.
+
+**Perintah SQL mana yang digunakan?**
 
 **Data acuan: Katalog Buku (keadaan awal)**
 
@@ -219,7 +229,6 @@ Perintah SQL apa yang digunakan untuk kebutuhan tersebut?
 | 20 | Logika Data | 1 | 0 |
 | 30 | Algoritma Ringkas | 2 | 3 |
 | 40 | Pengantar SQL | 3 | 2 |
-
 
 **Pilihan jawaban**
 
@@ -228,11 +237,13 @@ Perintah SQL apa yang digunakan untuk kebutuhan tersebut?
 - SELECT
 - Belum tahu
 
-### 9. Memperbarui stok satu buku
+### 9. Mengubah satu record
 
-Setelah menerima tambahan eksemplar, stok buku dengan `book_id = 30` harus menjadi **4**. Stok buku lain tidak boleh berubah.
+Stok **Algoritma Ringkas**, dengan `book_id = 30`, bertambah dari **3 menjadi 4**.
 
-Query mana yang memperbarui hanya record yang dimaksud?
+Petugas harus memperbarui stok buku tersebut. Stok semua buku lainnya harus tetap sama.
+
+**Query mana yang tepat?**
 
 **Data acuan: Katalog Buku (keadaan awal)**
 
@@ -245,7 +256,6 @@ Query mana yang memperbarui hanya record yang dimaksud?
 | 30 | Algoritma Ringkas | 2 | 3 |
 | 40 | Pengantar SQL | 3 | 2 |
 
-
 **Pilihan jawaban**
 
 - UPDATE books SET stock = 4;
@@ -253,11 +263,13 @@ Query mana yang memperbarui hanya record yang dimaksud?
 - UPDATE books SET stock = 4 WHERE book_id = 30;
 - Belum tahu
 
-### 10. Menghapus record secara terarah
+### 10. Memeriksa target sebelum menghapus
 
-Buku dengan `book_id = 20` akan dikeluarkan dari katalog. Petugas perlu memastikan bahwa hanya buku tersebut yang dihapus dan data penulis tetap ada.
+Perpustakaan akan menghapus **Logika Data**, dengan `book_id = 20`, dari katalog.
 
-Apa langkah yang tepat **sebelum** menjalankan DELETE?
+Sebelum menjalankan DELETE, petugas ingin memastikan bahwa kondisi penghapusan memilih **buku itu saja**, tanpa memilih buku lain.
+
+**Query SELECT mana yang sebaiknya digunakan untuk memeriksa target?**
 
 **Data acuan: Katalog Buku (keadaan awal)**
 
@@ -278,12 +290,11 @@ Apa langkah yang tepat **sebelum** menjalankan DELETE?
 | 2 | Budi | Surabaya |
 | 3 | Sinta | Bandung |
 
-
 **Pilihan jawaban**
 
-- Periksa record dengan SELECT dan WHERE book_id = 20, lalu gunakan kondisi yang sama untuk DELETE.
-- Periksa semua buku, lalu jalankan DELETE FROM books tanpa WHERE.
-- Periksa penulis buku, lalu hapus record penulisnya.
+- SELECT * FROM books WHERE book_id = 20;
+- SELECT * FROM books WHERE author_id = 1;
+- SELECT * FROM books WHERE stock > 0;
 - Belum tahu
 
 ## Latihan per materi

@@ -5,6 +5,7 @@ import courseEn from "./messages/course.en.json";
 import courseId from "./messages/course.id.json";
 import { assessmentDisplayCopy } from "@/features/assessment/domain/display-copy";
 import { createTextTranslator } from "./translate";
+import { ASSESSMENT_REVISIONS } from "@/features/assessment/server/question-revisions";
 describe("shipped bilingual catalogs", () => {
   it("has matching, nonempty English and Indonesian UI/content entries", () => {
     expect(Object.keys(uiEn).sort()).toEqual(Object.keys(uiId).sort());
@@ -24,5 +25,17 @@ describe("shipped bilingual catalogs", () => {
     expect(en(assessmentDisplayCopy("Pre-test Basis Data", "en"))).toBe("Database Pre-test");
     expect(id(assessmentDisplayCopy("Pre-test Basis Data", "id"))).toBe("Tes Awal Basis Data");
     expect(assessmentDisplayCopy("Database Post-test", "en")).toBe("Database Post-test");
+  });
+  it("translates every revised diagnostic title, prompt and choice in both catalogs", () => {
+    const catalogs: Record<string, string>[] = [uiEn, uiId, courseEn, courseId];
+    for (const item of ASSESSMENT_REVISIONS.filter(item => item.slug === "pre-test-basis-data")) {
+      const config = item.publicConfig;
+      if (!config || typeof config !== "object" || Array.isArray(config) || !Array.isArray(config.options)) throw new Error("Missing choices");
+      const choices = config.options.flatMap(option => option && typeof option === "object" && !Array.isArray(option) && typeof option.text === "string" ? [option.text] : []);
+      for (const text of [item.title, item.prompt, ...choices]) {
+        for (const catalog of catalogs) expect(catalog[text], text).toBeTypeOf("string");
+      }
+      expect(uiEn[item.prompt as keyof typeof uiEn]).not.toBe(item.prompt);
+    }
   });
 });
