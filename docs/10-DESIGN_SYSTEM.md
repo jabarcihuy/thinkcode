@@ -12,11 +12,11 @@ Typography: DM Sans interface/prose and Geist Mono SQL. Controls radius 12px, gr
 
 ## Mobile shell
 
-Bottom navigation: Beranda, Materi, Menu, Tes, Profil (maximum five); Menu central, Profil right. Menu expands upward into a compact two-column panel above the bar: Lab Materi, SQLab, Chatbot, Pre-test and Post-test, plus Admin CMS for ADMIN only and an explicit Keluar action. Keep short labels, at least 44px touch targets, safe-area padding and a scrollable panel on short screens. Menu closes on selection, outside tap, Escape, its close button, or switching to desktop width; keyboard focus returns to the trigger on Escape. Respect reduced motion. Desktop uses header navigation. Dashboard resumes active test or current reading/core step. Reading is one column. Lab stacks schema, query and result; only required core exercises are displayed. Relasi modeling uses Susun/Diagram/Periksa tabs and labeled forms. Result tables scroll within their region.
+Bottom navigation: Beranda, Materi, Menu, Tantangan, Profil (maximum five); Menu central, Profil right. Menu expands upward into a compact two-column panel above the bar: Lab Materi, SQLab, Chatbot, Forum and Tantangan Akhir, plus Admin CMS for ADMIN only and an explicit Keluar action. Keep short labels, at least 44px touch targets, safe-area padding and a scrollable panel on short screens. Menu closes on selection, outside tap, Escape, its close button, or switching to desktop width; keyboard focus returns to the trigger on Escape. Respect reduced motion. Desktop uses header navigation. Dashboard resumes active test or current reading/core step. Reading is one column. Lab stacks schema, query and result; only required core exercises are displayed. Relasi modeling uses Susun/Diagram/Periksa tabs and labeled forms. Result tables scroll within their region.
 
 ## Landing
 
-Simple hero, clear value proposition and real compact 2D schema preview. Follow with the pre-test → Materi → Lab Materi → post-test flow, three content groups, visual Lab, tutor and tests, then a dedicated SQLab section and CTA. Distinguish required course Labs from optional independent SQLab; describe downloadable PDFs, selectively available Indonesian videos, and name-only guest access with device-local progress. SQLab previews stay static and lightweight; do not load the runner or AI on the public landing page. No invented statistics, large decorative illustration, excessive gradient, glassmorphism or endless cards.
+Simple hero, clear value proposition and real compact 2D schema preview. Follow with the Materi → Lab Materi → Tantangan Akhir flow, three content groups, visual Lab, tutor and tests, then a dedicated SQLab section and CTA. Distinguish required course Labs from optional independent SQLab; describe downloadable PDFs, selectively available Indonesian videos, and name-only guest access with device-local progress. SQLab previews stay static and lightweight; do not load the runner or AI on the public landing page. No invented statistics, large decorative illustration, excessive gradient, glassmorphism or endless cards.
 
 ## States and accessibility
 
@@ -54,7 +54,7 @@ Account and guest share header/bottom navigation, dashboard, material list, read
 
 ## Learner terminology
 
-Display the diagnostic pre-test as **Tes Awal** and the post-test as **Tes Akhir** throughout navigation, actions, instructions and result screens. Preserve existing route URLs, database types/slugs and scoring rules. Normalize legacy assessment titles/instructions at the display boundary. In the material list, use sequence number + title and a short **Baca** action; do not repeat “Materi” for every entry. The navigation destination remains **Materi**.
+Tes Awal is retired: remove its learner navigation and prerequisite; preserve historical records. Display the final test as **Tantangan Akhir** / **Final Challenge** throughout navigation, actions, instructions and result screens. The short mobile label is **Tantangan** / **Challenge**. Preserve existing route URLs, database types/slugs and scoring rules. Normalize legacy assessment titles/instructions at the display boundary. In the material list, use sequence number + title and a short **Baca** action; do not repeat “Materi” for every entry. The navigation destination remains **Materi**.
 
 ## English and Bahasa Indonesia
 

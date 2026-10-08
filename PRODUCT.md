@@ -4,7 +4,7 @@
 
 web
 
-Quethink is an Indonesian-language platform for learning relational databases through a small synthetic dataset, SQL practice, and clear 2D visual explanations.
+Quethink is an English/Indonesian platform for learning relational databases through a small synthetic dataset, SQL practice, and clear 2D visual explanations.
 
 ## Users
 
@@ -16,11 +16,11 @@ Help learners understand where data lives, how tables relate, and how SQL change
 
 ## Learning Cycle
 
-Mandatory diagnostic pre-test once → numbered pure reading/PDF → paired visual Lab and server-checked core → next material → post-test ≥75 → completion. Videos, extra checks, free Playground and AI hints support the journey without becoming additional gates. Reading acknowledgement alone cannot unlock the next material. Historical completions remain reviewable.
+Numbered pure reading/PDF → paired visual Lab and server-checked core → next material → Final Challenge ≥75 → completion. Videos, free Playground and AI hints support the journey without becoming additional gates. Reading acknowledgement alone cannot unlock the next material. Historical completions remain reviewable.
 
 ## Active Scope
 
-11 materials grouped internally into Relasi (2), Read (6), Write (3). Model tables and keys first; then query and safely change synthetic data. SQLite WASM in a browser Worker never connects to Supabase. Progress, deterministic answer checks, diagnostic/post-test scoring and private keys are server-owned. Tutor is optional in Lab/chatbot and paused during all active tests. Admin draft/preview/publish is protected server-side.
+11 materials grouped internally into Relasi (2), Read (6), Write (3). Model tables and keys first; then query and safely change synthetic data. SQLite WASM in a browser Worker never connects to Supabase. Progress, deterministic answer checks, Final Challenge scoring and private keys are server-owned. Tutor is optional in Lab/chatbot and paused during all active tests. Admin draft/preview/publish is protected server-side.
 
 ## Product Principles
 
@@ -34,3 +34,9 @@ Mandatory diagnostic pre-test once → numbered pure reading/PDF → paired visu
 ## Technical Constraints
 
 Next.js App Router, strict TypeScript, Supabase Auth/PostgreSQL, SQLite WASM in the browser, and Vercel are the current stack. JavaScript and TypeScript are internal application languages only; they are not learner course content. There is no active programming or PTI course.
+
+## Current flow — 8 October 2026
+
+Tes Awal is retired and never gates reading. The learner starts at the first material, reads it, passes its core Lab check and unlocks the next material. Final Challenge (Tantangan Akhir) follows all required materials and core checks; its passing score remains 75. Historical diagnostic records are retained.
+
+Forum supports database questions and general discussion, with topics and replies. Guests read only; accounts post; admins moderate. Forum is unavailable during an active assessment. Mobile navigation exposes Forum through the expanded Menu, preserving five bottom destinations. App UI supports English (default) and Indonesian. Android uses the same responsive web UI through TWA.

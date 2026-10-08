@@ -1,6 +1,4 @@
-import { localizeMetadata } from "@/i18n/metadata";
-import { CourseTestPage } from "@/features/assessment/components/course-test-page";
-const pageMetadata = { title: "Tes Awal" };
-export default function PreTestPage() { return <CourseTestPage diagnostic />; }
-
-export async function generateMetadata() { return localizeMetadata(pageMetadata); }
+import { redirect } from "next/navigation";
+import { DEFAULT_LEARNING_PATH_SLUG, learningPathHref } from "@/features/learning/config";
+/** Retired diagnostic bookmark: start with the learning materials. */
+export default function PreTestPage() { redirect(learningPathHref(DEFAULT_LEARNING_PATH_SLUG)); }

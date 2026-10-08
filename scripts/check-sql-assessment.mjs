@@ -27,8 +27,6 @@ try {
   assert.ok(ready,log);
   const user=await makeUser(), other=await makeUser();
   await completeTestBaseline(db,user.id);
-  const baseline=await db.from("assessments").select("id").eq("slug","pre-test-basis-data").single(); assert.ifError(baseline.error);
-  assert.ifError((await db.from("assessment_results").insert({user_id:user.id,assessment_id:baseline.data.id,attempt_count:1,latest_score:0,highest_score:0,passed:false})).error);
   // Isolated integration fixture: other tests exercise all reading/core APIs in sequence.
   const path=await db.from("learning_paths").select("id").eq("slug","database-fundamentals").single(); assert.ifError(path.error);
   const chapters=await db.from("chapters").select("id").eq("learning_path_id",path.data.id).eq("is_published",true); assert.ifError(chapters.error);
@@ -42,8 +40,9 @@ try {
   browser=await chromium.launch({executablePath:"/usr/bin/chromium",headless:true,args:["--no-sandbox"]});
   const context=await browser.newContext({viewport:{width:360,height:800}}), page=await context.newPage(), errors=[];
   page.on("pageerror",(e)=>errors.push(e.message));
+  await context.addCookies([{name:"quethink_locale",value:"id",url:site}]);
   await page.goto(`${site}/login`); await page.getByLabel("Email",{exact:true}).fill(user.email); await page.getByLabel("Password",{exact:true}).fill(user.password); await page.getByRole("button",{name:"Masuk",exact:true}).click(); await page.waitForURL("**/dashboard");
-  await page.goto(`${site}/post-test`); await page.getByRole("button",{name:"Mulai post-test",exact:true}).click(); await page.waitForURL("**/assessments/sessions/*");
+  await page.goto(`${site}/post-test`); await page.getByRole("button",{name:"Mulai tantangan akhir",exact:true}).click(); await page.waitForURL("**/assessments/sessions/*");
   const sessionId=page.url().split("/").at(-1), endpoint=`${site}/api/assessment-sessions/${sessionId}`;
   const session=await checked(await page.request.get(endpoint)); assert.equal(session.items.length,16); assertPublic(session);
   for (const item of session.items) {
@@ -115,7 +114,7 @@ try {
     if("sourceCode" in correct[i].answer) await page.getByLabel("Jawaban SQL",{exact:true}).fill(correct[i].answer.sourceCode);
     else await page.locator(`input[value="${correct[i].answer.choiceId}"]`).check();
   }
-  await page.getByRole("button",{name:"Kirim post-test",exact:true}).click();
+  await page.getByRole("button",{name:"Kirim tantangan akhir",exact:true}).click();
   await page.getByRole("button",{name:"Kirim jawaban",exact:true}).click(); await page.waitForURL("**/result");
   await page.getByRole("heading",{name:"Post-test Basis Data",exact:true}).waitFor();
   const saved=await db.from("assessment_sessions").select("score,status,safe_feedback").eq("id",sessionId).single(); assert.ifError(saved.error); assert.equal(saved.data.status,"COMPLETED");assert.equal(Number(saved.data.score),100);assertPublic(saved.data.safe_feedback);

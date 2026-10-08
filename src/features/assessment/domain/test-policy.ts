@@ -7,7 +7,8 @@ export function testPolicy(type: AssessmentType) {
 }
 
 export function isTestAvailable(type: AssessmentType, readingComplete: boolean, baselineRecorded: boolean) {
-  return type === "PRETEST" ? !baselineRecorded : readingComplete;
+  void baselineRecorded; // Retained call signature for existing integrations.
+  return type !== "PRETEST" && readingComplete;
 }
 
 export function summarizeTopics(results: Array<{ topic: string; passed: boolean }>) {

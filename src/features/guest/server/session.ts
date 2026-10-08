@@ -1,6 +1,7 @@
 import "server-only";
 import { isAuthSessionMissingError } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
+import { createPrivilegedClient } from "@/lib/supabase/privileged";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { encodeGuest, decodeGuest, type GuestSession } from "../domain/session";
@@ -19,7 +20,11 @@ export class GuestError extends Error {
   }
 }
 export async function getGuest() {
-  return decodeGuest((await cookies()).get(COOKIE)?.value, secret());
+  const guest = decodeGuest((await cookies()).get(COOKIE)?.value, secret());
+  if (!guest?.activeTest) return guest;
+  const { data, error } = await createPrivilegedClient().from("assessments").select("id").eq("id", guest.activeTest).eq("is_published", true).neq("type", "PRETEST").maybeSingle();
+  if (error) throw new GuestError(503, "Status tes belum dapat diperiksa.");
+  return data ? guest : { ...guest, activeTest: null };
 }
 export async function requireGuest() {
   const guest = await getGuest();

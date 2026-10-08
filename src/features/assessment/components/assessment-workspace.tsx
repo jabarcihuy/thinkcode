@@ -95,7 +95,7 @@ export function AssessmentWorkspace({
         </div>
       </div>
     </div>
-    <p className="mb-6 rounded-md bg-muted px-4 py-3 text-sm">{tx(diagnostic ? "Tes Awal · Tanpa syarat lulus · AI dan petunjuk dinonaktifkan" : `Tes Akhir · Lulus pada skor ${passingScore}+ · AI dan petunjuk dinonaktifkan`)}</p>
+    <p className="mb-6 rounded-md bg-muted px-4 py-3 text-sm">{tx(diagnostic ? "Tes Awal · Tanpa syarat lulus · AI dan petunjuk dinonaktifkan" : `Tantangan Akhir · Lulus pada skor ${passingScore}+ · AI dan petunjuk dinonaktifkan`)}</p>
 
     <div className="mb-6"><DraftStatus status={draft.status} restored={draft.restored} onRetry={() => draft.save(draft.value)} onReset={draft.clear} /></div>
     {draft.status === "loading" ? <p role="status">{tx("Menyiapkan jawaban tes…")}</p> : <div className="grid min-w-0 grid-cols-1 items-start gap-6 md:grid-cols-[12rem_minmax(0,1fr)]">
@@ -106,7 +106,7 @@ export function AssessmentWorkspace({
           <Button type="button" variant="outline" disabled={activeIndex === 0 || submitPending} onClick={() => selectQuestion(activeIndex - 1)}><ArrowLeft size={15} aria-hidden="true" />{tx("Sebelumnya")}</Button>
           {activeIndex < items.length - 1
             ? <Button type="button" variant="outline" disabled={submitPending} onClick={() => selectQuestion(activeIndex + 1)}>{tx("Berikutnya")}<ArrowRight size={15} aria-hidden="true" /></Button>
-            : <Button type="button" disabled={submitPending || completeCount !== items.length} onClick={() => confirmationRef.current?.showModal()}><Send size={15} aria-hidden="true" />{tx(diagnostic ? "Kirim tes awal" : "Kirim tes akhir")}</Button>}
+            : <Button type="button" disabled={submitPending || completeCount !== items.length} onClick={() => confirmationRef.current?.showModal()}><Send size={15} aria-hidden="true" />{tx(diagnostic ? "Kirim tes awal" : "Kirim tantangan akhir")}</Button>}
         </div>
         {error && <p role="alert" className="mt-4 text-sm text-destructive">{tx(error)}</p>}
       </div>

@@ -3,6 +3,7 @@ const mock = vi.hoisted(() => ({
   get: vi.fn(),
   claims: vi.fn(),
   rpc: vi.fn(),
+  assessment: vi.fn(),
 }));
 vi.mock("next/headers", () => ({ cookies: async () => ({ get: mock.get }) }));
 vi.mock("@/lib/supabase/server", () => ({
@@ -11,6 +12,12 @@ vi.mock("@/lib/supabase/server", () => ({
     rpc: mock.rpc,
   }),
 }));
+vi.mock("@/lib/supabase/privileged", () => ({
+  createPrivilegedClient: () => {
+    const query = { select: () => query, eq: () => query, neq: () => query, maybeSingle: mock.assessment };
+    return { from: () => query };
+  },
+}));
 import { authorizeGuest, assertNoAccountTest, rejectCrossOrigin } from "./session";
 import { encodeGuest } from "../domain/session";
 import { AuthSessionMissingError } from "@supabase/supabase-js";
@@ -18,6 +25,7 @@ beforeEach(() => {
   vi.resetAllMocks();
   process.env.SUPABASE_SECRET_KEY = "guest-test-key-only";
   mock.claims.mockResolvedValue({ data: null, error: null });
+  mock.assessment.mockResolvedValue({ data: { id: "active-final" }, error: null });
 });
 function token(activeTest: string | null = null) {
   return encodeGuest(
@@ -63,4 +71,15 @@ it("accepts local browser Host without accepting another Origin or protocol", ()
  expect(() => rejectCrossOrigin(new Request("http://localhost:3225/api/guest/check", { headers: { host: "127.0.0.1:3225", origin: "http://127.0.0.1:3225" } }))).not.toThrow();
  expect(() => rejectCrossOrigin(new Request("https://app.example/api/guest/check", { headers: { host: "app.example", origin: "https://other.example" } }))).toThrow();
  expect(() => rejectCrossOrigin(new Request("https://app.example/api/guest/check", { headers: { host: "app.example", origin: "http://app.example" } }))).toThrow();
+});
+
+it("clears a retired guest assessment without blocking learning", async () => {
+  mock.get.mockReturnValue({ value: token("4b9d4fe6-b053-487b-a3ec-9430ca81f724") });
+  mock.assessment.mockResolvedValue({ data: null, error: null });
+  await expect(authorizeGuest()).resolves.toMatchObject({ activeTest: null });
+});
+it("fails closed when checking a guest assessment is unavailable", async () => {
+  mock.get.mockReturnValue({ value: token("4b9d4fe6-b053-487b-a3ec-9430ca81f724") });
+  mock.assessment.mockResolvedValue({ data: null, error: new Error("offline") });
+  await expect(authorizeGuest()).rejects.toMatchObject({ status: 503 });
 });

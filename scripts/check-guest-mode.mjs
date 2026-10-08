@@ -24,44 +24,18 @@ try {
   await page.getByLabel('Nama', { exact: true }).fill('Uji Tamu Lokal');
   await page.getByRole('button', { name: 'Masuk sebagai tamu', exact: true }).click();
   await page.waitForURL(site + '/guest');
-  await page.getByRole('heading', { name: 'Kenali titik awalmu', exact: true }).waitFor();
+  await page.getByRole('link', { name: 'Baca materi', exact: true }).waitFor();
   const cookie = (await context.cookies()).find(cookie => cookie.name === 'quethink_guest');
   assert.ok(cookie?.httpOnly);
   const guest = JSON.parse(Buffer.from(cookie.value.split('.')[0], 'base64url').toString());
   assert.equal((await request.post(site + '/api/ai/tutor', { data: { lessonId: '00000000-0000-4000-8000-000000000001', action: 'hint' } })).status(), 401);
   assert.ok((await request.get(site + '/admin')).url().includes('/login'));
   const { data: path, error: pathError } = await db.from('learning_paths').select('id').eq('slug', 'database-fundamentals').single(); assert.ifError(pathError);
-  const { data: pre, error: preError } = await db.from('assessments').select('id').eq('learning_path_id', path.id).eq('type', 'PRETEST').eq('is_published', true).single(); assert.ifError(preError);
   const { data: chapters, error: chapterError } = await db.from('chapters').select('id,position').eq('learning_path_id', path.id).eq('is_published', true); assert.ifError(chapterError);
   const { data: lessons, error: lessonError } = await db.from('lessons').select('id,slug,title,content,chapter_id,position').in('chapter_id', chapters.map(chapter => chapter.id)).eq('is_published', true); assert.ifError(lessonError);
   const positions = new Map(chapters.map(chapter => [chapter.id, chapter.position]));
   lessons.sort((a,b) => positions.get(a.chapter_id) - positions.get(b.chapter_id) || a.position - b.position);
-  await page.getByRole('link', { name: 'Mulai tes awal', exact: true }).click();
-  await page.getByRole('button', { name: 'Mulai tes awal', exact: true }).click();
-  await page.waitForURL(site + '/guest/tests/' + pre.id);
-  assert.equal((await request.post(site + '/api/guest/tutor', { data: {} })).status(), 403);
-  await page.locator('input[type=radio]').first().check();
-  await page.getByRole('button', { name: 'Berikutnya', exact: true }).click();
-  await page.reload();
-  await page.locator('input[type=radio]').first().waitFor();
-  const { count } = await db.from('assessment_items').select('id', { count: 'exact', head: true }).eq('assessment_id', pre.id);
-  // The saved active index is 1; answer all remaining questions through the real UI.
-  for (let i = 1; i < count; i++) {
-    await page.locator('input[type=radio]').first().check();
-    if (i < count - 1) await page.getByRole('button', { name: 'Berikutnya', exact: true }).click();
-  }
-  await page.getByRole('button', { name: 'Kirim tes awal', exact: true }).click();
-  const submitted = page.waitForResponse(response => response.url().includes('/api/guest/tests/') && response.request().method() === 'POST');
-  await page.getByRole('dialog').getByRole('button', { name: 'Kirim jawaban', exact: true }).click();
-  const submittedResponse = await submitted;
-  assert.equal(submittedResponse.status(), 200, 'Guest submit: ' + await submittedResponse.text());
-  await page.getByText('Pemahaman awal tercatat', { exact: true }).waitFor();
-  const progressKey = 'quethink:guest-local:v1:progress';
-  const progress = await page.evaluate(key => JSON.parse(localStorage.getItem(key)).value, progressKey);
-  assert.ok(progress.tests[pre.id]);
-  assert.ok(Array.isArray(progress.tests[pre.id].topicSummary));
-  assert.ok(!(await page.content()).includes('answer_config'));
-  await page.getByRole('link', { name: 'Mulai membaca materi', exact: true }).click();
+  await page.goto(site + '/guest?view=materials');
   const first = lessons[0];
   await page.getByRole('link', { name: new RegExp(first.title) }).first().click();
   await page.getByRole('heading', { name: `Materi 1. ${first.title}`, exact: true }).waitFor();
@@ -124,8 +98,8 @@ try {
   await page.goto(site + '/guest?view=profile'); await page.getByRole('button', { name: 'Reset progres tamu', exact: true }).click(); await page.getByRole('button', { name: 'Hapus data tamu', exact: true }).click();
   assert.deepEqual(await page.evaluate(() => Object.keys(localStorage).filter(key => key.includes('quethink:guest-local:'))), []);
   assert.equal(await page.evaluate(() => localStorage.getItem('quethink:practice-draft:v1:account:sample')), 'preserve');
-  await page.goto(site + '/guest'); await page.getByRole('heading', { name: 'Kenali titik awalmu', exact: true }).waitFor();
+  await page.goto(site + '/guest'); await page.getByRole('link', { name: 'Baca materi', exact: true }).waitFor();
   assert.deepEqual(errors, []);
-  console.log('PASS: shared learner views, local pre-test draft/results, reading/core progression, reload/new-session recovery, local SQLab, profile/reset account isolation, 360/768/1280 layouts, active-test AI block, RBAC and no guest DB writes.');
+  console.log('PASS: shared learner views, pre-test retired, reading/core progression, reload/new-session recovery, local SQLab, profile/reset account isolation, 360/768/1280 layouts, RBAC and no guest DB writes.');
 } catch (error) { console.error('Guest check failed:', error.message); console.error(logs); throw error; }
 finally { await browser?.close(); server.kill('SIGTERM'); }

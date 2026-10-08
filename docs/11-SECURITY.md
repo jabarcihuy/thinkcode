@@ -1,5 +1,9 @@
 # Security Model
 
+## Current product revision — 8 October 2026
+
+Pre-test is retired from account and guest flows. Start with the first material; reading plus required core practice still unlocks the next. The final assessment is named **Tantangan Akhir / Final Challenge**, still unlocked after all required materials, graded server-side and passed at 75. Historical diagnostic questions/sessions/results remain archived; old pre-test URLs redirect to materials. Earlier baseline descriptions below are historical and do not define the active flow. A mobile-first database discussion forum is now explicitly in scope at the user's request; see planning/2026-10-08-forum.md.
+
 ## SQL practice sandbox
 
 Learner SQL runs only in a disposable browser Worker with a small synthetic in-memory SQLite database. The Worker receives no application state, auth tokens, Supabase client, service key, user data, private answer key, or assessment hidden tests.

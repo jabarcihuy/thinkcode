@@ -22,7 +22,7 @@ export async function updateSession(request: NextRequest) {
   const claims = data?.claims;
   const path = request.nextUrl.pathname;
   const practicePath = /^\/learn\/[^/]+\/lessons\/[^/]+\/practice(?:\/|$)/.test(path);
-  const protectedPath = practicePath || ["/dashboard", "/admin", "/lab", "/pre-test", "/post-test", "/assessments", "/chatbot", "/playground", "/schema-builder", "/profile"].some((prefix) =>
+  const protectedPath = practicePath || ["/dashboard", "/admin", "/lab", "/pre-test", "/post-test", "/assessments", "/chatbot", "/playground", "/schema-builder", "/forum", "/profile"].some((prefix) =>
     path === prefix || path.startsWith(`${prefix}/`),
   );
   let redirectTo: string | null = null;

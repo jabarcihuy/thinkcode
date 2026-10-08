@@ -14,6 +14,89 @@ export type Database = {
   }
   public: {
     Tables: {
+      forum_topics: {
+        Row: {
+          author_id: string
+          body: string
+          category: string
+          created_at: string
+          id: string
+          is_hidden: boolean
+          is_locked: boolean
+          title: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          category?: string
+          created_at?: string
+          id?: string
+          is_hidden?: boolean
+          is_locked?: boolean
+          title: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          category?: string
+          created_at?: string
+          id?: string
+          is_hidden?: boolean
+          is_locked?: boolean
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forum_topics_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forum_replies: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          is_hidden: boolean
+          topic_id: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          is_hidden?: boolean
+          topic_id: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          is_hidden?: boolean
+          topic_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forum_replies_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forum_replies_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "forum_topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_messages: {
         Row: {
           content: string
@@ -762,6 +845,29 @@ export type Database = {
       }
     }
     Functions: {
+      forum_check_writer: { Args: { p_user_id: string }; Returns: undefined }
+      forum_create_topic: {
+        Args: {
+          p_body: string
+          p_category: string
+          p_title: string
+          p_user_id: string
+        }
+        Returns: string
+      }
+      forum_create_reply: {
+        Args: { p_body: string; p_topic_id: string; p_user_id: string }
+        Returns: string
+      }
+      forum_moderate: {
+        Args: {
+          p_action: string
+          p_target_id: string
+          p_user_id: string
+          p_value: boolean
+        }
+        Returns: undefined
+      }
       course_has_baseline: { Args: { p_path_id: string; p_user_id: string }; Returns: boolean }
       acknowledge_material_read: { Args: { p_lesson_id: string }; Returns: undefined }
       consume_code_request_quota: { Args: { p_kind: string }; Returns: boolean }

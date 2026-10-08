@@ -59,7 +59,7 @@ async function call(user, route, method = "GET", body) {
   });
   if (response.status !== 429 || attempt === 1) break;
   await response.text();
-  await new Promise(resolve => setTimeout(resolve, 61000));
+  await new Promise(resolve => setTimeout(resolve, 60000));
   }
   return { response, payload: await response.json().catch(() => ({})) };
 }
@@ -69,25 +69,22 @@ async function assertPrivateSafe(payload) {
   for (const name of ['answer_config','expected_output','assessment_test_cases','entry_function','solution_code']) assert.ok(!serialized.includes(name), `${name} leaked to client`);
 }
 async function snapshot(page, route, name) {
-  for (const width of [360,768,1280]) {
+  console.log(`Checking ${name}`);
+  for (const width of process.env.FLOW_CAPTURE === "0" ? [360] : [360,768,1280]) {
     await page.setViewportSize({width,height:900});
     await page.emulateMedia({reducedMotion:'reduce'});
     await page.goto(site+route); await page.locator('main h1').waitFor();
     if (await page.getByRole('button',{name:'Coba lagi',exact:true}).count()) { await page.reload(); await page.locator('main h1').waitFor(); }
     assert.equal(await page.getByRole('button',{name:'Coba lagi',exact:true}).count(),0,`${name}: error fallback is not valid capture evidence`);
     await page.waitForLoadState('networkidle');
-    if (name === 'lab') {
-      await page.getByRole('link', { name: 'Mulai pre-test' }).waitFor();
-      assert.equal(await page.getByText('Tuntaskan materi sebelumnya untuk membuka', { exact: true }).count(), 0);
-    }
-    if (name === 'pre-test-session' || name === 'admin') {
+    if (name === 'admin') {
       const navigation = page.getByRole('navigation', { name: name === 'admin' ? 'CMS sections' : 'Navigasi soal', exact: true });
       const fits = await navigation.evaluate(element => element.scrollWidth <= element.clientWidth);
       assert.ok(fits, `${name} ${width}: navigation must fit without horizontal scrolling`);
     }
     const dimensions = await page.evaluate(()=>({viewport:document.documentElement.clientWidth,content:document.documentElement.scrollWidth}));
     assert.ok(dimensions.content <= dimensions.viewport, `${name} ${width}: page overflow`);
-    await page.screenshot({path:`.impeccable/review/mandatory-lms/${name}-${width}.png`,fullPage:true});
+    if (process.env.FLOW_CAPTURE !== '0') await page.screenshot({path:`.impeccable/review/mandatory-lms/${name}-${width}.png`,fullPage:true});
   }
 }
 try {
@@ -99,33 +96,24 @@ try {
   const content=await privileged.from('lessons').select('id,slug,chapter_id,position').in('chapter_id',[...chapterOrder.keys()]).eq('is_published',true);assert.ifError(content.error);
   const lessons=content.data.sort((a,b)=>chapterOrder.get(a.chapter_id)-chapterOrder.get(b.chapter_id)||a.position-b.position);assert.equal(lessons.length,11);
   const tests=await privileged.from('assessments').select('id,slug,type,course_weight_percent').eq('learning_path_id',path.data.id).eq('is_published',true);assert.ifError(tests.error);
-  assert.equal(tests.data.length,2);const pre=tests.data.find(t=>t.type==='PRETEST'),post=tests.data.find(t=>t.type==='FINAL');assert.ok(pre&&post);assert.equal(pre.course_weight_percent,0);assert.equal(post.course_weight_percent,100);
+  assert.equal(tests.data.length,1);const post=tests.data.find(t=>t.type==='FINAL');assert.ok(post);assert.equal(post.course_weight_percent,100);
+  const archived=await privileged.from('assessments').select('slug').eq('learning_path_id',path.data.id).eq('type','PRETEST').limit(1).single();assert.ifError(archived.error);
   for(const route of ['/dashboard','/lab','/pre-test','/post-test']) assert.equal((await call(null,route)).response.status,307);
   assert.equal((await call(learner,'/admin')).response.status,307);
   assert.equal((await call(learner,'/api/admin/users')).response.status,403);
   assert.equal((await call(admin,'/api/admin/users')).response.status,200);
   assert.equal((await call(null,`/api/materials/${lessons[0].id}/read`,'POST')).response.status,401);
-  assert.equal((await call(learner,`/api/materials/${lessons[0].id}/read`,'POST')).response.status,403,'Baseline required');
+  assert.equal((await call(learner,`/api/assessments/${archived.data.slug}/start`,'POST')).response.status,404,'Retired pre-test is unavailable');
   assert.equal((await call(learner,`/api/materials/${lessons[1].id}/read`,'POST')).response.status,403);
   assert.equal((await call(learner,`/api/assessments/${post.slug}/start`,'POST')).response.status,403);
 
   browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
   const context=await browser.newContext({viewport:{width:360,height:900}});
+  await context.addCookies([{name:'quethink_locale',value:'id',url:site}]);
   await context.addCookies(learner.cookie().split('; ').map(part=>{const [name,...value]=part.split('=');return{name,value:decodeURIComponent(value.join('=')),url:site};}));
   const page=await context.newPage();const errors=[];page.on('pageerror',error=>errors.push(error.message));
   await snapshot(page,'/','landing');await snapshot(page,'/dashboard','dashboard');await snapshot(page,'/pre-test','pre-test');await snapshot(page,'/post-test','post-test-locked');await snapshot(page,'/lab','lab');
-  const [startOne,startTwo]=await Promise.all([call(learner,`/api/assessments/${pre.slug}/start`,'POST'),call(learner,`/api/assessments/${pre.slug}/start`,'POST')]);
-  assert.equal(startOne.response.status,200);assert.equal(startTwo.payload.sessionId,startOne.payload.sessionId);const preId=startOne.payload.sessionId;
-  const preSession=await call(learner,`/api/assessment-sessions/${preId}`);await assertPrivateSafe(preSession.payload);assert.equal(preSession.payload.items.length,10);
-  assert.equal((await call(other,`/api/assessment-sessions/${preId}`)).response.status,404);
-  const paused=await call(learner,'/api/ai/tutor','POST',{lessonId:lessons[0].id,action:'hint',message:'Beri petunjuk.'});assert.equal(paused.response.status,403);
-  assert.equal((await call(learner,`/api/materials/${lessons[0].id}/read`,'POST')).response.status,403);
-  await snapshot(page,`/assessments/sessions/${preId}`,'pre-test-session');
-  const baseline=await call(learner,`/api/assessment-sessions/${preId}/submit`,'POST',{answers:preSession.payload.items.map(item=>({itemId:item.id,answer:{choiceId:item.publicConfig.options[0].id}}))});
-  assert.equal(baseline.response.status,200);assert.ok(baseline.payload.score >= 0 && baseline.payload.score <= 100);assert.equal(baseline.payload.passed,false);await assertPrivateSafe(baseline.payload);
-  assert.equal((await call(learner,`/api/assessments/${pre.slug}/start`,'POST')).response.status,403,'Baseline cannot be retaken');
-  await snapshot(page,`/assessments/sessions/${preId}/result`,'pre-test-result');assert.equal(await page.getByText('Belum lulus',{exact:true}).count(),0);
-  const history=await call(learner,`/api/ai/tutor?lessonId=${lessons[0].id}`);assert.equal(history.response.status,200,'AI resumes after diagnostic');
+  await page.goto(site+'/pre-test');await page.waitForURL(site+`/learn/${pathSlug}`);
   const exercises=await privileged.from('exercises').select('id,lesson_id,type,title,config,is_required').in('lesson_id',lessons.map(l=>l.id)).eq('is_published',true);assert.ifError(exercises.error);assert.equal(exercises.data.filter(e=>e.is_required).length,11);
   const exercise=exercises.data.find(e=>e.lesson_id===lessons[0].id&&!e.is_required);assert.ok(exercise);
   const firstCore=exercises.data.find(e=>e.lesson_id===lessons[0].id&&e.is_required);assert.ok(firstCore);
@@ -164,7 +152,7 @@ try {
   const postStarted=await call(learner,`/api/assessments/${post.slug}/start`,'POST');assert.equal(postStarted.response.status,200);const postId=postStarted.payload.sessionId;
   assert.equal((await call(learner,`/api/ai/tutor?lessonId=${lessons[0].id}`)).response.status,403);
   assert.equal((await call(learner,`/api/exercises/${exercise.id}/check`,'POST',{pathSlug,answer:exercise.config.answer})).response.status,403);
-  assert.equal((await call(learner,`/api/assessments/${pre.slug}/start`,'POST')).response.status,403,'Cannot create another active test');
+  assert.equal((await call(learner,`/api/assessments/${archived.data.slug}/start`,'POST')).response.status,404,'Retired test remains unavailable during challenge');
   const postSession=await call(learner,`/api/assessment-sessions/${postId}`);await assertPrivateSafe(postSession.payload);assert.equal(postSession.payload.items.length,16);
   const forged=await call(learner,`/api/assessment-sessions/${postId}/submit`,'POST',{score:100,passed:true,answers:postSession.payload.items.map(item=>({itemId:item.id,answer:item.publicConfig?.mode === 'sql' ? {sourceCode:'SELECT 1'} : {choiceId:item.publicConfig.options.find(option => option.id !== 'b').id}}))});
   assert.equal(forged.response.status,400,'Client score fields are rejected by strict validation');
@@ -176,7 +164,8 @@ try {
   await snapshot(page,`/assessments/sessions/${retry.payload.sessionId}/result`,'post-test-result');
   await page.goto(site+'/dashboard');await page.getByRole('heading',{name:'Jalur belajarmu tuntas',exact:true}).waitFor();
   // Real browser SQL smoke stays independent of assessment scoring.
-  await page.setViewportSize({width:360,height:900});await page.goto(site+'/playground');
+  await page.setViewportSize({width:360,height:900});await page.goto(site+`/learn/${pathSlug}/lessons/${lessons[2].slug}/practice`);
+  await page.getByRole('navigation',{name:'Akses cepat Lab',exact:true}).getByRole('link',{name:'Query',exact:true}).click();
   const lab=page.getByRole('region',{name:'Praktik query basis data'});await lab.locator('#database-sql').fill("SELECT name FROM students ORDER BY name;");await lab.locator('#database-prediction').fill('4');await lab.getByRole('button',{name:'Jalankan SELECT'}).click();await page.locator('#lab-results').getByRole('cell',{name:'Alya'}).waitFor();
   const userClient=createClient(url,publishableKey,{auth:{persistSession:false,autoRefreshToken:false}});assert.ifError((await userClient.auth.signInWithPassword({email:other.email,password})).error);
   const privateRead=await userClient.from('assessment_results').select('*').eq('user_id',learner.id);assert.ifError(privateRead.error);assert.deepEqual(privateRead.data,[]);
@@ -187,12 +176,12 @@ try {
   assert.ok(blockedWrite.error || blockedWrite.data.length===0,'RLS permits no direct completion/status changes');
   const legacy=await privileged.from('lesson_progress').select('status').eq('user_id',other.id).single();assert.ifError(legacy.error);assert.equal(legacy.data.status,'COMPLETED');
   assert.equal((await fetch(`${site}/learn/${pathSlug}/lessons/${lessons[0].slug}/pdf`,{headers:{Cookie:other.cookie()}})).status,200,'Historical completed material remains reviewable without baseline');
-  assert.ok((await userClient.rpc('acknowledge_material_read',{p_lesson_id:lessons[1].id})).error,'RPC cannot skip prerequisite');
-  const results=await privileged.from('assessment_results').select('assessment_id,passed,attempt_count').eq('user_id',learner.id);assert.ifError(results.error);assert.equal(results.data.find(r=>r.assessment_id===pre.id).passed,false);assert.equal(results.data.find(r=>r.assessment_id===post.id).attempt_count,2);
+  assert.ok((await userClient.rpc('acknowledge_material_read',{p_lesson_id:lessons[2].id})).error,'RPC cannot skip prerequisite');
+  const results=await privileged.from('assessment_results').select('assessment_id,passed,attempt_count').eq('user_id',learner.id);assert.ifError(results.error);assert.equal(results.data.find(r=>r.assessment_id===post.id).attempt_count,2);
   const adminContext=await browser.newContext();await adminContext.addCookies(admin.cookie().split('; ').map(part=>{const [name,...value]=part.split('=');return{name,value:decodeURIComponent(value.join('=')),url:site};}));await snapshot(await adminContext.newPage(),'/admin','admin');await adminContext.close();
   const guestContext=await browser.newContext();const guestPage=await guestContext.newPage();await snapshot(guestPage,'/login','login');await snapshot(guestPage,'/register','register');await guestContext.close();
   assert.deepEqual(errors,[]);
-  console.log('PASS: pre-test baseline/immutable/neutral result; pure material/PDF; baseline required; reading does not unlock; 11 trusted cores including model unlock progression; optional checks do not complete; trusted post-test/retry; forged score/hidden keys/other-user/RBAC denied; AI blocked in both test modes; SQLite browser smoke; 360/768/1280 screenshots.');
+  console.log('PASS: pre-test retired; pure material/PDF; first material available; reading does not unlock; 11 trusted cores including model unlock progression; optional checks do not complete; trusted post-test/retry; forged score/hidden keys/other-user/RBAC denied; AI blocked during challenge; SQLite browser smoke; 360/768/1280 screenshots.');
 } finally {
   await browser?.close();server.kill('SIGTERM');
   for(const id of userIds) assert.ifError((await privileged.auth.admin.deleteUser(id)).error);

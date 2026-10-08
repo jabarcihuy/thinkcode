@@ -24,7 +24,7 @@ describe("shipped bilingual catalogs", () => {
     const en = createTextTranslator("en", uiEn), id = createTextTranslator("id", uiId);
     expect(en(assessmentDisplayCopy("Pre-test Basis Data", "en"))).toBe("Database Pre-test");
     expect(id(assessmentDisplayCopy("Pre-test Basis Data", "id"))).toBe("Tes Awal Basis Data");
-    expect(assessmentDisplayCopy("Database Post-test", "en")).toBe("Database Post-test");
+    expect(assessmentDisplayCopy("Database Post-test", "en")).toBe("Database Final Challenge");
   });
   it("translates every revised diagnostic title, prompt and choice in both catalogs", () => {
     const catalogs: Record<string, string>[] = [uiEn, uiId, courseEn, courseId];

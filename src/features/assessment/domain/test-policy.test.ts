@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { isTestAvailable, summarizeTopics, testPolicy } from "./test-policy";
 
 describe("diagnostic and post-test policy", () => {
-  it("offers baseline without a reading or passing prerequisite", () => {
-    expect(isTestAvailable("PRETEST", false, false)).toBe(true);
+  it("never offers retired diagnostics", () => {
+    expect(isTestAvailable("PRETEST", false, false)).toBe(false);
     expect(testPolicy("PRETEST")).toEqual({ diagnostic: true, canRetry: false, countsForGrade: false });
   });
   it("keeps a recorded baseline immutable", () => {

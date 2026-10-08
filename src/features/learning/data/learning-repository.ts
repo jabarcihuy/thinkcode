@@ -1,6 +1,5 @@
 import "server-only";
 import { getText } from "@/i18n/server";
-import { createPrivilegedClient } from "@/lib/supabase/privileged";
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { calculateLearningMetrics, deriveLessonStates, ownsProgress } from "@/features/learning/domain/progression";
@@ -20,15 +19,12 @@ async function loadOverview(pathSlug: string, userId: string | null): Promise<Le
   if (pathError) throw pathError;
   if (!path) return null;
 
-  const [{ data: chapters, error: chapterError }, baseline] = await Promise.all([
+  const { data: chapters, error: chapterError } = await
     supabase
     .from("chapters")
     .select("id, title, description, position, is_required")
     .eq("learning_path_id", path.id)
-    .order("position"),
-    userId ? createPrivilegedClient().rpc("course_has_baseline", { p_path_id: path.id, p_user_id: userId }) : Promise.resolve({ data: false, error: null }),
-  ]);
-  if (baseline.error) throw baseline.error;
+    .order("position");
   if (chapterError) throw chapterError;
 
   const chapterRows = (chapters ?? []) as Chapter[];
@@ -62,7 +58,7 @@ async function loadOverview(pathSlug: string, userId: string | null): Promise<Le
     progress = result.data ?? [];
   }
 
-  const baselineComplete = Boolean(baseline.data);
+  const baselineComplete = true; // Compatibility field; diagnostic prerequisite is retired.
   const lessonsWithState = deriveLessonStates(outlines, progress, [], baselineComplete);
   return {
     path: path as LearningPath,

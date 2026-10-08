@@ -38,6 +38,7 @@ export const guestCatalog = cache(async () => {
       .select("id, title, type, instructions, passing_score, position")
       .eq("learning_path_id", path.id)
       .eq("is_published", true)
+      .neq("type", "PRETEST")
       .order("position"),
   ]);
   if (lessons.error || tests.error) throw lessons.error ?? tests.error;

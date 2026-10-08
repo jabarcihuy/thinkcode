@@ -80,14 +80,10 @@ export const assessmentTestCaseInput = z.object({
 });
 export const assessmentInput = z.object({
   learning_path_id: z.uuid(), title: z.string().trim().min(1).max(160), slug,
-  type: z.enum(["CHECKPOINT", "FINAL", "PRETEST"]), instructions: z.string().trim().max(4_000).default(""),
+  type: z.enum(["CHECKPOINT", "FINAL"]), instructions: z.string().trim().max(4_000).default(""),
   course_weight_percent: z.number().min(0).max(100).default(0),
   passing_score: z.number().min(0).max(100), gate_after_chapter: z.number().int().min(1).max(10),
   position, is_published: z.boolean().default(false),
-}).superRefine((value, context) => {
-  if (value.type === "PRETEST" && (value.course_weight_percent !== 0 || value.passing_score !== 0)) {
-    context.addIssue({ code: "custom", message: "Tes Awal tidak memiliki bobot nilai atau syarat lulus." });
-  }
 });
 export const assessmentItemInput = z.object({
   assessment_id: z.uuid(), type: z.enum(["PREDICT_OUTPUT", "PSEUDOCODE", "FLOWCHART", "PROBLEM_SOLVING"]), title: z.string().trim().min(1).max(160),

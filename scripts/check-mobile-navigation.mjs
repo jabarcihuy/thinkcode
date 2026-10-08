@@ -26,7 +26,7 @@ async function login(page, user) {
   await page.getByRole("button", { name: "Masuk", exact: true }).click(); await page.waitForURL("**/dashboard");
   await trigger(page).waitFor();
 }
-const destinations = [["Lab Materi", "/lab"], ["SQLab", "/playground"], ["Chatbot", "/chatbot"], ["Tes Awal", "/pre-test"], ["Tes Akhir", "/post-test"]];
+const destinations = [["Lab Materi", "/lab"], ["SQLab", "/playground"], ["Chatbot", "/chatbot"], ["Forum", "/forum"], ["Tantangan Akhir", "/post-test"]];
 const nav = page => page.getByRole("navigation", { name: "Navigasi utama", exact: true });
 const panel = page => page.getByRole("navigation", { name: "Fitur lainnya", exact: true });
 const trigger = page => nav(page).getByRole("button", { name: "Menu", exact: true });
@@ -49,9 +49,10 @@ try {
   const learner = await account("USER"), admin = await account("ADMIN");
   browser = await chromium.launch({ executablePath: "/usr/bin/chromium", headless: true, args: ["--no-sandbox"] });
   const context = await browser.newContext({ viewport: { width: 360, height: 800 }, reducedMotion: "reduce" });
+  await context.addCookies([{ name: "quethink_locale", value: "id", url: site }]);
   const page = await context.newPage(), errors = []; page.on("pageerror", error => errors.push(error.message));
   await login(page, learner);
-  assert.deepEqual(await nav(page).locator("li").allTextContents(), ["Beranda", "Materi", "Menu", "Tes", "Profil"]);
+  assert.deepEqual(await nav(page).locator("li").allTextContents(), ["Beranda", "Materi", "Menu", "Tantangan", "Profil"]);
   await assertExpanded(page, false); await openMenu(page);
   for (const [label, href] of destinations) assert.equal(await panel(page).getByRole("link", { name: label, exact: true }).getAttribute("href"), href);
   assert.equal(await panel(page).getByRole("link", { name: "Admin CMS", exact: true }).count(), 0);

@@ -5,8 +5,9 @@ export function guestHref(href: string): string {
   const suffix = hash ? `#${hash}` : "";
   const material = pathname.match(/^\/learn\/[^/]+\/lessons\/([^/]+)(\/practice)?$/);
   if (material) return `/guest/${material[2] ? "lab" : "materials"}/${material[1]}${suffix}`;
+  if (pathname === "/forum" || pathname.startsWith("/forum/")) return `/guest${pathname}${suffix}`;
   if (pathname.startsWith("/learn/")) return "/guest?view=materials";
-  const views: Record<string, string> = { "/dashboard": "", "/lab": "lab", "/playground": "sqlab", "/schema-builder": "sqlab", "/chatbot": "chatbot", "/pre-test": "tests", "/post-test": "post-test", "/profile": "profile" };
+  const views: Record<string, string> = { "/dashboard": "", "/lab": "lab", "/playground": "sqlab", "/schema-builder": "sqlab", "/chatbot": "chatbot", "/pre-test": "materials", "/post-test": "post-test", "/profile": "profile" };
   if (pathname in views) return `/guest${views[pathname] ? `?view=${views[pathname]}` : ""}${suffix}`;
   return href;
 }

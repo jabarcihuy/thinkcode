@@ -17,7 +17,8 @@ export function DashboardNavigation({ role, guest = false }: { role: Role; guest
     <Button asChild variant="ghost" size="sm"><Link href={href("/dashboard")}>{tx("Dashboard")}</Link></Button>
     <Button asChild variant="ghost" size="sm"><Link href={href(`/learn/${DEFAULT_LEARNING_PATH_SLUG}`)}>{tx("Materi")}</Link></Button>
     <Button asChild variant="ghost" size="sm"><Link href={href("/lab")}>{tx("Lab Materi")}</Link></Button>
-    <Button asChild variant="ghost" size="sm"><Link href={href("/pre-test")}>{tx("Tes")}</Link></Button>
+    <Button asChild variant="ghost" size="sm"><Link href={href("/post-test")}>{tx("Tantangan")}</Link></Button>
+    <Button asChild variant="ghost" size="sm"><Link href={href("/forum")}>{tx("Forum")}</Link></Button>
     {!guest && role === "ADMIN" && <Button asChild variant="ghost" size="sm"><Link href="/admin">{tx("Admin CMS")}</Link></Button>}
     <Button asChild variant="ghost" size="sm"><Link href={href("/profile")}>{tx("Profil")}</Link></Button>
     <form action={guest ? exitGuest : logoutAction}><Button type="submit" variant="outline" size="sm">{tx("Keluar")}</Button></form>

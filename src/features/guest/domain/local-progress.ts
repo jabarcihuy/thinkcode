@@ -31,7 +31,7 @@ export function guestOverview(catalog: GuestLearningCatalog, local: GuestLocalPr
     const required = catalog.exercises.filter((exercise) => exercise.lesson_id === lesson.id);
     return [{ lesson_id: lesson.id, read_at: readAt, status: required.length > 0 && required.every((exercise) => passed.has(exercise.id)) ? "COMPLETED" : "IN_PROGRESS" }];
   });
-  const baselineComplete = catalog.tests.some((test) => test.type === "PRETEST" && Boolean(local.tests[test.id]));
+  const baselineComplete = true; // Historical local diagnostic results are retained but no longer gate learning.
   const lessons = deriveLessonStates(catalog.lessons, progress, [], baselineComplete);
   return { path: catalog.path, chapters: [], lessons, baselineComplete, metrics: calculateLearningMetrics(lessons) };
 }

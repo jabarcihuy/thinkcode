@@ -1,5 +1,9 @@
 # UX Flow
 
+## Current product revision — 8 October 2026
+
+Pre-test is retired from account and guest flows. Start with the first material; reading plus required core practice still unlocks the next. The final assessment is named **Tantangan Akhir / Final Challenge**, still unlocked after all required materials, graded server-side and passed at 75. Historical diagnostic questions/sessions/results remain archived; old pre-test URLs redirect to materials. Earlier baseline descriptions below are historical and do not define the active flow. A mobile-first database discussion forum is now explicitly in scope at the user's request; see planning/2026-10-08-forum.md.
+
 ## Public landing
 
 Explain in one sentence that Quethink teaches learners to understand relationships, read data, and safely change a practice database. Show the simple cycle: inspect → predict → query → see the result/change. Primary action is to start learning.

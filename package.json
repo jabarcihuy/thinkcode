@@ -29,7 +29,8 @@
     "test:guest:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-guest-mode.mjs",
     "audit:mobile": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/audit-mobile-pages.mjs",
     "test:mobile-shell:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-mobile-shell.mjs",
-    "test:language:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-language-mode.mjs"
+    "test:language:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-language-mode.mjs",
+    "test:forum:integration": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-forum.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

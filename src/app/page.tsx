@@ -13,14 +13,13 @@ import { DEFAULT_LEARNING_PATH_SLUG } from "@/features/learning/config";
 
 const pageMetadata: Metadata = {
   title: "Quethink — Belajar basis data, lihat cara kerjanya",
-  description: "Platform belajar basis data dengan materi dan PDF, video pendamping, skema visual 2D, latihan SQL, SQLab, Tutor AI, serta tes awal dan tes akhir.",
+  description: "Platform belajar basis data dengan materi dan PDF, video pendamping, skema visual 2D, latihan SQL, SQLab, Tutor AI, serta Tantangan Akhir.",
 };
 
 const journey = [
-  ["Tes Awal", "Kenali pemahaman awalmu. Tidak ada syarat lulus untuk mulai belajar."],
   ["Materi", "Baca satu konsep. Unduh PDF atau tonton video pendamping yang tersedia."],
   ["Lab Materi", "Amati tabel dan relasinya, lalu selesaikan latihan inti untuk membuka materi berikutnya."],
-  ["Tes Akhir", "Uji pemahaman secara mandiri setelah seluruh materi tuntas. Nilai kelulusan minimal 75."],
+  ["Tantangan Akhir", "Uji pemahaman secara mandiri setelah seluruh materi tuntas. Nilai kelulusan minimal 75."],
 ];
 const topics = [
   ["Relasi", "Pahami tabel, baris, kolom, dan kunci. Lihat bagaimana data saling terhubung.", "2 materi"],
@@ -50,8 +49,8 @@ export default function HomePage() {
 
         <section className="border-y border-border bg-white" aria-labelledby="journey-title">
           <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-20">
-            <div className="max-w-xl"><h2 id="journey-title" className="text-3xl font-semibold tracking-tight">{tx("Selalu tahu langkah berikutnya.")}</h2><p className="mt-3 leading-7 text-muted-foreground">{tx("Ikuti alur belajar dari titik awal hingga tes akhir. Latihan bisa dicoba kembali.")}</p></div>
-            <ol className="mt-8 grid gap-0 md:grid-cols-4 md:gap-6">
+            <div className="max-w-xl"><h2 id="journey-title" className="text-3xl font-semibold tracking-tight">{tx("Selalu tahu langkah berikutnya.")}</h2><p className="mt-3 leading-7 text-muted-foreground">{tx("Ikuti alur belajar dari titik awal hingga tantangan akhir. Latihan bisa dicoba kembali.")}</p></div>
+            <ol className="mt-8 grid gap-0 md:grid-cols-3 md:gap-6">
               {journey.map(([title, body], i) => (
                 <li key={title} className="flex min-w-0 gap-4 border-t border-border py-6 md:block">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-primary">{i + 1}</span>
@@ -81,7 +80,7 @@ export default function HomePage() {
             <div><h2 id="lab-title" className="text-3xl font-semibold tracking-tight">{tx("Lihat hubungan. Amati hasilnya.")}</h2><p className="mt-4 max-w-[48ch] leading-7 text-muted-foreground">{tx("Di Lab Materi, amati tabel dan hubungan PK–FK melalui skema 2D. Prediksi hasil query, jalankan, lalu bandingkan dengan data yang muncul.")}</p><p className="mt-4 max-w-[48ch] text-sm leading-7 text-muted-foreground">{tx("Latihan menggunakan kasus kampus, katalog buku, dan toko. Data latihan terisolasi dan bisa direset.")}</p></div>
             <div className="space-y-7">
               <section><h3 className="text-xl font-semibold">{tx("Tutor AI saat kamu buntu")}</h3><p className="mt-2 text-sm leading-7 text-muted-foreground">{tx("Minta petunjuk tentang konsep, query, atau kesalahan di Lab Materi. Chatbot juga tersedia dari menu. Kamu tetap yang mencoba dan mengambil keputusan.")}</p></section>
-              <section className="border-t border-primary/15 pt-6"><h3 className="text-xl font-semibold">{tx("Latihan untuk mencoba. Tes untuk mengukur.")}</h3><p className="mt-2 text-sm leading-7 text-muted-foreground">{tx("Ulangi latihan tanpa penalti. Tes Awal mencatat titik awal; tes akhir menilai pemahaman akhir. Saat tes aktif, bantuan AI dinonaktifkan.")}</p></section>
+              <section className="border-t border-primary/15 pt-6"><h3 className="text-xl font-semibold">{tx("Latihan untuk mencoba. Tes untuk mengukur.")}</h3><p className="mt-2 text-sm leading-7 text-muted-foreground">{tx("Ulangi latihan tanpa penalti. Tantangan Akhir menguji pemahaman setelah belajar. Saat tantangan aktif, bantuan AI dinonaktifkan.")}</p></section>
             </div>
           </div>
         </section>

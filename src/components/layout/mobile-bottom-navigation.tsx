@@ -5,7 +5,7 @@ import { useText } from "@/i18n/use-text";
 import { Suspense, useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { BookOpen, ChevronUp, ClipboardCheck, Database, House, LogOut, MessagesSquare, PanelsTopLeft, ShieldCheck, UserRound, X } from "lucide-react";
+import { BookOpen, ChevronUp, ClipboardCheck, Database, House, LogOut, MessageSquare, MessagesSquare, PanelsTopLeft, ShieldCheck, UserRound, X } from "lucide-react";
 import { DEFAULT_LEARNING_PATH_SLUG } from "@/features/learning/config";
 import { logoutAction } from "@/lib/auth/actions";
 import { useMobileShell } from "@/components/navigation/use-mobile-shell";
@@ -17,15 +17,15 @@ const entries = [
   { href: "/dashboard", label: "Beranda", icon: House, prefixes: ["/dashboard"] },
   { href: `/learn/${DEFAULT_LEARNING_PATH_SLUG}`, label: "Materi", icon: BookOpen, prefixes: ["/learn"] },
   { href: null, label: "Menu", icon: ChevronUp, prefixes: [] },
-  { href: "/pre-test", label: "Tes", icon: ClipboardCheck, prefixes: ["/pre-test", "/post-test", "/assessments"] },
+  { href: "/post-test", label: "Tantangan", icon: ClipboardCheck, prefixes: ["/pre-test", "/post-test", "/assessments"] },
   { href: "/profile", label: "Profil", icon: UserRound, prefixes: ["/profile"] },
 ];
 const tools = [
   { href: "/lab", label: "Lab Materi", icon: Database },
   { href: "/playground", label: "SQLab", icon: PanelsTopLeft },
   { href: "/chatbot", label: "Chatbot", icon: MessagesSquare },
-  { href: "/pre-test", label: "Tes Awal", icon: ClipboardCheck },
-  { href: "/post-test", label: "Tes Akhir", icon: ClipboardCheck },
+  { href: "/forum", label: "Forum", icon: MessageSquare },
+  { href: "/post-test", label: "Tantangan Akhir", icon: ClipboardCheck },
 ];
 const itemClass = "flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 rounded-md px-1 transition-colors hover:bg-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 function matchesPath(pathname: string, prefix: string) {
@@ -38,14 +38,14 @@ function BottomNavigation({ role, guest = false }: { role: Role; guest?: boolean
   const actualPathname = usePathname();
   const search = useSearchParams();
   const view = guestNavigationView(actualPathname, search.get("view"));
-  const pathname = guest ? ({ "": "/dashboard", materials: "/learn", tests: "/pre-test", "post-test": "/post-test", profile: "/profile", menu: "/playground" }[view] ?? "/dashboard") : actualPathname;
+  const pathname = guest ? ({ "": "/dashboard", materials: "/learn", tests: "/post-test", "post-test": "/post-test", profile: "/profile", menu: "/playground" }[view] ?? "/dashboard") : actualPathname;
   const destination = (href: string) => guest ? guestHref(href) : href;
   const practice = pathname.endsWith("/practice");
   const menuId = useId();
   const panel = useRef<HTMLElement>(null);
   const bar = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(false);
-  const menuActive = practice || ["/lab", "/playground", "/schema-builder", "/chatbot", "/admin"].some((prefix) => matchesPath(pathname, prefix));
+  const menuActive = practice || ["/lab", "/playground", "/schema-builder", "/chatbot", "/forum", "/admin"].some((prefix) => matchesPath(pathname, prefix));
   function closeMenu() { panel.current?.hidePopover(); }
   useEffect(() => { panel.current?.hidePopover(); }, [pathname]);
   useMobileShell(bar, panel);
@@ -58,16 +58,18 @@ function BottomNavigation({ role, guest = false }: { role: Role; guest?: boolean
         <button type="button" popoverTarget={menuId} popoverTargetAction="hide" aria-label={tx("Tutup menu")} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-muted-foreground hover:bg-secondary focus-visible:outline-2 focus-visible:outline-ring"><X size={20} aria-hidden="true" /></button>
       </div>
       <ul className="grid grid-cols-2 gap-2">{expanded.map(({ href, label, icon: Icon }) => {
-        const active = guest ? (actualPathname.startsWith("/guest/lab/") && href === "/lab") || search.get("view") === new URL(destination(href), "https://local.invalid").searchParams.get("view") : matchesPath(pathname, href);
+        const target = new URL(destination(href), "https://local.invalid");
+        const targetView = target.searchParams.get("view");
+        const active = guest ? (actualPathname.startsWith("/guest/lab/") && href === "/lab") || (targetView ? search.get("view") === targetView : matchesPath(actualPathname, target.pathname)) : matchesPath(pathname, href);
         return <li key={href} className={href === "/admin" ? "col-span-2" : undefined}><Link href={destination(href)} onClick={closeMenu} aria-current={active ? "page" : undefined} className={`flex min-h-14 items-center gap-3 rounded-md px-3 py-3 text-sm font-medium leading-6 hover:bg-secondary focus-visible:outline-2 focus-visible:outline-ring ${active ? "bg-secondary text-primary" : "text-foreground"}`}><Icon size={20} className="shrink-0 text-primary" aria-hidden="true" /><span>{tx(label)}</span></Link></li>;
       })}</ul>
       <form action={guest ? exitGuest : logoutAction} className="mt-3 border-t border-border pt-2"><button type="submit" onClick={closeMenu} className="flex min-h-11 w-full items-center gap-3 rounded-md px-3 text-sm font-medium text-muted-foreground hover:bg-secondary focus-visible:outline-2 focus-visible:outline-ring"><LogOut size={20} aria-hidden="true" />{tx("Keluar")}</button></form>
     </nav>
     <nav ref={bar} aria-label={tx("Navigasi utama")} className="mobile-bottom-bar fixed inset-x-0 bottom-0 z-50 border-t border-border bg-white pb-[env(safe-area-inset-bottom)] lg:hidden">
       <ul className="mx-auto grid max-w-xl grid-cols-5 gap-1 px-2 pt-1">{entries.map(({ href, label, icon: Icon, prefixes }) => {
-        if (href === null) return <li key="menu"><button type="button" popoverTarget={menuId} aria-controls={menuId} aria-expanded={open} aria-current={menuActive ? "page" : undefined} className={`${itemClass} w-full ${open || menuActive ? "bg-secondary text-primary" : "text-muted-foreground"}`}><ChevronUp size={20} aria-hidden="true" className={`transition-transform motion-reduce:transition-none ${open ? "rotate-180" : ""}`} /><span className="max-w-full text-center text-xs font-medium leading-tight [overflow-wrap:anywhere]">{tx("Menu")}</span></button></li>;
+        if (href === null) return <li key="menu"><button type="button" popoverTarget={menuId} aria-controls={menuId} aria-expanded={open} aria-current={menuActive ? "page" : undefined} className={`${itemClass} w-full ${open || menuActive ? "bg-secondary text-primary" : "text-muted-foreground"}`}><ChevronUp size={20} aria-hidden="true" className={`transition-transform motion-reduce:transition-none ${open ? "rotate-180" : ""}`} /><span className="max-w-full text-center text-[11px] [overflow-wrap:anywhere] font-medium leading-tight">{tx("Menu")}</span></button></li>;
         const active = (label !== "Materi" || !practice) && prefixes.some((prefix) => matchesPath(pathname, prefix));
-        return <li key={href}><Link href={destination(href)} onClick={closeMenu} aria-current={active ? "page" : undefined} className={`${itemClass} ${active ? "bg-secondary text-primary" : "text-muted-foreground"}`}><Icon size={19} aria-hidden="true" /><span className="max-w-full text-center text-xs font-medium leading-tight [overflow-wrap:anywhere]">{tx(label)}</span></Link></li>;
+        return <li key={href}><Link href={destination(href)} onClick={closeMenu} aria-current={active ? "page" : undefined} className={`${itemClass} ${active ? "bg-secondary text-primary" : "text-muted-foreground"}`}><Icon size={19} aria-hidden="true" /><span className="max-w-full text-center text-[11px] [overflow-wrap:anywhere] font-medium leading-tight">{tx(label)}</span></Link></li>;
       })}
       </ul>
     </nav>

@@ -5,9 +5,9 @@ const id = "00000000-0000-4000-8000-000000000001";
 const exerciseBase = { lesson_id: id, title: "Draft", prompt: "Solve this step.", position: 1, is_required: true };
 
 describe("admin CMS content validation", () => {
-  it("keeps diagnostic tests outside official scoring", () => {
+  it("rejects creation of retired diagnostic tests", () => {
     const input = { learning_path_id: id, title: "Pre-test", slug: "pre-test", type: "PRETEST", passing_score: 0, gate_after_chapter: 3, position: 1 };
-    expect(assessmentInput.safeParse(input).success).toBe(true);
+    expect(assessmentInput.safeParse(input).success).toBe(false);
     expect(assessmentInput.safeParse({ ...input, passing_score: 75 }).success).toBe(false);
     expect(assessmentInput.safeParse({ ...input, course_weight_percent: 10 }).success).toBe(false);
   });
