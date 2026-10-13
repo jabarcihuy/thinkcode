@@ -61,3 +61,32 @@ SQLab query execution has no server endpoint: a dedicated browser Worker receive
 ## Named guest demo APIs
 
 Namespace `/api/guest` accepts a signed HttpOnly guest session rather than a Supabase account. It only exposes published course content. `/tutor`, `/sqlab`, `/check/[id]`, `/pdf/[slug]`, and `/tests/[id]/submit` reuse bounded server services without writing progress, attempts, AI history, or official assessment results. Guest tests use trusted server grading and return only aggregate scores; answer keys and hidden fixtures never leave the server. Demo tests block guest AI/helpers; an active official account test also blocks guest endpoints. Same-origin checks, request validation and process-local quotas apply. Production deployments spanning instances require a shared upstream abuse limit.
+
+## Native Android API v1
+
+The authorized Flutter first slice uses `/api/mobile/v1`. Every endpoint verifies
+`Authorization: Bearer <Supabase access token>` with Auth `getUser`, then reads the
+role from `profiles`. Web cookies and client-supplied user IDs are not identities.
+Responses are private/no-store. `X-Quethink-Locale: en|id` selects presentation
+language only; IDs, SQL identifiers, records and answers remain unchanged.
+
+- `GET /course`: published flat material outline, actual owned progress and active
+  assessment flag. No unpublished CMS content or private answers.
+- `GET /materials/:id`: unlocked published reading, no embedded exercises.
+- `POST /materials/:id/read`: existing guarded reading acknowledgement RPC.
+- `GET /materials/:id/lab`: required public core exercises, selected synthetic
+  dataset registry, safe starter SQL and public schema blueprint. Requires reading
+  acknowledgement; rejects locked materials and active assessment sessions.
+- `POST /exercises/:id/check`: strict `{pathSlug, answer}` only, 60 KB maximum;
+  existing deterministic server grader and quota/attempt RPC. Never accepts score,
+  user ID, completion, browser/native execution results or hidden tests. Completion
+  and next-material availability come from the database transaction.
+
+Invalid identity is 401; locked/read-required/active-assessment is 403; invalid
+answer is 400; quota is 429; temporary failures return safe 503 errors. Native SQL
+runs only on synthetic local SQLite, never through this API or production
+PostgreSQL. The web assessment flow and trusted assessment adapter are unchanged.
+No database migration is required for this slice. Deploy these API routes before
+using the native production-configured app. Final Challenge and non-slice features
+remain available on the website; native 100% material progress is not final course
+completion.

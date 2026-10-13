@@ -1,0 +1,3 @@
+# Preserve the verified upstream amalgamation byte-for-byte.
+sqlite3.c -whitespace
+sqlite3.h -whitespace

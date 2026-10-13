@@ -1,11 +1,13 @@
 import "server-only";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/types/database";
 import { createClient } from "@/lib/supabase/server";
 import { createPrivilegedClient } from "@/lib/supabase/privileged";
 import type { GradingExercise, PublicExercise, VisibleTest } from "@/features/practice/types";
 import type { Json } from "@/types/database";
 
-export async function getPublicExercises(lessonId: string, userId: string): Promise<PublicExercise[]> {
-  const supabase = await createClient();
+export async function getPublicExercises(lessonId: string, userId: string, suppliedClient?: SupabaseClient<Database>): Promise<PublicExercise[]> {
+  const supabase = suppliedClient ?? await createClient();
   const { data: catalog, error: catalogError } = await supabase
     .from("published_exercise_catalog")
     .select("id, lesson_id, type, title, prompt, starter_code, public_config, position, is_required")

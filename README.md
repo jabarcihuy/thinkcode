@@ -110,3 +110,15 @@ Buka **Menu → Forum** untuk diskusi Basis Data atau Umum. Akun dapat membuat t
 Migration `20261008042509_retire_pretest_and_final_challenge.sql` menonaktifkan Tes Awal, mempertahankan riwayat, dan menamai ulang tantangan. Migration `20261008042911_discussion_forum.sql` menambahkan topik, balasan, RLS read-only untuk akun, serta mutation server dengan kuota per jam. Tidak ada variabel lingkungan baru.
 
 `npm run test:forum:integration` menguji forum, moderasi, kuota, assessment block, RLS dan mobile pada production build dengan akun sementara yang dibersihkan setelah tes.
+
+## Aplikasi Android native (Flutter)
+
+Client native baru berada di `flutter/`, terpisah dari APK TWA lama di `android/`.
+Tahap awal mencakup **Login → Dashboard → Materi → Lab inti → Progres** dengan
+materi dan pemeriksaan jawaban dari backend yang sama. SQL berjalan pada SQLite
+sintetis lokal dalam isolate, bukan pada database Supabase.
+
+Lihat [panduan Flutter](flutter/README.md) untuk konfigurasi public-only, pengujian,
+dan build APK. Deploy API `/api/mobile/v1` sebelum memakai konfigurasi produksi.
+SQLab mandiri, AI, Forum, Tantangan Akhir, PDF, mode tamu dan edit profil masih
+tersedia di web dan belum dipindahkan ke client native tahap awal.

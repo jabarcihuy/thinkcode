@@ -1,20 +1,18 @@
 import "server-only";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/types/database";
 import { getText } from "@/i18n/server";
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { calculateLearningMetrics, deriveLessonStates, ownsProgress } from "@/features/learning/domain/progression";
 import type { Chapter, LearningOverview, LearningPath, LessonOutline, ProgressRecord } from "@/features/learning/types";
 
-async function loadOverview(pathSlug: string, userId: string | null): Promise<LearningOverview | null> {
-  const supabase = await createClient();
-  if (userId) {
-    const { data } = await supabase.auth.getClaims();
-    if (!ownsProgress(data?.claims?.sub ?? null, userId)) throw new Error("Akses progres ditolak.");
-  }
+/** Caller must first verify the actor; the supplied client preserves owner RLS. */
+export async function loadLearningOverviewWithClient(supabase: SupabaseClient<Database>, pathSlug: string, userId: string | null): Promise<LearningOverview | null> {
   const { data: path, error: pathError } = await supabase
     .from("learning_paths")
     .select("id, slug, title, description")
-    .eq("slug", pathSlug)
+    .eq("slug", pathSlug).eq("is_published", true)
     .maybeSingle();
   if (pathError) throw pathError;
   if (!path) return null;
@@ -23,7 +21,7 @@ async function loadOverview(pathSlug: string, userId: string | null): Promise<Le
     supabase
     .from("chapters")
     .select("id, title, description, position, is_required")
-    .eq("learning_path_id", path.id)
+    .eq("learning_path_id", path.id).eq("is_published", true)
     .order("position");
   if (chapterError) throw chapterError;
 
@@ -37,7 +35,7 @@ async function loadOverview(pathSlug: string, userId: string | null): Promise<Le
   const { data: lessons, error: lessonError } = await supabase
     .from("lessons")
     .select("id, chapter_id, slug, title, summary, position, is_required, is_preview")
-    .in("chapter_id", chapterIds)
+    .in("chapter_id", chapterIds).eq("is_published", true)
     .order("position");
   if (lessonError) throw lessonError;
 
@@ -69,7 +67,14 @@ async function loadOverview(pathSlug: string, userId: string | null): Promise<Le
   };
 }
 
-export const getLearningOverview = cache(loadOverview);
+export const getLearningOverview = cache(async (pathSlug: string, userId: string | null) => {
+  const supabase = await createClient();
+  if (userId) {
+    const { data } = await supabase.auth.getClaims();
+    if (!ownsProgress(data?.claims?.sub ?? null, userId)) throw new Error("Akses progres ditolak.");
+  }
+  return loadLearningOverviewWithClient(supabase, pathSlug, userId);
+});
 
 export async function getLessonMaterial(lessonId: string): Promise<{ content: string; exampleSql: string | null } | null> {
   const supabase = await createClient();

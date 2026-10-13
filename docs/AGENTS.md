@@ -51,3 +51,8 @@ Use `src/i18n` for presentation localization. Persist only `en` or `id` in the v
 ## Forum
 
 Forum supports Basis Data and Umum discussion. Follow `docs/planning/2026-10-08-forum.md`. Only accounts write through validated server mutations; guests read only. ADMIN moderation is rechecked server-side. No forum access during active assessment; shared user advisory locks make start-assessment and forum writes mutually ordered. Forum text is escaped, never interpreted as HTML or SQL.
+
+
+## Flutter Android learning slice — 13 October 2026
+
+The user authorized a separate native Flutter client in `flutter/`, starting with account login → dashboard → published reading → required core Lab → server-verified progress. Keep Next.js as the web/Admin CMS and backend. Mobile calls the versioned bearer-token API documented in 08-API_SPEC.md; do not pass cookie sessions as mobile identity or expose service credentials. Native practice uses fresh synthetic in-memory SQLite in a bounded Dart isolate, because browser Workers/WASM are unavailable in native Dart. Read flutter/README.md for setup and the exact implemented scope. Preserve all published-material gates, active-assessment blocking, owner-only attempts, and trusted server completion. No native AI, Forum, independent SQLab, assessment UI, or Admin CMS expansion is included in this first slice.
