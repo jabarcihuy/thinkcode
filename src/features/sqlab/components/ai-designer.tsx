@@ -7,6 +7,7 @@ import { useGuestMode } from "@/features/guest/components/guest-mode";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { FeatureArtwork } from "@/components/layout/feature-artwork";
 import { ModelDiagram } from "@/features/schema-builder/components/model-diagram";
 import { parseDocument, type SqlabDocument } from "../domain/document";
 export function AiDesigner({ apply }: { apply: (doc: SqlabDocument) => string | null }) {
@@ -48,9 +49,12 @@ export function AiDesigner({ apply }: { apply: (doc: SqlabDocument) => string | 
   }
   return (
     <section className="space-y-5">
-      <div className="max-w-[68ch]">
-        <h2 className="text-2xl font-semibold tracking-tight">{tx("Dari ide menjadi database")}</h2>
-        <p className="mt-2 text-sm leading-6 text-muted-foreground">{tx("Jelaskan kebutuhanmu. Tinjau skema dan contoh data, lalu terapkan saat sudah sesuai.")}</p>
+      <div className="flex items-center justify-between gap-3 sm:gap-6">
+        <div className="min-w-0 max-w-[68ch]">
+          <h2 className="text-2xl font-semibold tracking-tight">{tx("Dari ide menjadi database")}</h2>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">{tx("Jelaskan kebutuhanmu. Tinjau skema dan contoh data, lalu terapkan saat sudah sesuai.")}</p>
+        </div>
+        <FeatureArtwork name="ai-schema" className="w-20 sm:w-36" />
       </div>
       <form onSubmit={generate} className="space-y-3">
         <Label htmlFor="sqlab-prompt">{tx("Database apa yang ingin dibuat?")}</Label>

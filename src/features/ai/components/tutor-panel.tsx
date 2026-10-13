@@ -8,6 +8,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Lightbulb, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TutorMessageContent } from "./tutor-message";
+import { FeatureArtwork } from "@/components/layout/feature-artwork";
 import type { TutorAction } from "@/features/ai/domain/tutor-context";
 
 interface TutorMessage { role: "USER" | "ASSISTANT"; content: string }
@@ -139,7 +140,7 @@ export function TutorPanel({
       following.current = element.scrollHeight - element.scrollTop - element.clientHeight < 48;
       if (following.current) setNewMessage(false);
     }} aria-live="polite" className={`mt-5 space-y-4 overflow-y-auto overscroll-contain focus-visible:outline-2 focus-visible:outline-ring ${standalone ? "max-h-[55dvh] min-h-48" : "max-h-80"}`}>
-      {!loadingHistory && !unavailable && messages.length === 0 && <li className="max-w-[75ch] rounded-md bg-muted px-4 py-3 text-sm leading-6 text-muted-foreground">{tx("Pilih bantuan atau tanyakan konsep yang sedang kamu pelajari.")}</li>}
+      {!loadingHistory && !unavailable && messages.length === 0 && <li className="max-w-[75ch] rounded-md bg-muted px-4 py-3 text-sm leading-6 text-muted-foreground">{standalone && <FeatureArtwork name="query-conversation" className="mx-auto mb-3 w-36" />}{tx("Pilih bantuan atau tanyakan konsep yang sedang kamu pelajari.")}</li>}
       {messages.map((message, index) => <li key={`${index}-${message.role}`} className={`max-w-[75ch] [overflow-wrap:anywhere] rounded-md px-4 py-3 text-sm leading-6 ${message.role === "USER" ? "ml-auto whitespace-pre-wrap bg-secondary text-secondary-foreground" : "bg-muted text-foreground"}`}>
         <p className="mb-1 text-xs font-semibold">{tx(message.role === "USER" ? "Kamu" : "Quethink Tutor")}</p>
         {message.role === "ASSISTANT" && message.content ? <TutorMessageContent content={message.content} /> : message.content || (pending && index === messages.length - 1 ? tx("Menyiapkan petunjuk…") : "")}
