@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { ArrowRight, Check, ClipboardCheck, LockKeyhole, UserRound } from "lucide-react";
+import { ArrowRight, Check, ClipboardCheck, LockKeyhole } from "lucide-react";
+import { ProfileAvatar } from "@/features/profile/components/profile-avatar";
+import type { ProfileAppearance } from "@/features/profile/domain/appearance";
 import { useText } from "@/i18n/use-text";
 import { Button } from "@/components/ui/button";
 import { FeatureArtwork } from "@/components/layout/feature-artwork";
@@ -10,13 +12,14 @@ import type { LearningOverview } from "../types";
 import { LearningHomeTools } from "./learning-home-tools";
 import styles from "./mobile-lms.module.css";
 
-export function DashboardView({ displayName, overview, action, postPassed, postAvailable, guest = false }: {
+export function DashboardView({ displayName, overview, action, postPassed, postAvailable, guest = false, appearance }: {
   displayName: string | null;
   overview: LearningOverview | null;
   action: ReturnType<typeof nextLearningAction> | null;
   postPassed: boolean;
   postAvailable: boolean;
   guest?: boolean;
+  appearance?: ProfileAppearance;
 }) {
   const tx = useText();
   const destination = (path: string) => guest ? guestHref(path) : path;
@@ -25,7 +28,7 @@ export function DashboardView({ displayName, overview, action, postPassed, postA
       <header className={styles.welcome}>
         <div className="min-w-0"><h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{tx("Halo")}{displayName ? `, ${displayName}` : ""}.</h1><p className="mt-2 text-sm leading-6 text-muted-foreground">{tx("Sedikit demi sedikit, pahami cara data bekerja.")}</p></div>
         <Link href={destination("/profile")} aria-label={tx("Profil")} className={styles.avatar}>
-          {displayName ? <span aria-hidden="true">{Array.from(displayName.trim())[0]?.toUpperCase()}</span> : <UserRound size={22} aria-hidden="true" />}
+          <ProfileAvatar name={displayName ?? ""} appearance={appearance} />
         </Link>
       </header>
       {!overview || !action ? <p className="mt-8 text-muted-foreground">{tx("Materi akan muncul setelah dipublikasikan.")}</p> : (

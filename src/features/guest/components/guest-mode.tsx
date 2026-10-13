@@ -1,4 +1,5 @@
 "use client";
+import type { ProfileAppearance } from "@/features/profile/domain/appearance";
 import { createContext, useContext, useMemo, useSyncExternalStore } from "react";
 import { resetGuestStorage } from "../browser/reset";
 import { createLocalDraftStore } from "@/lib/browser/local-draft-store";
@@ -16,6 +17,10 @@ function useGuestStore(catalog: GuestLearningCatalog, name: string) {
     markRead: (id: string) => update((value) => ({ ...value, read: { ...value.read, [id]: new Date().toISOString() } })),
     markPassed: (id: string) => update((value) => ({ ...value, passedExercises: [...new Set([...value.passedExercises, id])] })),
     recordTest: (id: string, result: GuestLocalProgress["tests"][string]) => update((value) => ({ ...value, tests: { ...value.tests, [id]: { ...result, highestScore: Math.max(value.tests[id]?.highestScore ?? value.tests[id]?.score ?? 0, result.score), passed: result.passed || Boolean(value.tests[id]?.passed) } } })),
+    saveProfile: (name: string, appearance: ProfileAppearance) => {
+      update(value => ({ ...value, name, appearance }));
+      return store.getSnapshot().status === "saved";
+    },
     rename: (name: string) => update((value) => ({ ...value, name })),
     reset: () => {
       try { if (!resetGuestStorage(localStorage)) return false; } catch { return false; }

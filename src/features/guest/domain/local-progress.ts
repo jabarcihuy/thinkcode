@@ -1,3 +1,4 @@
+import { appearanceSchema, defaultAppearance } from "@/features/profile/domain/appearance";
 import { z } from "zod";
 import { calculateLearningMetrics, deriveLessonStates } from "@/features/learning/domain/progression";
 import type { LearningOverview, LessonOutline, ProgressRecord } from "@/features/learning/types";
@@ -6,12 +7,13 @@ export const GUEST_LOCAL_PREFIX = "quethink:guest-local:v1:";
 export const guestResultSchema = z.object({ score: z.number().min(0).max(100), totalCorrect: z.number().int().nonnegative(), totalItems: z.number().int().positive(), passed: z.boolean(), highestScore: z.number().min(0).max(100).optional(), topicSummary: z.array(z.object({ topic: z.string().max(200), passed: z.boolean() })).max(100).optional() });
 export const guestProgressSchema = z.object({
   name: z.string().max(60),
+  appearance: appearanceSchema.default(defaultAppearance),
   read: z.record(z.uuid(), z.string().datetime()),
   passedExercises: z.array(z.uuid()).max(1000),
   tests: z.record(z.uuid(), guestResultSchema),
 });
 export type GuestLocalProgress = z.infer<typeof guestProgressSchema>;
-export const emptyGuestProgress: GuestLocalProgress = { name: "", read: {}, passedExercises: [], tests: {} };
+export const emptyGuestProgress: GuestLocalProgress = { name: "", appearance: defaultAppearance, read: {}, passedExercises: [], tests: {} };
 export interface GuestLearningCatalog {
   path: LearningOverview["path"] | null;
   lessons: LessonOutline[];

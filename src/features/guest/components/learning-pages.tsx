@@ -46,5 +46,5 @@ export function GuestLearningPages({ view, userId, activeTest }: { view: string;
  }
  const action = overview ? nextLearningAction(overview, null, postPassed) : null;
  const activeAction = activeTest ? { href: `/guest/tests/${activeTest}`, title: "Lanjutkan tes", label: "Lanjutkan tes", description: "Selesaikan sesi yang masih aktif. Jawaban tersimpan di perangkat ini." } : action;
- return <DashboardView displayName={local?.name ?? ""} overview={overview} action={activeAction} postPassed={postPassed} postAvailable={postAvailable} guest />;
+ return <DashboardView appearance={local?.value.appearance} displayName={local?.name ?? ""} overview={overview} action={activeAction} postPassed={postPassed} postAvailable={postAvailable} guest />;
 }
