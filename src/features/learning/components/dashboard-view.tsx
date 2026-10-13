@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, BookOpen, FlaskConical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProgressSummary } from "./progress-summary";
+import styles from "./mobile-lms.module.css";
 import { FeatureArtwork } from "@/components/layout/feature-artwork";
 import { learningPathHref } from "../config";
 import { guestHref } from "@/features/guest/domain/links";
@@ -14,10 +15,10 @@ export function DashboardView({ displayName, overview, action, postPassed, postA
   const tx = useText();
 
  const destination = (value: string) => guest ? guestHref(value) : value;
-  return <main id="main-content" className="mx-auto min-w-0 max-w-6xl px-5 py-8 sm:px-8 sm:py-12 [overflow-wrap:anywhere]">
+  return <main id="main-content" className={`${styles.dashboard} mx-auto min-w-0 max-w-6xl px-5 py-8 sm:px-8 sm:py-12 [overflow-wrap:anywhere]`}>
     <h1 className="mt-2 text-3xl font-semibold tracking-tight">{tx("Halo")}{tx(displayName ? `, ${displayName}` : "")}.</h1>
     <p className="mt-3 leading-7 text-muted-foreground">{tx("Sedikit demi sedikit, pahami cara data bekerja.")}</p>
-    {!overview || !action ? <p className="mt-10 text-muted-foreground">{tx("Materi akan muncul setelah dipublikasikan.")}</p> : <div className="mt-8 grid min-w-0 grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
+    {!overview || !action ? <p className="mt-10 text-muted-foreground">{tx("Materi akan muncul setelah dipublikasikan.")}</p> : <div className={`${styles.dashboardGrid} mt-8 grid min-w-0 grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]`}>
       <div className="min-w-0">
         <section className="min-w-0 rounded-lg border border-primary/15 bg-white p-5 sm:p-8" aria-label={tx("Langkah belajar berikutnya")}>
           <h2 className="text-2xl font-semibold">{tx(action.title)}</h2>

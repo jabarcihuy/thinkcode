@@ -4,6 +4,7 @@ import { useText } from "@/i18n/use-text";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { MaterialList } from "./material-list";
+import styles from "./mobile-lms.module.css";
 import { ProgressSummary } from "./progress-summary";
 import { lessonHref, lessonPracticeHref } from "../config";
 import { guestHref } from "@/features/guest/domain/links";
@@ -14,13 +15,12 @@ export function LearningPathView({ overview, authenticated, guest = false }: { o
  const pathSlug = overview.path.slug;
  const current = overview.metrics.currentLesson;
  const href = (value: string) => guest ? guestHref(value) : value;
- return (    <main id="main-content" className="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16">
+ return (    <main id="main-content" className={`${styles.course} mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16`}>
       <div className="max-w-3xl">
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">{tx(overview.path.title)}</h1>
         <p className="mt-4 max-w-[72ch] text-base leading-7 text-muted-foreground">{tx(overview.path.description)}</p>
       </div>
-      <div className="mt-8 grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_16rem] lg:gap-12">
-        <div className="min-w-0"><MaterialList lessons={overview.lessons} pathSlug={pathSlug} authenticated={authenticated} guest={guest} /></div>
+      <div className={`${styles.courseGrid} mt-8 grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_16rem] lg:gap-12`}>
         <aside className="space-y-6 lg:sticky lg:top-8" aria-label={tx("Ringkasan jalur belajar")}>
           <div className="rounded-lg border border-border bg-secondary/50 p-5">
             {authenticated ? <>
@@ -30,6 +30,7 @@ export function LearningPathView({ overview, authenticated, guest = false }: { o
             </> : <><h2 className="text-lg font-semibold">{tx("Mulai belajar terarah")}</h2><p className="mt-3 text-sm leading-6 text-muted-foreground">{tx("Baca materi pratinjau, lalu buat akun untuk menyimpan progres dan membuka jalur belajar.")}</p><Button asChild className="mt-5 w-full"><Link href="/register">{tx("Buat akun")}</Link></Button></>}
           </div>
         </aside>
+        <div className="min-w-0"><MaterialList lessons={overview.lessons} pathSlug={pathSlug} authenticated={authenticated} guest={guest} /></div>
       </div>
     </main>);
 }

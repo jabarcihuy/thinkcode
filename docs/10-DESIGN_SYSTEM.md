@@ -59,3 +59,8 @@ Tes Awal is retired: remove its learner navigation and prerequisite; preserve hi
 ## English and Bahasa Indonesia
 
 English is the default language. A compact labeled header selector is available on public, sign-in, guest and account pages, including mobile. A validated first-party locale cookie preserves the choice for one year; server rendering and the HTML language use the same locale. Existing routes and content/progress identities remain unchanged. UI, published course reading, public questions/options, instructions, results and downloadable PDFs are localized from checked-in catalogs. SQL identifiers, literal dataset values and submitted answers are preserved. AI tutors/content helpers respond in the selected language. Existing optional YouTube audio remains Indonesian and is labeled in English mode. New/edited CMS content must receive catalog translations before claiming bilingual publication; original text is retained if no translation exists. Browser storage and grading security are unchanged.
+
+
+## Mobile LMS hierarchy — 13 October 2026
+
+On phone and tablet, keep page introductions compact and place the dashboard next action before progress and exploration links. The catalog places the progress/resume summary before the material list in both visual and document order. Each material has its sequence, written state, readable title and summary; only accessible items link to reading, and the current item has a border and `aria-current="step"`. The five-item bottom navigation and required reading → core Lab → Final Challenge flow remain unchanged. Decorative assets stay small; no new features or curriculum changes accompany this adaptation.
