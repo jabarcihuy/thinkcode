@@ -24,6 +24,7 @@ class _SchemaAnswerFieldState extends State<SchemaAnswerField> {
     jsonEncode(widget.modeling['tables']),
   ) as List).map((x) => JsonMap.from(x)).toList();
   final Map<String, JsonMap> links = {};
+  String? selectedPreviewTable;
   void changed() {
     widget.onChanged({
       'schema': {
@@ -233,8 +234,13 @@ class _SchemaAnswerFieldState extends State<SchemaAnswerField> {
           const SizedBox(height: 16),
           SchemaCanvas(
             dataset: diagram,
-            selected: diagram.tables.first.name,
-            onSelect: (_) {},
+            selected:
+                diagram.tables.any(
+                  (table) => table.name == selectedPreviewTable,
+                )
+                ? selectedPreviewTable!
+                : diagram.tables.first.name,
+            onSelect: (name) => setState(() => selectedPreviewTable = name),
           ),
         ] else
           Text(

@@ -40,15 +40,6 @@ class _DatasetViewState extends State<DatasetView> {
               ?.copyWith(fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: 12),
-        SchemaCanvas(
-          dataset: widget.dataset,
-          selected: selected,
-          onSelect: (name) => setState(() {
-            selected = name;
-            page = 0;
-          }),
-        ),
-        const SizedBox(height: 16),
         DropdownButtonFormField<String>(
           isExpanded: true,
           initialValue: selected,
@@ -73,7 +64,16 @@ class _DatasetViewState extends State<DatasetView> {
             }
           },
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
+        SchemaCanvas(
+          dataset: widget.dataset,
+          selected: selected,
+          onSelect: (name) => setState(() {
+            selected = name;
+            page = 0;
+          }),
+        ),
+        const SizedBox(height: 16),
         Wrap(
           spacing: 8,
           runSpacing: 8,

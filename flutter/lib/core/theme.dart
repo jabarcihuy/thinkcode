@@ -1,4 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+// App appearance is independent of Android night mode and wallpaper colors.
+const quethinkThemeMode = ThemeMode.light;
+const quethinkBackground = Color(0xFFF8F7FC);
+const quethinkSystemUiStyle = SystemUiOverlayStyle(
+  statusBarColor: Colors.transparent,
+  statusBarIconBrightness: Brightness.dark,
+  statusBarBrightness: Brightness.light,
+  systemStatusBarContrastEnforced: false,
+  systemNavigationBarColor: Colors.transparent,
+  systemNavigationBarIconBrightness: Brightness.dark,
+  systemNavigationBarContrastEnforced: false,
+);
+
+Widget quethinkSystemChrome(BuildContext context, Widget? child) =>
+    AnnotatedRegion<SystemUiOverlayStyle>(
+      value: quethinkSystemUiStyle,
+      child: child ?? const SizedBox.shrink(),
+    );
 
 ThemeData quethinkTheme(Brightness brightness) {
   final scheme =
@@ -17,13 +37,14 @@ ThemeData quethinkTheme(Brightness brightness) {
     useMaterial3: true,
     colorScheme: scheme,
     scaffoldBackgroundColor: brightness == Brightness.light
-        ? const Color(0xFFF8F7FC)
+        ? quethinkBackground
         : scheme.surface,
     appBarTheme: AppBarTheme(
       backgroundColor: brightness == Brightness.light
-          ? const Color(0xFFF8F7FC)
+          ? quethinkBackground
           : scheme.surface,
       scrolledUnderElevation: 0,
+      systemOverlayStyle: quethinkSystemUiStyle,
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,

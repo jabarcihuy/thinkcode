@@ -10,10 +10,11 @@ Account email/password login → dashboard → flat published material list → 
 acknowledgement → required core Lab → verified progress → next material.
 
 - Four native destinations: Home, Materials, Progress, Profile. Tablet uses a rail.
-- English default / Indonesian, system light/dark theme, accessible native controls.
+- English default / Indonesian, fixed light Indigo–apricot theme, accessible native controls.
 - Read-only Markdown materials; HTTPS video links open externally.
 - Vertical Lab: 2D PK/FK schema and paginated records → SQL → output → core task.
-  Relasi Labs have no query editor. Pinch/pan, Fit/Reset, named table selector.
+  Relasi Labs have no query editor. Pinch/pan, 48dp zoom buttons, Show all,
+  Focus table, named table selector and accessible relationship descriptions.
 - Core choices, ordering, output prediction and guided schema modeling reuse the
   published website content. Server checks answers; native SQL never grants scores.
 - SQL on isolated synthetic in-memory SQLite, one statement, 4096 characters,
@@ -116,3 +117,20 @@ steps via the native bearer API, checks ownership/forged scores/locked access an
 active-assessment blocking, then deletes only those test accounts. This test reads
 private grading keys server-side for its own submissions; it never embeds those
 keys in app assets, API responses or logs.
+
+## App appearance
+
+The app uses its own light Indigo–apricot theme, independent of Android night mode
+and wallpaper colors. Flutter pages, dialogs, status/navigation icons and native
+launch/normal window themes use this policy. Android Force Dark is disabled for
+the app window. Keep system font scaling, reduced motion, SafeArea, keyboard
+insets, rotation and Back gestures enabled; appearance locking must not disable
+accessibility or native interaction. The keyboard and external apps retain their
+own Android settings. Rebuild/reinstall the APK to apply native window changes.
+
+### Mobile diagram controls
+
+Choose a table above the diagram, then use **Focus table** for a readable centered
+view. **+ / −** zoom around the current viewport center; **Show all** restores the
+full schema. Pan/pinch remain available. Controls wrap on small screens and large
+text; resizing refits the schema. Selection also updates the records below.

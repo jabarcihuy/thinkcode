@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/locale.dart';
 import 'dataset.dart';
+import 'schema_controls.dart';
 
 class SchemaCanvas extends StatefulWidget {
   final SqlDataset dataset;
@@ -22,6 +23,24 @@ class SchemaCanvas extends StatefulWidget {
 class _SchemaCanvasState extends State<SchemaCanvas> {
   final transform = TransformationController();
   bool needsFit = true;
+  double? lastWidth;
+
+  void positionView(double zoom, Offset sceneCenter, Size viewport) {
+    transform.value = Matrix4.diagonal3Values(zoom, zoom, 1)
+      ..setTranslationRaw(
+        viewport.width / 2 - sceneCenter.dx * zoom,
+        viewport.height / 2 - sceneCenter.dy * zoom,
+        0,
+      );
+  }
+
+  void zoomBy(double factor, Size viewport) {
+    final center = Offset(viewport.width / 2, viewport.height / 2);
+    final sceneCenter = transform.toScene(center);
+    final zoom = (transform.value.getMaxScaleOnAxis() * factor).clamp(.1, 1.8);
+    positionView(zoom, sceneCenter, viewport);
+  }
+
   @override
   void dispose() {
     transform.dispose();
@@ -122,16 +141,49 @@ class _SchemaCanvasState extends State<SchemaCanvas> {
         width = widget.dataset.tables.length == 1
             ? cardWidth + 40
             : stride + cardWidth + 40;
+    final contentBottom =
+        widget.dataset.tables
+            .map(
+              (table) =>
+                  positions[table.name]!.dy +
+                  (44 + table.columns.length * 26) * scale,
+            )
+            .reduce(math.max) +
+        20;
     return LayoutBuilder(
       builder: (context, constraints) {
-        if (needsFit) {
-          needsFit = false;
+        final viewport = Size(constraints.maxWidth, 280);
+        void fitAll() {
           final fit = math
-              .min(constraints.maxWidth / width, 280 / height)
-              .clamp(.35, 1.0);
+              .min(viewport.width / width, viewport.height / contentBottom)
+              .clamp(.1, 1.0);
+          positionView(fit, Offset(width / 2, contentBottom / 2), viewport);
+        }
+
+        void focusTable() {
+          final table = widget.dataset.tables.singleWhere(
+            (table) => table.name == widget.selected,
+          );
+          final tableHeight = (44 + table.columns.length * 26) * scale;
+          final zoom = math
+              .min(
+                (viewport.width - 32) / cardWidth,
+                (viewport.height - 32) / tableHeight,
+              )
+              .clamp(.1, 1.8);
+          positionView(
+            zoom,
+            positions[table.name]! + Offset(cardWidth / 2, tableHeight / 2),
+            viewport,
+          );
+        }
+
+        if (needsFit || lastWidth != constraints.maxWidth) {
+          lastWidth = constraints.maxWidth;
+          needsFit = false;
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) {
-              transform.value = Matrix4.diagonal3Values(fit, fit, 1);
+              fitAll();
             }
           });
         }
@@ -145,22 +197,30 @@ class _SchemaCanvasState extends State<SchemaCanvas> {
                   color: colors.surfaceContainerLow,
                   child: InteractiveViewer(
                     transformationController: transform,
-                    minScale: .35,
+                    minScale: .1,
                     maxScale: 1.8,
                     constrained: false,
-                    boundaryMargin: const EdgeInsets.all(80),
+                    boundaryMargin: const EdgeInsets.all(double.infinity),
                     child: SizedBox(
                       width: width,
                       height: height,
                       child: Stack(
                         children: [
                           Positioned.fill(
-                            child: CustomPaint(
-                              painter: _RelationsPainter(
-                                widget.dataset,
-                                positions,
-                                colors.primary,
-                                scale,
+                            child: Semantics(
+                              label: widget.dataset.relations
+                                  .map(
+                                    (relation) =>
+                                        '${relation.parent}.${relation.parentColumn} ${t(context, "links to", "terhubung ke")} ${relation.child}.${relation.childColumn}',
+                                  )
+                                  .join('. '),
+                              child: CustomPaint(
+                                painter: _RelationsPainter(
+                                  widget.dataset,
+                                  positions,
+                                  colors.primary,
+                                  scale,
+                                ),
                               ),
                             ),
                           ),
@@ -178,34 +238,22 @@ class _SchemaCanvasState extends State<SchemaCanvas> {
                 ),
               ),
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    t(
-                      context,
-                      'Pan or zoom to explore.',
-                      'Geser atau zoom untuk menjelajahi.',
-                    ),
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
+            const SizedBox(height: 12),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: ValueListenableBuilder<Matrix4>(
+                valueListenable: transform,
+                builder: (context, matrix, _) => SchemaControls(
+                  zoomIn: matrix.getMaxScaleOnAxis() >= 1.8
+                      ? null
+                      : () => zoomBy(1.25, viewport),
+                  zoomOut: matrix.getMaxScaleOnAxis() <= .1001
+                      ? null
+                      : () => zoomBy(.8, viewport),
+                  fit: fitAll,
+                  focus: focusTable,
                 ),
-                IconButton(
-                  tooltip: t(context, 'Fit schema', 'Paskan skema'),
-                  onPressed: () {
-                    final scale = math
-                        .min(constraints.maxWidth / width, 280 / height)
-                        .clamp(.35, 1.0);
-                    transform.value = Matrix4.diagonal3Values(scale, scale, 1);
-                  },
-                  icon: const Icon(Icons.fit_screen),
-                ),
-                IconButton(
-                  tooltip: t(context, 'Reset view', 'Reset tampilan'),
-                  onPressed: () => transform.value = Matrix4.identity(),
-                  icon: const Icon(Icons.restart_alt),
-                ),
-              ],
+              ),
             ),
           ],
         );

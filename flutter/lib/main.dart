@@ -45,6 +45,9 @@ Future<void> main() async {
   } catch (_) {
     runApp(
       MaterialApp(
+        theme: quethinkTheme(Brightness.light),
+        themeMode: quethinkThemeMode,
+        builder: quethinkSystemChrome,
         home: Scaffold(
           body: SafeArea(
             child: Center(
@@ -73,8 +76,8 @@ class QuethinkApp extends StatelessWidget {
       title: 'Quethink',
       debugShowCheckedModeBanner: false,
       theme: quethinkTheme(Brightness.light),
-      darkTheme: quethinkTheme(Brightness.dark),
-      themeMode: ThemeMode.system,
+      themeMode: quethinkThemeMode,
+      builder: quethinkSystemChrome,
       locale: Locale(locale.value),
       supportedLocales: const [Locale('en'), Locale('id')],
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
