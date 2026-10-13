@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { ArrowRight, BookOpen, Check, LockKeyhole } from "lucide-react";
+import Image from "next/image";
+import styles from "./mobile-lms.module.css";
+import { ArrowRight } from "lucide-react";
 import { useText } from "@/i18n/use-text";
 import { guestHref } from "@/features/guest/domain/links";
 import { lessonHref } from "../config";
@@ -18,12 +20,13 @@ export function MaterialItem({ lesson, index, pathSlug, authenticated, guest, cu
   const tx = useText();
   const accessible = mayOpenLesson(lesson, authenticated);
   const state = authenticated ? lesson.state : accessible ? "AVAILABLE" : "LOCKED";
-  const Icon = state === "COMPLETED" ? Check : accessible ? BookOpen : LockKeyhole;
+  const group = lesson.chapterTitle.toLowerCase();
+  const artwork = group.includes("write") ? "write" : group.includes("read") ? "read" : "relations";
   const content = (
     <>
-      <span aria-hidden="true" className={`flex w-12 shrink-0 flex-col items-center justify-center gap-2 self-start rounded-md py-3 ${accessible ? "bg-secondary text-primary" : "bg-muted text-muted-foreground"}`}>
-        <Icon size={20} strokeWidth={1.7} />
-        <span className="text-xs font-semibold tabular-nums">{String(index + 1).padStart(2, "0")}</span>
+      <span aria-hidden="true" className={styles.materialArt} data-tone={artwork}>
+        <Image src={`/assets/quethink/lesson-${artwork}.svg`} alt="" width={96} height={96} unoptimized />
+        <span className="text-xs font-semibold tabular-nums text-primary">{String(index + 1).padStart(2, "0")}</span>
       </span>
       <div className="min-w-0 flex-1">
         <span className="mb-2 block"><LessonStateLabel state={state} /></span>
@@ -35,13 +38,13 @@ export function MaterialItem({ lesson, index, pathSlug, authenticated, guest, cu
       </div>
     </>
   );
-  const className = `flex min-w-0 gap-3 rounded-lg border bg-white p-4 sm:gap-4 sm:p-6 ${current ? "border-primary" : "border-border"}`;
+  const className = styles.materialTile;
   const href = lessonHref(pathSlug, lesson.slug);
   return (
     <li>
       {accessible ? (
         <Link href={guest ? guestHref(href) : href} aria-current={current ? "step" : undefined}
-          className={`${className} transition-colors hover:bg-secondary/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring`}>
+          className={className}>
           {content}
         </Link>
       ) : <div className={className}>{content}</div>}

@@ -64,3 +64,8 @@ English is the default language. A compact labeled header selector is available 
 ## Mobile LMS hierarchy — 13 October 2026
 
 On phone and tablet, keep page introductions compact and place the dashboard next action before progress and exploration links. The catalog places the progress/resume summary before the material list in both visual and document order. Each material has its sequence, written state, readable title and summary; only accessible items link to reading, and the current item has a border and `aria-current="step"`. The five-item bottom navigation and required reading → core Lab → Final Challenge flow remain unchanged. Decorative assets stay small; no new features or curriculum changes accompany this adaptation.
+
+
+## Learning home visual redesign — 13 October 2026
+
+Use a compact greeting/profile header and a course card combining a pale-indigo illustrated cover, actual progress, and a solid-indigo next-action area. Final Challenge availability is a compact status row. Exploration has two touch-friendly material/Lab destinations, an apricot SQLab AI entry, and compact Chatbot/Forum links. The catalog uses topic artwork (Relasi/Read/Write), sequence numbers, written states, and an explicit current-item outline. Keep the full summaries, keyboard focus, noninteractive locked entries and existing unlock rules. Phone layouts remain one column; desktop uses a learning column and exploration/summary column. Static SVG artwork has no scripts or external dependencies.

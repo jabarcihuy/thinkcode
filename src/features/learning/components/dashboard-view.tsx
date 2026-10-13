@@ -1,35 +1,60 @@
-
-
-import { useText } from "@/i18n/use-text";
 import Link from "next/link";
-import { ArrowRight, BookOpen, FlaskConical } from "lucide-react";
+import { ArrowRight, Check, ClipboardCheck, LockKeyhole, UserRound } from "lucide-react";
+import { useText } from "@/i18n/use-text";
 import { Button } from "@/components/ui/button";
-import { ProgressSummary } from "./progress-summary";
-import styles from "./mobile-lms.module.css";
 import { FeatureArtwork } from "@/components/layout/feature-artwork";
-import { learningPathHref } from "../config";
 import { guestHref } from "@/features/guest/domain/links";
-import { nextLearningAction } from "../domain/next-action";
+import { learningPathHref } from "../config";
+import type { nextLearningAction } from "../domain/next-action";
 import type { LearningOverview } from "../types";
-export function DashboardView({ displayName, overview, action, postPassed, postAvailable, guest = false }: { displayName: string | null; overview: LearningOverview | null; action: ReturnType<typeof nextLearningAction> | null; postPassed: boolean; postAvailable: boolean; guest?: boolean }) {
-  const tx = useText();
+import { LearningHomeTools } from "./learning-home-tools";
+import styles from "./mobile-lms.module.css";
 
- const destination = (value: string) => guest ? guestHref(value) : value;
-  return <main id="main-content" className={`${styles.dashboard} mx-auto min-w-0 max-w-6xl px-5 py-8 sm:px-8 sm:py-12 [overflow-wrap:anywhere]`}>
-    <h1 className="mt-2 text-3xl font-semibold tracking-tight">{tx("Halo")}{tx(displayName ? `, ${displayName}` : "")}.</h1>
-    <p className="mt-3 leading-7 text-muted-foreground">{tx("Sedikit demi sedikit, pahami cara data bekerja.")}</p>
-    {!overview || !action ? <p className="mt-10 text-muted-foreground">{tx("Materi akan muncul setelah dipublikasikan.")}</p> : <div className={`${styles.dashboardGrid} mt-8 grid min-w-0 grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]`}>
-      <div className="min-w-0">
-        <section className="min-w-0 rounded-lg border border-primary/15 bg-white p-5 sm:p-8" aria-label={tx("Langkah belajar berikutnya")}>
-          <h2 className="text-2xl font-semibold">{tx(action.title)}</h2>
-          <p className="mt-3 max-w-[55ch] leading-7 text-muted-foreground">{tx(action.description)}</p>
-          <Button asChild className="mt-6 h-auto min-h-11 w-full py-3 sm:w-auto"><Link href={destination(action.href)}>{tx(action.label)}<ArrowRight size={16} aria-hidden="true" /></Link></Button>
-        </section>
-        <nav aria-label={tx("Jelajahi pembelajaran")} className="mt-6 divide-y divide-border rounded-lg border border-border bg-white px-5">
-          {[[learningPathHref(overview.path.slug), "Materi", "11 bacaan · PDF dan video pendamping", BookOpen], ["/lab", "Lab Materi", "Amati, coba, dan buktikan pemahamanmu", FlaskConical]].map(([href, title, description, Icon]) => { const Symbol = Icon as typeof BookOpen; return <Link key={String(href)} href={destination(String(href))} className="flex min-h-24 items-center gap-4 py-4 focus-visible:outline-2 focus-visible:outline-ring"><Symbol size={22} className="shrink-0 text-primary" aria-hidden="true" /><span className="min-w-0 flex-1"><span className="block font-semibold">{tx(String(title))}</span><span className="mt-1 block text-sm leading-6 text-muted-foreground">{tx(String(description))}</span></span><ArrowRight size={17} className="shrink-0" aria-hidden="true" /></Link>; })}
-        </nav>
-      </div>
-      <aside aria-label={tx("Progres belajar")} className="min-w-0 rounded-lg border border-border bg-white p-5 sm:p-6"><FeatureArtwork name="learning-map" className="mx-auto mb-4 w-36 sm:w-44" /><ProgressSummary metrics={overview.metrics} /><div className="mt-6 border-t border-border pt-5"><p className="text-sm font-semibold">{tx("Tantangan Akhir")}</p><p className="mt-2 text-sm leading-6 text-muted-foreground">{tx(postPassed ? "Lulus · jalur belajar selesai" : postAvailable ? "Terbuka, siap dikerjakan" : "Terbuka setelah semua latihan inti tuntas")}</p></div></aside>
-    </div>}
-  </main>;
+export function DashboardView({ displayName, overview, action, postPassed, postAvailable, guest = false }: {
+  displayName: string | null;
+  overview: LearningOverview | null;
+  action: ReturnType<typeof nextLearningAction> | null;
+  postPassed: boolean;
+  postAvailable: boolean;
+  guest?: boolean;
+}) {
+  const tx = useText();
+  const destination = (path: string) => guest ? guestHref(path) : path;
+  return (
+    <main id="main-content" className={styles.dashboard}>
+      <header className={styles.welcome}>
+        <div className="min-w-0"><h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{tx("Halo")}{displayName ? `, ${displayName}` : ""}.</h1><p className="mt-2 text-sm leading-6 text-muted-foreground">{tx("Sedikit demi sedikit, pahami cara data bekerja.")}</p></div>
+        <Link href={destination("/profile")} aria-label={tx("Profil")} className={styles.avatar}>
+          {displayName ? <span aria-hidden="true">{Array.from(displayName.trim())[0]?.toUpperCase()}</span> : <UserRound size={22} aria-hidden="true" />}
+        </Link>
+      </header>
+      {!overview || !action ? <p className="mt-8 text-muted-foreground">{tx("Materi akan muncul setelah dipublikasikan.")}</p> : (
+        <div className={styles.dashboardGrid}>
+          <div className={styles.learningColumn}>
+            <section className={styles.courseCard} aria-label={tx("Langkah belajar berikutnya")}>
+              <div className={styles.courseCover}>
+                <h2 className="min-w-0 text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">{tx(overview.path.title)}</h2>
+                <FeatureArtwork name="learning-map" className="w-28 sm:w-44" />
+              </div>
+              <div className={styles.courseProgress}>
+                <div className="flex flex-wrap items-center justify-between gap-2 text-sm"><span>{overview.metrics.completedRequiredLessons} {tx("dari")} {overview.metrics.totalRequiredLessons} {tx("selesai")}</span><span className="font-semibold tabular-nums text-primary">{overview.metrics.percentage}%</span></div>
+                <div role="progressbar" aria-label={tx("Progres belajar")} aria-valuenow={overview.metrics.percentage} aria-valuemin={0} aria-valuemax={100} className={styles.progressTrack}><span style={{ width: `${overview.metrics.percentage}%` }} /></div>
+              </div>
+              <div className={styles.nextAction}>
+                <h3 className="text-xl font-semibold tracking-tight">{tx(action.title)}</h3>
+                <p className="mt-2 text-sm leading-6">{tx(action.description)}</p>
+                <Button asChild className="mt-4 min-h-12 w-full bg-white text-primary hover:bg-secondary"><Link href={destination(action.href)}>{tx(action.label)}<ArrowRight size={18} aria-hidden="true" /></Link></Button>
+              </div>
+            </section>
+            <div className={styles.challengeStatus}>
+              <span className={styles.challengeIcon}>{postPassed ? <Check size={22} aria-hidden="true" /> : postAvailable ? <ClipboardCheck size={22} aria-hidden="true" /> : <LockKeyhole size={22} aria-hidden="true" />}</span>
+              <div className="min-w-0"><p className="font-semibold">{tx("Tantangan Akhir")}</p><p className="mt-1 text-sm leading-6 text-muted-foreground">{tx(postPassed ? "Lulus · jalur belajar selesai" : postAvailable ? "Terbuka, siap dikerjakan" : "Terbuka setelah semua latihan inti tuntas")}</p></div>
+              {(postAvailable || postPassed) && <Link href={destination("/post-test")} aria-label={tx("Tantangan Akhir")} className="ml-auto grid min-h-11 min-w-11 shrink-0 place-items-center rounded-md text-primary focus-visible:outline-2 focus-visible:outline-ring"><ArrowRight size={20} aria-hidden="true" /></Link>}
+            </div>
+          </div>
+          <LearningHomeTools materialsHref={learningPathHref(overview.path.slug)} total={overview.lessons.length} guest={guest} />
+        </div>
+      )}
+    </main>
+  );
 }

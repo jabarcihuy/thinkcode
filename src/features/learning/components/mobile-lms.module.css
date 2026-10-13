@@ -1,116 +1,67 @@
-/* Keep the next learning step first; mobile gets a learning home, not a desktop sidebar. */
-@media (max-width: 1023px) {
-  .dashboard,
-  .course {
-    padding-top: 1.5rem;
-    padding-bottom: 2rem;
-  }
-
-  .dashboard :global(.page-intro),
-  .course :global(.page-intro) {
-    padding: 0;
-    background: transparent;
-    flex-direction: row;
-    gap: 0.75rem;
-    align-items: flex-start;
-  }
-
-  .dashboard :global(.page-intro__icon),
-  .course :global(.page-intro__icon) {
-    width: 2.75rem;
-    height: 2.75rem;
-    flex-shrink: 0;
-  }
-
-  .dashboard h1,
-  .course h1 {
-    font-size: 1.5rem;
-    line-height: 1.3;
-  }
-
-  .dashboardGrid {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    margin-top: 1.5rem;
-  }
-
-  .dashboardGrid > div {
-    display: contents;
-  }
-
-  .dashboardGrid > div > section {
-    order: 1;
-    width: 100%;
-    background: var(--primary);
-    color: var(--primary-foreground);
-    border-color: transparent;
-    padding: 1.25rem;
-  }
-
-  .dashboardGrid > div > section > svg {
-    display: none;
-  }
-
-  .dashboardGrid > div > section h2 {
-    font-size: 1.5rem;
-  }
-
-  .dashboardGrid > div > section p {
-    color: var(--primary-foreground);
-  }
-
-  .dashboardGrid > div > section a {
-    background: var(--background);
-    color: var(--primary);
-  }
-
-  .dashboardGrid > aside {
-    order: 2;
-    width: 100%;
-  }
-
-  .dashboardGrid > aside > img {
-    float: right;
-    width: 4rem;
-    margin: 0 0 0.75rem 0.75rem;
-  }
-
-  .dashboardGrid > aside [role="progressbar"] {
-    clear: both;
-  }
-
-  .dashboardGrid > div > nav {
-    order: 3;
-    width: 100%;
-    margin-top: 0;
-  }
-
-  /* Learners can resume before scrolling through the entire catalog. */
-  .courseGrid {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    margin-top: 1.5rem;
-  }
-
-  .courseGrid > aside {
-    width: 100%;
-  }
-
-  .courseGrid > div {
-    width: 100%;
-  }
+.dashboard, .course {
+  max-width: 72rem;
+  min-width: 0;
+  margin-inline: auto;
+  padding: 1.5rem 1.25rem 2.5rem;
+  overflow-wrap: anywhere;
 }
-
+.welcome { display: flex; align-items: flex-start; gap: 1rem; justify-content: space-between; }
+.avatar { display: grid; place-items: center; flex-shrink: 0; width: 3rem; height: 3rem; border-radius: 1rem; background: var(--secondary); color: var(--primary); font-weight: 600; }
+.avatar:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
+.dashboardGrid { display: grid; gap: 1.75rem; margin-top: 1.5rem; align-items: start; }
+.learningColumn { min-width: 0; }
+.courseCard { overflow: hidden; border: 1px solid var(--border); border-radius: 1.25rem; background: var(--surface, white); }
+.courseCover { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 1.5rem 1.25rem; background: var(--secondary); color: var(--secondary-foreground); }
+.courseProgress { padding: 1rem 1.25rem; }
+.progressTrack { height: 0.5rem; margin-top: 0.75rem; border-radius: 1rem; overflow: hidden; background: var(--border); }
+.progressTrack > span { display: block; height: 100%; border-radius: inherit; background: var(--primary); }
+.nextAction { padding: 1.25rem; background: var(--primary); color: var(--primary-foreground); }
+.challengeStatus { display: flex; align-items: center; gap: 0.75rem; padding-block: 1.25rem; border-bottom: 1px solid var(--border); }
+.challengeIcon { display: grid; place-items: center; flex-shrink: 0; width: 2.75rem; height: 2.75rem; border: 1px solid var(--border); border-radius: 50%; background: white; color: var(--primary); }
+.tools { display: grid; min-width: 0; gap: 1rem; }
+.quickLinks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
+.quickLink { position: relative; display: flex; min-width: 0; flex-direction: column; align-items: flex-start; gap: 0.5rem; padding: 1.25rem 1rem; border: 1px solid var(--border); border-radius: 1rem; background: white; }
+.quickLink > svg:first-child { margin-bottom: 0.5rem; color: var(--primary); }
+.labLink { background: var(--secondary); border-color: var(--secondary); }
+.cornerArrow { position: absolute; right: 0.75rem; top: 1rem; color: var(--muted-foreground); }
+.sqlabLink { display: flex; align-items: center; gap: 0.5rem; padding: 1.25rem; border-radius: 1rem; background: var(--live-surface, #FFF0E3); color: var(--foreground); }
+.supportLinks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-block: 1px solid var(--border); }
+.supportLinks > a { display: flex; min-height: 3.5rem; align-items: center; gap: 0.5rem; font-size: 0.875rem; font-weight: 600; }
+.supportLinks > a + a { padding-left: 0.75rem; border-left: 1px solid var(--border); }
+.supportLinks > a > svg:first-child { color: var(--primary); }
+.supportLinks > a > svg:last-child { margin-left: auto; margin-right: 0.5rem; }
+.tools a:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
+.tools a:active { background: var(--secondary); }
+.courseHeading { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; padding: 1.25rem; border-radius: 1.25rem; background: var(--secondary); }
+.courseHeading h1 { font-size: 1.5rem; line-height: 1.25; }
+.courseGrid { display: grid; gap: 1.25rem; margin-top: 1.25rem; align-items: start; }
+.courseGrid > aside { min-width: 0; }
+.courseGrid > div { min-width: 0; }
+.resumePanel { padding: 1.25rem; border: 1px solid var(--border); border-radius: 1rem; background: white; }
+.resumePanel :global(section) { font-size: 0.875rem; }
+.materialTile { display: flex; min-width: 0; gap: 1rem; padding: 1rem; border: 1px solid var(--border); border-radius: 1rem; background: white; }
+.materialTile[aria-current="step"] { border-color: var(--primary); background: var(--secondary); }
+.materialTile:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
+.materialArt { display: grid; place-items: center; align-self: flex-start; flex-shrink: 0; width: 4.25rem; min-height: 5.5rem; padding: 0.375rem; border-radius: 0.75rem; background: var(--secondary); }
+.materialArt[data-tone="read"] { background: var(--live-surface, #FFF0E3); }
+.materialArt[data-tone="write"] { background: var(--muted); }
+.materialArt > img { width: 100%; height: auto; }
+.materialTile[aria-current="step"] .materialArt { background: white; }
+@media (hover: hover) {
+  .tools a:hover, a.materialTile:hover { outline: 1px solid var(--primary); outline-offset: -1px; }
+}
+@media (min-width: 640px) {
+  .dashboard, .course { padding: 2.5rem 2rem 3rem; }
+  .courseCover { padding: 2rem; }
+  .courseProgress, .nextAction { padding: 1.5rem 2rem; }
+  .materialArt { width: 5.5rem; }
+  .materialTile { padding: 1.25rem; }
+  .courseHeading h1 { font-size: 2rem; }
+}
 @media (min-width: 1024px) {
-  .courseGrid > aside {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
-  .courseGrid > div {
-    grid-column: 1;
-    grid-row: 1;
-  }
+  .dashboardGrid { grid-template-columns: minmax(0, 1fr) 21rem; gap: 2rem; }
+  .courseGrid { grid-template-columns: minmax(0, 1fr) 18rem; gap: 2rem; }
+  .courseGrid > aside { grid-column: 2; grid-row: 1; position: sticky; top: 2rem; }
+  .courseGrid > div { grid-column: 1; grid-row: 1; }
+  .courseHeading { padding: 2rem; }
 }
